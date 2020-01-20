@@ -1,0 +1,47 @@
+From 1a4a38fcfe4c442f6ae58b7ba674bf8db0869c1d Mon Sep 17 00:00:00 2001
+From: root <root@ryzen.haxx.dafuq>
+Date: Thu, 2 Jan 2020 11:13:46 -0600
+Subject: [PATCH] gcc: add graphite support
+
+---
+ releases/weekly/portage/isos/package.accept_keywords/gcc   | 1 +
+ releases/weekly/portage/isos/package.use/gcc               | 1 +
+ releases/weekly/portage/stages/package.accept_keywords/gcc | 1 +
+ releases/weekly/portage/stages/package.use/gcc             | 1 +
+ 4 files changed, 4 insertions(+)
+ create mode 100644 releases/weekly/portage/isos/package.accept_keywords/gcc
+ create mode 100644 releases/weekly/portage/isos/package.use/gcc
+ create mode 100644 releases/weekly/portage/stages/package.accept_keywords/gcc
+ create mode 100644 releases/weekly/portage/stages/package.use/gcc
+
+diff --git a/releases/weekly/portage/isos/package.accept_keywords/gcc b/releases/weekly/portage/isos/package.accept_keywords/gcc
+new file mode 100644
+index 00000000..e30528a1
+--- /dev/null
++++ b/releases/weekly/portage/isos/package.accept_keywords/gcc
+@@ -0,0 +1 @@
++dev-libs/isl
+diff --git a/releases/weekly/portage/isos/package.use/gcc b/releases/weekly/portage/isos/package.use/gcc
+new file mode 100644
+index 00000000..da4356e2
+--- /dev/null
++++ b/releases/weekly/portage/isos/package.use/gcc
+@@ -0,0 +1 @@
++sys-devel/gcc graphite
+diff --git a/releases/weekly/portage/stages/package.accept_keywords/gcc b/releases/weekly/portage/stages/package.accept_keywords/gcc
+new file mode 100644
+index 00000000..e30528a1
+--- /dev/null
++++ b/releases/weekly/portage/stages/package.accept_keywords/gcc
+@@ -0,0 +1 @@
++dev-libs/isl
+diff --git a/releases/weekly/portage/stages/package.use/gcc b/releases/weekly/portage/stages/package.use/gcc
+new file mode 100644
+index 00000000..da4356e2
+--- /dev/null
++++ b/releases/weekly/portage/stages/package.use/gcc
+@@ -0,0 +1 @@
++sys-devel/gcc graphite
+-- 
+2.24.1
+
