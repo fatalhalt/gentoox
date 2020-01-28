@@ -17,19 +17,20 @@ fi
 #
 
 gitprefix="https://gitgud.io/cloveros/cloveros/raw/master"
-rootpassword=gentoox
+rootpassword=live
 username=gentoox
-userpassword=gentoox
+userpassword=live
 #builddate="$(date +%Y%m%d).graphite"
 builddate="20200127.graphite"
-builddir="build-$(date +%Y%m%d)"
+#builddir="build-$(date +%Y%m%d)"
+builddir="build-20200127"
 KERNEL_CONFIG_DIFF="0001-kernel-config-cfs-r2.patch"
 
 binpkgs=/root/var/cache/binpkgs/
 distfiles=/root/var/cache/distfiles/
 
-build_weston=y
-build_kde=y
+#build_weston=y
+#build_kde=y
 #build_steam=y
 #configure_user=y
 #clover_rice="y"
@@ -106,6 +107,8 @@ LC_MESSAGES=C' > /etc/portage/make.conf
 mkdir /etc/portage/env
 echo 'CFLAGS="\${CFLAGS} -fno-lto"
 CXXFLAGS="\${CFLAGS} -fno-lto"' > /etc/portage/env/nolto.conf
+echo 'CFLAGS="-O2 -march=sandybridge -mtune=sandybridge -pipe"
+CXXFLAGS="\${CFLAGS}"' > /etc/portage/env/O2nolto.conf
 
 echo 'dev-libs/elfutils nolto.conf
 app-crypt/efitools nolto.conf
@@ -123,13 +126,14 @@ x11-drivers/xf86-video-amdgpu nolto.conf
 x11-drivers/xf86-video-ati nolto.conf
 x11-drivers/xf86-video-intel nolto.conf
 x11-base/xorg-server nolto.conf
-dev-libs/weston nolto.conf' > /etc/portage/package.env
+dev-libs/weston nolto.conf
+dev-util/umockdev O2nolto.conf' > /etc/portage/package.env
 
 echo 'sys-devel/gcc graphite
 sys-apps/kmod lzma
 sys-kernel/linux-firmware initramfs redistributable unknown-license
 x11-libs/libdrm libkms
-media-libs/mesa d3d9 lm-sensors opencl vaapi vdpau vulkan vulkan-overlay xa xvmc
+media-libs/mesa d3d9 lm-sensors opencl -vaapi vdpau vulkan vulkan-overlay xa xvmc
 www-client/firefox -system-libvpx hwaccel pgo lto wayland
 dev-libs/boost python
 dev-lang/python sqlite
@@ -276,7 +280,7 @@ sed -i '1s/^/NTHREADS="12"\n/' /etc/portage/make.conf
 
 echo -e '\nkde-plasma/plasma-meta discover networkmanager thunderbolt
 kde-apps/kio-extras samba' >> /etc/portage/package.use/gentoox
-emerge -v --jobs=4 --keep-going=y --autounmask=y --autounmask-write=y --deep --newuse kde-plasma/plasma-meta kde-apps/kde-apps-meta kde-apps/kmail calamares firefox mpv
+emerge -v --jobs=4 --keep-going=y --autounmask=y --autounmask-write=y --deep --newuse kde-plasma/plasma-meta kde-apps/kde-apps-meta kde-apps/kmail latte-dock calamares firefox mpv
 
 yes | layman -o https://raw.githubusercontent.com/fosero/flatpak-overlay/master/repositories.xml -f -a flatpak-overlay -q
 emerge -v sys-apps/flatpak
@@ -335,7 +339,7 @@ x11-libs/libxshmfence abi_x86_32
 x11-libs/libXv abi_x86_32
 x11-libs/libXvMC abi_x86_32
 x11-libs/libXxf86vm abi_x86_32' >> /etc/portage/package.use/gentoox
-emerge -v steam-meta
+emerge -av steam-meta
 touch /tmp/gentoox-steam-done
 HEREDOC
 exit 0
@@ -343,6 +347,7 @@ fi
 
 
 if [[ ! -z $configure_user ]] && [[ ! -f 'tmp/gentoox-user-configured' ]]; then
+cp ../../1518039301698.png .
 cat <<HEREDOC | chroot .
 source /etc/profile  && export PS1="(chroot) \$PS1"
 
@@ -354,9 +359,10 @@ nis_domain_lo="haxx.local"' > /etc/conf.d/net
 echo 'nameserver 1.1.1.1
 nameserver 2606:4700:4700::1111' > /etc/resolv.conf
 
-echo "root:$rootpassword" | chpasswd
+#echo "root:$rootpassword" | chpasswd
+yes "$rootpassword" | passwd root
 useradd $username
-echo "$username:$userpassword" | chpasswd
+yes "$userpassword"  | passwd "$username"
 gpasswd -a $username wheel
 
 cp /usr/share/zoneinfo/UTC /etc/localtime
@@ -383,7 +389,7 @@ rc-update add avahi-daemon default
 rc-update add samba default
 
 
-cp ../../1518039301698.png /home/$username/
+mv /1518039301698.png /home/$username/
 cd /home/$username/
 echo 'exec dbus-launch --exit-with-session startplasma-x11' > .xinitrc
 chown -R $username /home/$username/
@@ -439,7 +445,6 @@ HEREDOC
 cd ..
 umount -l image/var/cache/{binpkgs,distfiles}
 umount -l image/*
-mv image/usr/src/kernel-gentoox.tar.lzma .
 mksquashfs image/ image.squashfs -b 1M -comp zstd -Xcompression-level 10
 mkdir iso/
 isobuilddate=$(wget -O - http://distfiles.gentoo.org/releases/amd64/autobuilds/current-install-amd64-minimal/ | sed -nr "s/.*href=\"install-amd64-minimal-([0-9].*).iso\">.*/\1/p")

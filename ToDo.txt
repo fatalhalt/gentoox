@@ -21,3 +21,4 @@ for (i=0;i<Desktops.length;i++) {
 - adjust weston USE flags
 - adjust mpv USE flags
 
+- read eselect news messages
