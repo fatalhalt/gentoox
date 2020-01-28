@@ -29,7 +29,7 @@ binpkgs=/root/var/cache/binpkgs/
 distfiles=/root/var/cache/distfiles/
 
 build_weston=y
-#build_kde=y
+build_kde=y
 #build_steam=y
 #configure_user=y
 #clover_rice="y"
@@ -116,10 +116,14 @@ media-libs/x264 nolto.conf
 dev-libs/weston nolto.conf
 sys-auth/elogind nolto.conf
 dev-lang/spidermonkey nolto.conf
+sys-devel/llvm nolto.conf
+sys-libs/compiler-rt-sanitizers nolto.conf
 x11-drivers/xf86-video-intel nolto.conf
 x11-drivers/xf86-video-amdgpu nolto.conf
 x11-drivers/xf86-video-ati nolto.conf
-x11-drivers/xf86-video-intel nolto.conf' > /etc/portage/package.env
+x11-drivers/xf86-video-intel nolto.conf
+x11-base/xorg-server nolto.conf
+dev-libs/weston nolto.conf' > /etc/portage/package.env
 
 echo 'sys-devel/gcc graphite
 sys-apps/kmod lzma
@@ -248,7 +252,6 @@ touch /tmp/gentoox-weston-done
 HEREDOC
 exit 0
 fi
-exit 0
 
 
 if [[ ! -z $build_kde ]] && [[ ! -f 'tmp/gentoox-kde-done' ]]; then
@@ -256,9 +259,6 @@ cat <<HEREDOC | chroot .
 source /etc/profile  && export PS1="(chroot) \$PS1"
 eselect profile set "default/linux/amd64/17.1/desktop/plasma"
 sed -i -r "s/^USE=\"([^\"]*)\"$/USE=\"\1 -webkit\"/g" /etc/portage/make.conf
-
-mkdir -p /etc/portage/patches/media-libs/dav1d
-wget https://raw.githubusercontent.com/InBetweenNames/gentooLTO/master/sys-config/ltoize/files/patches/media-libs/dav1d/dav1d-graphite-ice-workaround.patch -P /etc/portage/patches/media-libs/dav1d/
 
 emerge layman
 layman --sync-all
@@ -425,20 +425,22 @@ fi
 
 
 if [[ ! -z $build_iso ]]; then
-#rm -Rf /var/cache/binpkgs/* /var/cache/edb/binhost/* /etc/resolv.conf
-#rm -f /tmp/*
-#ToDo: clear bash history, truncate logs in /var/log/
+cat <<HEREDOC | chroot .
+  rm -f /tmp/*
+  history -c
+  history -w
+HEREDOC
 cd ..
 umount -l image/var/cache/{binpkgs,distfiles}
 umount -l image/*
 mv image/usr/src/kernel-gentoox.tar.lzma .
 mksquashfs image/ image.squashfs -b 1M -comp zstd -Xcompression-level 10
 mkdir iso/
-builddate=$(wget -O - http://distfiles.gentoo.org/releases/amd64/autobuilds/current-install-amd64-minimal/ | sed -nr "s/.*href=\"install-amd64-minimal-([0-9].*).iso\">.*/\1/p")
-if [[ ! -f "current-install-amd64-minimal/install-amd64-minimal-$builddate.iso" ]]; then
-  wget http://distfiles.gentoo.org/releases/amd64/autobuilds/current-install-amd64-minimal/install-amd64-minimal-$builddate.iso
+isobuilddate=$(wget -O - http://distfiles.gentoo.org/releases/amd64/autobuilds/current-install-amd64-minimal/ | sed -nr "s/.*href=\"install-amd64-minimal-([0-9].*).iso\">.*/\1/p")
+if [[ ! -f "current-install-amd64-minimal/install-amd64-minimal-$isobuilddate.iso" ]]; then
+  wget http://distfiles.gentoo.org/releases/amd64/autobuilds/current-install-amd64-minimal/install-amd64-minimal-$isobuilddate.iso
 fi
-xorriso -osirrox on -indev *-$builddate.iso -extract / iso/
+xorriso -osirrox on -indev *-$isobuilddate.iso -extract / iso/
 mv image.squashfs iso/image.squashfs
 tar -xOf kernel-gentoox.tar.lzma --wildcards \*vmlinuz-\* > iso/boot/gentoo
 tar -xOf kernel-gentoox.tar.lzma --wildcards \*initramfs-\* | xz -d | gzip > iso/boot/gentoo.igz
