@@ -135,7 +135,10 @@ dev-libs/boost python
 dev-lang/python sqlite
 sys-fs/squashfs-tools zstd
 sys-boot/grub:2 mount # libzfs
-x11-libs/libxcb xkb' > /etc/portage/package.use/gentoox
+x11-libs/libxcb xkb
+dev-db/sqlite secure-delete
+x11-base/xorg-server xvfb
+sys-apps/xdg-desktop-portal screencast' > /etc/portage/package.use/gentoox
 
 rm -rf /etc/portage/package.accept_keywords/
 echo -n > /etc/portage/package.accept_keywords
@@ -262,8 +265,8 @@ sed -i -r "s/^USE=\"([^\"]*)\"$/USE=\"\1 -webkit\"/g" /etc/portage/make.conf
 
 emerge layman
 layman --sync-all
-layman --add mv
-layman --add lto-overlay
+yes | layman --add mv
+yes | layman --add lto-overlay
 echo 'sys-config/ltoize ~amd64
 app-portage/portage-bashrc-mv ~amd64
 app-shells/runtitle ~amd64' >> /etc/portage/package.accept_keywords
