@@ -281,11 +281,6 @@ emerge -v --jobs=4 --keep-going=y --autounmask=y --autounmask-write=y --deep --n
 yes | layman -o https://raw.githubusercontent.com/fosero/flatpak-overlay/master/repositories.xml -f -a flatpak-overlay -q
 emerge -v sys-apps/flatpak
 
-cd /home/$username/
-echo 'exec dbus-launch --exit-with-session startplasma-x11' > .xinitrc
-chown -R $username /home/$username/
-su - gentoox
-flatpak --user remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 touch /tmp/gentoox-kde-done
 HEREDOC
 exit 0
@@ -386,6 +381,14 @@ rc-update add dbus default
 rc-update add dhcpcd default
 rc-update add avahi-daemon default
 rc-update add samba default
+
+
+cp ../../1518039301698.png /home/$username/
+cd /home/$username/
+echo 'exec dbus-launch --exit-with-session startplasma-x11' > .xinitrc
+chown -R $username /home/$username/
+su - gentoox
+flatpak --user remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
 touch /tmp/gentoox-user-configured
 HEREDOC
