@@ -1,0 +1,23 @@
+
+[create a 1st time login script that will execute and the delete itself]
+
+- set wallpaper to ~/1518039301698.png
+dbus-send --session --dest=org.kde.plasmashell --type=method_call /PlasmaShell org.kde.PlasmaShell.evaluateScript 'string:
+var Desktops = desktops();                                                                                                                       
+for (i=0;i<Desktops.length;i++) {
+        d = Desktops[i];
+        d.wallpaperPlugin = "org.kde.image";
+        d.currentConfigGroup = Array("Wallpaper",
+                                    "org.kde.image",
+                                    "General");
+        d.writeConfig("Image", "file:///PATH/TO/IMAGE.png");
+}'
+
+- begin work on Calamares installer
+- configure Fonts
+- configure locale: us; pl; german; jp; kr; fr; it
+- cyrillic, Kanji&Katakana, kr fonts
+
+- adjust weston USE flags
+- adjust mpv USE flags
+
