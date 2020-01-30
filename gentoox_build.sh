@@ -52,8 +52,12 @@ if [[ ! -f 'image/etc/gentoo-release' ]]; then
   rm -f stage3*
 
   cp ../../$KERNEL_CONFIG_DIFF usr/src
+  mkdir -p etc/portage/patches
+  cp -r ../../patches/* etc/portage/patches/
   mkdir -p etc/portage/patches/app-crypt/efitools
   cp ../../efitools-1.9.2-fixup-UNKNOWN_GLYPH.patch etc/portage/patches/app-crypt/efitools/
+  cp ../../arch-chroot usr/local/sbin/
+  cp ../../genfstab usr/local/sbin/
 
   if [[ ! -z $binpkgs ]] && [[ ! -z $distfiles ]]; then
     #rsync -a $binpkgs var/cache/binpkgs/
@@ -253,7 +257,7 @@ dev-ruby/kpeg ruby_targets_ruby27
 dev-ruby/racc ruby_targets_ruby27' >> /etc/portage/package.use/gentoox
 
 emerge -v --autounmask=y --autounmask-write=y --keep-going=y --deep --newuse xorg-server elogind sudo vim weston wpa_supplicant snapper \
-nfs-utils cifs-utils samba dhcpcd nss-mdns zsh zsh-completions powertop lm-sensors #plymouth-openrc-plugin
+nfs-utils cifs-utils samba dhcpcd nss-mdns zsh zsh-completions powertop lm-sensors screenfetch #plymouth-openrc-plugin
 #emerge -v --depclean
 touch /tmp/gentoox-weston-done
 HEREDOC
@@ -280,7 +284,7 @@ sed -i '1s/^/NTHREADS="12"\n/' /etc/portage/make.conf
 
 echo -e '\nkde-plasma/plasma-meta discover networkmanager thunderbolt
 kde-apps/kio-extras samba' >> /etc/portage/package.use/gentoox
-emerge -v --jobs=4 --keep-going=y --autounmask=y --autounmask-write=y --deep --newuse kde-plasma/plasma-meta kde-apps/kde-apps-meta kde-apps/kmail latte-dock calamares firefox mpv
+emerge -v --jobs=4 --keep-going=y --autounmask=y --autounmask-write=y --deep --newuse kde-plasma/plasma-meta kde-apps/kde-apps-meta kde-apps/kmail latte-dock calamares gparted plasma-sdk gdb dos2unix qt-creator firefox mpv app-misc/screen
 
 yes | layman -o https://raw.githubusercontent.com/fosero/flatpak-overlay/master/repositories.xml -f -a flatpak-overlay -q
 emerge -v sys-apps/flatpak
@@ -347,10 +351,11 @@ fi
 
 
 if [[ ! -z $configure_user ]] && [[ ! -f 'tmp/gentoox-user-configured' ]]; then
+cp ../../postinstall.sh .
 cp ../../1518039301698.png .
+cp '../../GentooX Breeze Dark Transparent.tar.gz' .
 cat <<HEREDOC | chroot .
 source /etc/profile  && export PS1="(chroot) \$PS1"
-
 sed -i "s/localhost/gentoox/g" /etc/conf.d/hostname
 sed -i "s/127.0.0.1	localhost/127.0.0.1	gentoox.haxx.dafuq gentoox localhost/" /etc/hosts
 sed -i "s/::1		localhost/::1		gentoox.haxx.dafuq gentoox localhost/" /etc/hosts
@@ -358,6 +363,16 @@ echo 'dns_domain_lo="haxx.local"
 nis_domain_lo="haxx.local"' > /etc/conf.d/net
 echo 'nameserver 1.1.1.1
 nameserver 2606:4700:4700::1111' > /etc/resolv.conf
+
+# theme related
+(cd /usr/share/icons; git clone https://github.com/keeferrourke/la-capitaine-icon-theme.git)
+cd /usr/src/
+git clone https://github.com/ishovkun/SierraBreeze.git
+cd SierraBreeze/
+mkdir build && cd build
+cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DKDE_INSTALL_LIBDIR=lib -DBUILD_TESTING=OFF -DKDE_INSTALL_USE_QT_SYS_PATHS=ON
+make install
+cd /
 
 #echo "root:$rootpassword" | chpasswd
 yes "$rootpassword" | passwd root
@@ -389,12 +404,15 @@ rc-update add avahi-daemon default
 rc-update add samba default
 
 
+mv /postinstall.sh /home/$username/
 mv /1518039301698.png /home/$username/
+mv '/GentooX Breeze Dark Transparent.tar.gz' /home/$username/
 cd /home/$username/
 echo 'exec dbus-launch --exit-with-session startplasma-x11' > .xinitrc
 chown -R $username /home/$username/
 su - gentoox
 flatpak --user remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+kpackagetool5 -i "GentooX Breeze Dark Transparent.tar.gz"
 
 touch /tmp/gentoox-user-configured
 HEREDOC
@@ -465,7 +483,7 @@ xorriso -as mkisofs -r -J \
 	-b isolinux/isolinux.bin -c isolinux/boot.cat \
 	-no-emul-boot -boot-load-size 4 -boot-info-table \
     -eltorito-alt-boot -e gentoo.efimg -no-emul-boot -isohybrid-gpt-basdat \
-    -V "GentooX Live" -o Gentoox-x86_64-$builddate.iso iso/
+    -V "GentooX Live" -o GentooX-x86_64-$builddate.iso iso/
 #rm -Rf image/ iso/ kernel-gentoox.tar.lzma
 fi
 

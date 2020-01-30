@@ -1,0 +1,22 @@
+diff --git a/kernel/rcu/tree_plugin.h b/kernel/rcu/tree_plugin.h
+index fa08d55f7040c0aa6a9976b328cb8c49195824d6..360428642c9bd34670683eb587110baf2ef24bd2 100644
+--- a/kernel/rcu/tree_plugin.h
++++ b/kernel/rcu/tree_plugin.h
+@@ -360,7 +360,7 @@ void __rcu_read_lock(void)
+ 		WARN_ON_ONCE(current->rcu_read_lock_nesting > RCU_NEST_PMAX);
+ 	barrier();  /* critical section after entry code. */
+ }
+-EXPORT_SYMBOL_GPL(__rcu_read_lock);
++EXPORT_SYMBOL(__rcu_read_lock);
+ 
+ /*
+  * Preemptible RCU implementation for rcu_read_unlock().
+@@ -390,7 +390,7 @@ void __rcu_read_unlock(void)
+ 		WARN_ON_ONCE(rrln < 0 && rrln > RCU_NEST_NMAX);
+ 	}
+ }
+-EXPORT_SYMBOL_GPL(__rcu_read_unlock);
++EXPORT_SYMBOL(__rcu_read_unlock);
+ 
+ /*
+  * Advance a ->blkd_tasks-list pointer to the next entry, instead

@@ -34,3 +34,4 @@ sed -i "s/   workgroup = MYGROUP/   workgroup = WORKGROUP/" /etc/samba/smb.conf
 
 su - gentoox
 flatpak --user remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+kpackagetool5 -i "GentooX Breeze Dark Transparent.tar.gz"

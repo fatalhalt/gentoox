@@ -21,4 +21,14 @@ for (i=0;i<Desktops.length;i++) {
 - adjust weston USE flags
 - adjust mpv USE flags
 
+- gentoox_build.sh should consider doing these at the end of build:
+	emerge -avuDN --with-bdeps=y @world
+	revdep-rebuild -ip
+  another point to consider is building ~ąmd64 stage3 seed tarball from get go
+
 - read eselect news messages
+
+
+- preliminary install instructions
+  unsquash -f -i -d /mnt/install/ /mnt/cdrom/image.squashfs
+
