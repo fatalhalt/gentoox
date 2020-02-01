@@ -32,6 +32,7 @@ distfiles=/root/var/cache/distfiles/
 #build_weston=y
 #build_kde=y
 #build_steam=y
+#build_extra=y
 #configure_user=y
 #clover_rice="y"
 #build_iso=y
@@ -146,7 +147,8 @@ sys-boot/grub:2 mount # libzfs
 x11-libs/libxcb xkb
 dev-db/sqlite secure-delete
 x11-base/xorg-server xvfb
-sys-apps/xdg-desktop-portal screencast' > /etc/portage/package.use/gentoox
+sys-apps/xdg-desktop-portal screencast
+dev-vcs/git tk' > /etc/portage/package.use/gentoox
 
 rm -rf /etc/portage/package.accept_keywords/
 echo -n > /etc/portage/package.accept_keywords
@@ -284,7 +286,7 @@ sed -i '1s/^/NTHREADS="12"\n/' /etc/portage/make.conf
 
 echo -e '\nkde-plasma/plasma-meta discover networkmanager thunderbolt
 kde-apps/kio-extras samba' >> /etc/portage/package.use/gentoox
-emerge -v --jobs=4 --keep-going=y --autounmask=y --autounmask-write=y --deep --newuse kde-plasma/plasma-meta kde-apps/kde-apps-meta kde-apps/kmail latte-dock calamares gparted plasma-sdk gdb dos2unix qt-creator firefox mpv app-misc/screen
+emerge -v --jobs=4 --keep-going=y --autounmask=y --autounmask-write=y --deep --newuse kde-plasma/plasma-meta kde-apps/kde-apps-meta kde-apps/kmail latte-dock calamares gparted plasma-sdk gdb dos2unix qt-creator firefox mpv app-misc/screen audacious-plugins audacious net-irc/hexchat
 
 yes | layman -o https://raw.githubusercontent.com/fosero/flatpak-overlay/master/repositories.xml -f -a flatpak-overlay -q
 emerge -v sys-apps/flatpak
@@ -350,10 +352,24 @@ exit 0
 fi
 
 
+if [[ ! -z $build_extra ]] && [[ ! -f 'tmp/gentoox-extra-done' ]]; then
+cat <<HEREDOC | chroot .
+source /etc/profile  && export PS1="(chroot) \$PS1"
+echo -e '\nmedia-gfx/gimp heif jpeg2k openexr python vector-icons webp wmf xpm
+media-video/ffmpeg theora' >> /etc/portage/package.use/gentoox
+emerge -v gimp avidemux blender # libreoffice
+touch /tmp/gentoox-extra-done
+HEREDOC
+exit 0
+fi
+
+
 if [[ ! -z $configure_user ]] && [[ ! -f 'tmp/gentoox-user-configured' ]]; then
-cp ../../postinstall.sh .
-cp ../../1518039301698.png .
-cp '../../GentooX Breeze Dark Transparent.tar.gz' .
+cp ../../install.sh usr/src/
+cp ../../postinstall.sh usr/src/
+mkdir usr/src/theme
+cp ../../1518039301698.png usr/src/theme/
+cp '../../GentooX Breeze Dark Transparent.tar.gz' usr/src/theme/
 cat <<HEREDOC | chroot .
 source /etc/profile  && export PS1="(chroot) \$PS1"
 sed -i "s/localhost/gentoox/g" /etc/conf.d/hostname
@@ -404,15 +420,13 @@ rc-update add avahi-daemon default
 rc-update add samba default
 
 
-mv /postinstall.sh /home/$username/
-mv /1518039301698.png /home/$username/
-mv '/GentooX Breeze Dark Transparent.tar.gz' /home/$username/
+cp /usr/src/install.sh /home/$username/
+cp /usr/src/postinstall.sh /home/$username/
 cd /home/$username/
-echo 'exec dbus-launch --exit-with-session startplasma-x11' > .xinitrc
+echo '~/postinstall.sh &' >> .xinitrc
+echo 'exec dbus-launch --exit-with-session startplasma-x11' >> .xinitrc
 chown -R $username /home/$username/
 su - gentoox
-flatpak --user remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-kpackagetool5 -i "GentooX Breeze Dark Transparent.tar.gz"
 
 touch /tmp/gentoox-user-configured
 HEREDOC
@@ -457,6 +471,7 @@ fi
 if [[ ! -z $build_iso ]]; then
 cat <<HEREDOC | chroot .
   rm -f /tmp/*
+  rm -rf /var/tmp/portage/*
   history -c
   history -w
 HEREDOC

@@ -17,6 +17,7 @@ for (i=0;i<Desktops.length;i++) {
 - configure Fonts
 - configure locale: us; pl; german; jp; kr; fr; it
 - cyrillic, Kanji&Katakana, kr fonts
+- tweak Firefox?
 
 - adjust weston USE flags
 - adjust mpv USE flags
