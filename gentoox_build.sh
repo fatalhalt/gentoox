@@ -17,9 +17,9 @@ fi
 #
 
 gitprefix="https://gitgud.io/cloveros/cloveros/raw/master"
-rootpassword=live
+rootpassword=gentoox
 username=gentoox
-userpassword=live
+userpassword=gentoox
 #builddate="$(date +%Y%m%d).graphite"
 builddate="20200127.graphite"
 #builddir="build-$(date +%Y%m%d)"
