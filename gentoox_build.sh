@@ -261,6 +261,7 @@ dev-ruby/racc ruby_targets_ruby27' >> /etc/portage/package.use/gentoox
 emerge -v --autounmask=y --autounmask-write=y --keep-going=y --deep --newuse xorg-server elogind sudo vim weston wpa_supplicant snapper \
 nfs-utils cifs-utils samba dhcpcd nss-mdns zsh zsh-completions powertop lm-sensors screenfetch #plymouth-openrc-plugin
 #emerge -v --depclean
+groupadd weston-launch
 touch /tmp/gentoox-weston-done
 HEREDOC
 exit 0
@@ -404,6 +405,7 @@ yes "$rootpassword" | passwd root
 useradd $username
 yes "$userpassword"  | passwd "$username"
 gpasswd -a $username wheel
+gpasswd -a $username weston-launch
 
 cp /usr/share/zoneinfo/UTC /etc/localtime
 echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
@@ -412,12 +414,14 @@ eselect locale set en_US.utf8
 
 echo "frozen-files=\"/etc/sudoers\"" >> /etc/dispatch-conf.conf
 sed -i "s/# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/" /etc/sudoers
-sed -Ei "s@c([2-6]):2345:respawn:/sbin/agetty 38400 tty@#\0@" /etc/inittab
+#sed -Ei "s@c([2-6]):2345:respawn:/sbin/agetty 38400 tty@#\0@" /etc/inittab
 sed -i "s@c1:12345:respawn:/sbin/agetty 38400 tty1 linux@c1:12345:respawn:/sbin/agetty --noclear 38400 tty1 linux@" /etc/inittab
 echo -e "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=wheel\nupdate_config=1" > /etc/wpa_supplicant/wpa_supplicant.conf
 eselect fontconfig enable 52-infinality.conf
 eselect infinality set infinality
 eselect lcdfilter set infinality
+
+echo 'kernel.sysrq=1' >> /etc/sysctl.d/local.conf
 
 usermod -aG users,portage,lp,adm,audio,cdrom,disk,games,input,usb,video,cron $username
 
