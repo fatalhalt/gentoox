@@ -355,9 +355,18 @@ fi
 if [[ ! -z $build_extra ]] && [[ ! -f 'tmp/gentoox-extra-done' ]]; then
 cat <<HEREDOC | chroot .
 source /etc/profile  && export PS1="(chroot) \$PS1"
+
 echo -e '\nmedia-gfx/gimp heif jpeg2k openexr python vector-icons webp wmf xpm
-media-video/ffmpeg theora' >> /etc/portage/package.use/gentoox
-emerge -v gimp avidemux blender # libreoffice
+media-video/ffmpeg bluray cdio dav1d rubberband libass ogg vpx rtmp aac wavpack opus gme v4l webp theora xcb cpudetection x265 libaom truetype libsoxr modplug vdpau
+dev-lang/php gd truetype pcntl zip curl sockets' >> /etc/portage/package.use/gentoox
+
+yes | layman -a bobwya -q
+mkdir -p /etc/portage/package.mask /etc/portage/package.unmask
+echo '*/*::bobwya' >> /etc/portage/package.mask/lowprio
+echo 'app-benchmarks/phoronix-test-suite::bobwya' >> /etc/portage/package.unmask/wanted
+echo 'dev-php/fpdf::bobwya' >> /etc/portage/package.unmask/wanted
+
+emerge -v gimp avidemux blender tuxkart phoronix-test-suite # libreoffice
 touch /tmp/gentoox-extra-done
 HEREDOC
 exit 0
