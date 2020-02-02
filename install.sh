@@ -39,8 +39,8 @@ setup_btrfs () {
 	mkdir /mnt/install/@/.snapshots/1
 	btrfs subvolume create /mnt/install/@/.snapshots/1/snapshot
 	mkdir -p /mnt/install/@/boot/grub/
-	btrfs subvolume create /mnt/install/@/boot/grub/i386-pc
-	btrfs subvolume create /mnt/install/@/boot/grub/x86_64-efi
+	#btrfs subvolume create /mnt/install/@/boot/grub/i386-pc
+	#btrfs subvolume create /mnt/install/@/boot/grub/x86_64-efi
 	btrfs subvolume create /mnt/install/@/home
 	btrfs subvolume create /mnt/install/@/opt
 	btrfs subvolume create /mnt/install/@/root
@@ -67,8 +67,9 @@ setup_btrfs () {
 	# ls /mnt/install should respond with empty result
 
 	mkdir /mnt/install/.snapshots
-	mkdir -p /mnt/install/boot/grub/i386-pc
-	mkdir -p /mnt/install/boot/grub/x86_64-efi
+    mkdir /mnt/install/boot
+	#mkdir -p /mnt/install/boot/grub/i386-pc
+	#mkdir -p /mnt/install/boot/grub/x86_64-efi
 	mkdir /mnt/install/home
 	mkdir /mnt/install/opt
 	mkdir /mnt/install/root
@@ -78,8 +79,8 @@ setup_btrfs () {
 	mkdir /mnt/install/var
 
 	mount $DEVICE /mnt/install/.snapshots -o subvol=@/.snapshots
-	mount $DEVICE /mnt/install/boot/grub/i386-pc -o subvol=@/boot/grub/i386-pc
-	mount $DEVICE /mnt/install/boot/grub/x86_64-efi -o subvol=@/boot/grub/x86_64-efi
+	#mount $DEVICE /mnt/install/boot/grub/i386-pc -o subvol=@/boot/grub/i386-pc
+	#mount $DEVICE /mnt/install/boot/grub/x86_64-efi -o subvol=@/boot/grub/x86_64-efi
 	mount $DEVICE /mnt/install/home -o subvol=@/home
 	mount $DEVICE /mnt/install/opt -o subvol=@/opt
 	mount $DEVICE /mnt/install/root -o subvol=@/root
@@ -121,7 +122,7 @@ if [[ $partitioning_mode = "a" ]]; then
     mkfs.vfat -F32 "${drive}1"
     UEFI_PART="${drive}1"
 	setup_btrfs "${drive}2"
-    mkdir /mnt/install/boot/efi
+    mkdir -p /mnt/install/boot/efi
     mount $UEFI_PART /mnt/install/boot/efi
   else
 	echo -e "o\nn\np\n1\n\n\nw" | fdisk /dev/$drive
