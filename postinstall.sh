@@ -71,7 +71,7 @@ kwriteconfig5 --file ~/.config/kdeglobals --group WM --key activeFont --type str
 kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key FlipSwitchAll --type string "none,none,Toggle Flip Switch (All desktops)"
 kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key lipSwitchCurrent --type string "none,none,Toggle Flip Switch (Current desktop)"
 
-kwriteconfig5 --file ~/.config/kmixrc --group Global --key AutoStart --type bool true
+kwriteconfig5 --file ~/.config/kmixrc --group Global --key AutoStart --type bool false
 
 echo '[Common]
 ShadowStrength=89
@@ -90,13 +90,14 @@ kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group C
 kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 3 --group Applets --group 20 --key plugin --type string "org.kde.plasma.panelspacer"
 #ToDo.....need to finish, see git diff HEAD~1
 
-#qdbus org.kde.KWin /KWin reconfigure
-killall plasmashell; kstart5 plasmashell
+killall plasmashell; kstart5 plasmashell &
+sleep 1
 
 
 mkdir -p ~/.config/autostart
 ln -s /usr/share/applications/org.kde.latte-dock.desktop ~/.config/autostart/
 latte-dock &
+sleep 5
 kwriteconfig5 --file ~/.config/latte/Default.layout.latte --group Containments --group 1  --group General --key iconSize --type string 48
 kwriteconfig5 --file ~/.config/latte/Default.layout.latte --group Containments --group 1  --group General --key panelTransparency --type string 30
 pkill latte-dock
@@ -212,11 +213,9 @@ CloseOnDoubleClickOnMenu=false
 ShowToolTips=true
 library=org.kde.sierrabreeze
 theme=Sierra Breeze' > ~/.config/kwinrc
+qdbus org.kde.KWin /KWin reconfigure
 
 
 # after script runs delete it
 sed -i "s/~\/postinstall.sh &//" ~/.xinitrc
 rm -- "$0"
-
-
-media-gfx/gimp heif jpeg2k openexr python vector-icons webp wmf xpm

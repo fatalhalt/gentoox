@@ -13,7 +13,7 @@ echo -e 'Welcome to the GentooX setup, the installation script mainly consists o
 \tGentooX requires minimum of 16GB of space, and use of BTRFS is hardcoded
 
 mounting target partition to /mnt/install
-unsquash -f -i -d /mnt/install/ /mnt/cdrom/image.squashfs
+unsquashfs -f -i -d /mnt/install/ /mnt/cdrom/image.squashfs
 /usr/local/sbin/genfstab -U >> /mnt/install/etc/fstab
 /usr/local/sbin/arch-chroot /mnt/install/
 grub-install --target=x86_64-efi for UEFI mode or grub-install --target=i386-pc (BIOS only)'
@@ -28,15 +28,15 @@ if [[ -d /sys/firmware/efi/ ]]; then UEFI_MODE=y; fi
 setup_btrfs () {
 	DEVICE=$1
 
-	mkfs.btrfs -f -L GENTOO /dev/$DEVICE
+	mkfs.btrfs -f -L GENTOO $DEVICE
 	mkdir /mnt/install
-	mount /dev/$DEVICE /mnt/install
+	mount $DEVICE /mnt/install
 
 	btrfs subvolume create /mnt/install/@
 	btrfs subvolume create /mnt/install/@/.snapshots
 	mkdir /mnt/install/@/.snapshots/1
 	btrfs subvolume create /mnt/install/@/.snapshots/1/snapshot
-	mkdir -p /mnt/install/@/boot/grub2/
+	mkdir -p /mnt/install/@/boot/grub/
 	btrfs subvolume create /mnt/install/@/boot/grub/i386-pc
 	btrfs subvolume create /mnt/install/@/boot/grub/x86_64-efi
 	btrfs subvolume create /mnt/install/@/home
@@ -60,7 +60,7 @@ setup_btrfs () {
 
 	btrfs subvolume set-default $(btrfs subvolume list /mnt/install | grep "@/.snapshots/1/snapshot" | grep -oP '(?<=ID )[0-9]+') /mnt/install
 	umount /mnt/install
-	mount /dev/$DEVICE /mnt/install
+	mount $DEVICE /mnt/install
 
 	# ls /mnt/install should respond with empty result
 
@@ -75,16 +75,16 @@ setup_btrfs () {
 	mkdir -p /mnt/install/usr/local
 	mkdir /mnt/install/var
 
-	mount /dev/$DEVICE /mnt/install/.snapshots -o subvol=@/.snapshots
-	mount /dev/$DEVICE /mnt/install/boot/grub/i386-pc -o subvol=@/boot/grub/i386-pc
-	mount /dev/$DEVICE /mnt/install/boot/grub/x86_64-efi -o subvol=@/boot/grub/x86_64-efi
-	mount /dev/$DEVICE /mnt/install/home -o subvol=@/home
-	mount /dev/$DEVICE /mnt/install/opt -o subvol=@/opt
-	mount /dev/$DEVICE /mnt/install/root -o subvol=@/root
-	mount /dev/$DEVICE /mnt/install/srv -o subvol=@/srv
-	mount /dev/$DEVICE /mnt/install/tmp -o subvol=@/tmp
-	mount /dev/$DEVICE /mnt/install/usr/local -o subvol=@/usr/local
-	mount /dev/$DEVICE /mnt/install/var -o subvol=@/var
+	mount $DEVICE /mnt/install/.snapshots -o subvol=@/.snapshots
+	mount $DEVICE /mnt/install/boot/grub/i386-pc -o subvol=@/boot/grub/i386-pc
+	mount $DEVICE /mnt/install/boot/grub/x86_64-efi -o subvol=@/boot/grub/x86_64-efi
+	mount $DEVICE /mnt/install/home -o subvol=@/home
+	mount $DEVICE /mnt/install/opt -o subvol=@/opt
+	mount $DEVICE /mnt/install/root -o subvol=@/root
+	mount $DEVICE /mnt/install/srv -o subvol=@/srv
+	mount $DEVICE /mnt/install/tmp -o subvol=@/tmp
+	mount $DEVICE /mnt/install/usr/local -o subvol=@/usr/local
+	mount $DEVICE /mnt/install/var -o subvol=@/var
 }
 
 
@@ -93,6 +93,7 @@ while :; do
 	read -erp "Automatic partitioning (a) or manual partitioning (will launch gparted)? [a/m] " -n 1 partitioning_mode
 	if [[ $partitioning_mode = "a" ]]; then
 		read -erp "Enter drive to be formatted for GentooX installation: " -i "/dev/sda" drive
+        if [[ ! -z $UEFI_MODE ]]; then partition="${drive}2"; else partition="${drive}1"; fi
 	elif [[ $partitioning_mode = "m" ]]; then
         if [[ ! -z $UEFI_MODE ]]; then echo "EFI boot detected, please also create EF00 ESP EFI partition..."; fi
 		gparted &> /dev/null &
@@ -113,10 +114,12 @@ done
 
 if [[ $partitioning_mode = "a" ]]; then
   if [[ ! -z $UEFI_MODE ]]; then
-	echo -e "o\nn\np\n1\n+256M\n\np\n2\n\n\nw" | gdisk /dev/$drive
+	echo -e "o\nY\nn\n\n\n+256M\nEF00\nn\n2\n\n\n\nw\nY\n" | gdisk $drive
     mkfs.vfat -F32 "${drive}1"
     UEFI_PART="${drive}1"
 	setup_btrfs "${drive}2"
+    mkdir /mnt/install/boot/efi
+    mount $UEFI_PART /mnt/install/boot/efi
   else
 	echo -e "o\nn\np\n1\n\n\nw" | fdisk /dev/$drive
 	setup_btrfs "${drive}1"
@@ -128,13 +131,14 @@ else
 fi
 
 echo "extracting precompiled image.squashfs GentooX image to the target partition..."
-unsquash -f -d /mnt/install/ /mnt/cdrom/image.squashfs
-/usr/local/sbin/genfstab -U >> /mnt/install/etc/fstab
+unsquashfs -f -d /mnt/install/ /mnt/cdrom/image.squashfs
+/usr/local/sbin/genfstab -U /mnt/install/ >> /mnt/install/etc/fstab
 
 mount -t proc none /mnt/install/proc
 mount --rbind /dev /mnt/install/dev
 mount --rbind /sys /mnt/install/sys
 
+cd /mnt/install/
 cat <<HEREDOC | chroot .
 source /etc/profile && export PS1="(chroot) \$PS1"
 sensors-detect --auto
@@ -144,6 +148,13 @@ sed -i -r "s/^MAKEOPTS=\"([^\"]*)\"$/MAKEOPTS=\"-j\$NCORES\"/g" /etc/portage/mak
 sed -i -r "s/^NTHREADS=\"([^\"]*)\"$/NTHREADS=\"\$NCORES\"/g" /etc/portage/make.conf
 #rc-update add zfs-import boot
 #rc-update add zfs-mount boot
+if [[ ! -z $UEFI_MODE ]]; then
+  grub-install --target=x86_64-efi
+else
+  if [[ -z \$drive ]]; then drive=\$(echo \$partition | sed 's/[0-9]\+$//'); fi
+  grub-install --target=i386-pc $drive
+fi
 HEREDOC
 
 umount -l /mnt/install/boot/efi /mnt/install/var /mnt/install/usr/local /mnt/install/tmp /mnt/install/srv /mnt/install/root /mnt/install/opt /mnt/install/home /mnt/install/boot/grub/x86_64-efi /mnt/install/boot/grub/i386-pc /mnt/install/.snapshots /mnt/install
+echo "Installation complete, you may remove the install media and reboot"

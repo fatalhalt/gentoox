@@ -202,7 +202,7 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
 fi
 
 cd /usr/src
-rm -f $KERNEL_CONFIG_DIFF
+rm -f \$KERNEL_CONFIG_DIFF
 #mkdir -p /usr/share/genkernel/distfiles/
 #wget https://www.busybox.net/downloads/busybox-1.20.2.tar.bz2 -d /usr/share/genkernel/distfiles/
 #cho -e '\nMAKEOPTS="-j12"' >> /etc/genkernel.conf
