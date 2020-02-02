@@ -12,11 +12,13 @@ echo -e 'Welcome to the GentooX setup, the installation script mainly consists o
 \tGentooX uses openSUSE-style BTRFS root partition & subvolumes for snapshotting with snapper
 \tGentooX requires minimum of 16GB of space, and use of BTRFS is hardcoded
 
-mounting target partition to /mnt/install
-unsquashfs -f -i -d /mnt/install/ /mnt/cdrom/image.squashfs
-/usr/local/sbin/genfstab -U >> /mnt/install/etc/fstab
-/usr/local/sbin/arch-chroot /mnt/install/
-grub-install --target=x86_64-efi for UEFI mode or grub-install --target=i386-pc (BIOS only)'
+Manual installation can be done via:
+  mounting target partition to /mnt/install
+  unsquashfs -f -i -d /mnt/install/ /mnt/cdrom/image.squashfs
+  /usr/local/sbin/genfstab -U >> /mnt/install/etc/fstab
+  /usr/local/sbin/arch-chroot /mnt/install/
+  grub-install --target=x86_64-efi for UEFI mode or grub-install --target=i386-pc (BIOS only)
+  grub-mkconfig -o /boot/grub/grub.cfg'
 
 
 declare -A PART_SCHEME
@@ -88,6 +90,7 @@ setup_btrfs () {
 }
 
 
+echo -e "\nDetected drives:\n$(lsblk | grep disk)"
 while :; do
 	echo
 	read -erp "Automatic partitioning (a) or manual partitioning (will launch gparted)? [a/m] " -n 1 partitioning_mode
@@ -141,6 +144,8 @@ mount --rbind /sys /mnt/install/sys
 cd /mnt/install/
 cat <<HEREDOC | chroot .
 source /etc/profile && export PS1="(chroot) \$PS1"
+if [[ -d /sys/firmware/efi/ ]]; then UEFI_MODE=y; fi
+if [[ -z $drive ]]; then drive=$(echo $partition | sed 's/[0-9]\+\$//'); fi
 sensors-detect --auto
 rc-update add lm_sensors default
 NCORES=\$(getconf _NPROCESSORS_ONLN)
@@ -151,9 +156,9 @@ sed -i -r "s/^NTHREADS=\"([^\"]*)\"$/NTHREADS=\"\$NCORES\"/g" /etc/portage/make.
 if [[ ! -z $UEFI_MODE ]]; then
   grub-install --target=x86_64-efi
 else
-  if [[ -z \$drive ]]; then drive=\$(echo \$partition | sed 's/[0-9]\+$//'); fi
   grub-install --target=i386-pc $drive
 fi
+grub-mkconfig -o /boot/grub/grub.cfg
 HEREDOC
 
 umount -l /mnt/install/boot/efi /mnt/install/var /mnt/install/usr/local /mnt/install/tmp /mnt/install/srv /mnt/install/root /mnt/install/opt /mnt/install/home /mnt/install/boot/grub/x86_64-efi /mnt/install/boot/grub/i386-pc /mnt/install/.snapshots /mnt/install

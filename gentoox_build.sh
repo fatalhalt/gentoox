@@ -202,7 +202,7 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
 fi
 
 cd /usr/src
-rm -f \$KERNEL_CONFIG_DIFF
+rm -f $KERNEL_CONFIG_DIFF
 #mkdir -p /usr/share/genkernel/distfiles/
 #wget https://www.busybox.net/downloads/busybox-1.20.2.tar.bz2 -d /usr/share/genkernel/distfiles/
 #cho -e '\nMAKEOPTS="-j12"' >> /etc/genkernel.conf
@@ -222,7 +222,7 @@ genkernel --microcode --luks --lvm --mdadm --btrfs --disklabel initramfs # --zfs
 XZ_OPT="--lzma1=preset=9e,dict=128MB,nice=273,depth=200,lc=4" tar --lzma -cf /usr/src/kernel-gentoox.tar.lzma /boot/*\${KERNELVERSION}* -C /lib/modules/ .
 
 emerge -v grub:2
-sed -i "s/#GRUB_CMDLINE_LINUX_DEFAULT=\"\"/GRUB_CMDLINE_LINUX_DEFAULT=\"zswap.enabled=1 zswap.compressor=lz4 zswap.max_pool_percent=20 zswap.zpool=z3fold\"/" /etc/default/grub
+sed -i "s/#GRUB_CMDLINE_LINUX_DEFAULT=\"\"/GRUB_CMDLINE_LINUX_DEFAULT=\"zswap.enabled=1 zswap.compressor=lz4 zswap.max_pool_percent=20 zswap.zpool=z3fold dobtrfs\"/" /etc/default/grub
 sed -i "s/#GRUB_GFXMODE=640x480/GRUB_GFXMODE=auto/" /etc/default/grub
 sed -i "s/#GRUB_GFXPAYLOAD_LINUX=/GRUB_GFXPAYLOAD_LINUX=keep/" /etc/default/grub
 #rc-update add zfs-import boot
@@ -400,10 +400,10 @@ cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DKDE_INSTALL_LI
 make install
 cd /
 
-#echo "root:$rootpassword" | chpasswd
-yes "$rootpassword" | passwd root
+#echo "root:\$rootpassword" | chpasswd
+yes $rootpassword | passwd root
 useradd $username
-yes "$userpassword"  | passwd "$username"
+yes $userpassword  | passwd $username
 gpasswd -a $username wheel
 gpasswd -a $username weston-launch
 
