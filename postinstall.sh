@@ -5,7 +5,7 @@
 sleep 20
 
 
-ln -s /usr/share/applications/audacious.desktop ~/Desktop/
+#ln -s /usr/share/applications/audacious.desktop ~/Desktop/
 ln -s /usr/share/applications/mpv.desktop ~/Desktop/
 ln -s /usr/share/applications/steam.desktop ~/Desktop/
 flatpak --user remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
@@ -42,7 +42,7 @@ sed -i "s/Theme=breeze/Theme=la-capitaine-icon-theme/" ~/.config/kdeglobals
 sed -i "s/Theme=breeze/Theme=la-capitaine-icon-theme/" ~/.kde4/share/config/kdeglobals
 
 # set icon positions to top-right edge
-kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 1 --group General --key positions --type string "4,23,desktop:/mpv.desktop,2,22,desktop:/audacious.desktop,3,22,desktop:/steam.desktop,1,22"
+#kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 1 --group General --key positions --type string "4,23,desktop:/mpv.desktop,2,22,desktop:/audacious.desktop,3,22,desktop:/steam.desktop,1,22"
 kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 1 --group General --key sortMode --type string 9999
 sed -i "s/sortMode=9999/sortMode=-1/" ~/.config/plasma-org.kde.plasma.desktop-appletsrc
 
@@ -88,9 +88,18 @@ MenuOpacity=70' > ~/.kde4/share/config/breezerc
 
 kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 3 --group Applets --group 20 --key immutability --type string 1
 kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 3 --group Applets --group 20 --key plugin --type string "org.kde.plasma.panelspacer"
-#ToDo.....need to finish, see git diff HEAD~1
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 3 --group Applets --group 20 --group Configuration --group General --key length --type string $((X_RES - 413))
 
-killall plasmashell; kstart5 plasmashell &
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 3 --group Applets --group 21 --key immutability --type string 1
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 3 --group Applets --group 20 --key plugin --type string "plugin=org.kde.plasma.appmenu"
+
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 3 --group Applets --group 6 --group Configuration --key PreloadWeight --delete
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 3 --group Applets --group 6 --key immutability --delete
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 3 --group Applets --group 6 --key plugin --delete
+
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 3 --group General --key AppletOrder --type string "4;5;21;20;7;9;10"
+
+kquitapp5 plasmashell; kstart5 plasmashell &
 sleep 1
 
 

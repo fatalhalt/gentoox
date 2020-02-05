@@ -75,10 +75,23 @@ if [[ -z $(findmnt image/proc) ]]; then
   mount -t proc none image/proc
   mount --rbind /dev image/dev
   mount --rbind /sys image/sys
+  if [[ -z $(findmnt image/var/cache/binpkgs) ]]; then
+    mount --bind $binpkgs image/var/cache/binpkgs/
+    mount --bind $distfiles image/var/cache/distfiles/
+  fi
 else
   echo "proc already mounted..."
 fi
 cd image/
+
+if [[ $# -ge 1 ]]; then
+  case $1 in
+    "chroot")
+      chroot . /bin/bash -i
+      exit 0
+      ;;
+  esac
+fi
 
 if [[ ! -f 'tmp/gentoox-base-done' ]]; then
 cat <<HEREDOC | chroot .
