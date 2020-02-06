@@ -24,7 +24,7 @@ userpassword=gentoox
 builddate="20200127.graphite"
 #builddir="build-$(date +%Y%m%d)"
 builddir="build-20200127"
-KERNEL_CONFIG_DIFF="0001-kernel-config-cfs-r2.patch"
+KERNEL_CONFIG_DIFF="0001-kernel-config-cfs-r3.patch"
 
 binpkgs=/root/var/cache/binpkgs/
 distfiles=/root/var/cache/distfiles/
@@ -53,6 +53,7 @@ if [[ ! -f 'image/etc/gentoo-release' ]]; then
   rm -f stage3*
 
   cp ../../$KERNEL_CONFIG_DIFF usr/src
+  cp ../../zfs-ungpl-rcu_read_unlock-export.diff usr/src
   mkdir -p etc/portage/patches
   cp -r ../../patches/* etc/portage/patches/
   mkdir -p etc/portage/patches/app-crypt/efitools
@@ -210,6 +211,7 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   patch -p1 < 0006-add-acs-overrides_iommu.patch
   patch -p1 < 0007-v5.5-fsync.patch
   patch -p1 < 0011-ZFS-fix.patch
+  patch -p1 < ../zfs-ungpl-rcu_read_unlock-export.diff
   patch -p1 < 0001-WireGuard-20200205.patch
   sed -i 's/CONFIG_DEFAULT_HOSTNAME="artixlinux"/CONFIG_DEFAULT_HOSTNAME="gentoox"/' .config
   make oldconfig
@@ -228,10 +230,12 @@ genkernel --kernel-config=/usr/src/linux-\$KERNELVERSION-gentoo/.config --no-mrp
 
 #unmask zfs to prompt installation of masked zfs-9999 zfs-kmod-9999
 #echo 'sys-fs/zfs
-#sys-fs/zfs-kmod' >> /etc/portage/package.unmask
+#sys-fs/zfs-kmod' >> /etc/portage/package.unmask/zfs
 #echo 'sys-fs/zfs **
 #sys-fs/zfs-kmod **' >> /etc/portage/package.accept_keywords
 emerge -v squashfs-tools linux-firmware os-prober # zfs zfs-kmod
+#hostid > /etc/hostid
+#dd if=/dev/urandom of=/dev/stdout bs=1 count=4 > /etc/hostid
 
 genkernel --microcode --luks --lvm --mdadm --btrfs --disklabel initramfs # --zfs
 XZ_OPT="--lzma1=preset=9e,dict=128MB,nice=273,depth=200,lc=4" tar --lzma -cf /usr/src/kernel-gentoox.tar.lzma /boot/*\${KERNELVERSION}* -C /lib/modules/ .
@@ -252,7 +256,7 @@ else echo "kernel already compiled, skipping..."; fi
 if [[ ! -z $build_weston ]] && [[ ! -f 'tmp/gentoox-weston-done' ]]; then
 cat <<HEREDOC | chroot .
 source /etc/profile  && export PS1="(chroot) \$PS1"
-sed -i -r "s/^USE=\"([^\"]*)\"$/USE=\"\1 elogind -consolekit -systemd udev dbus X wayland gles vulkan plymouth pulseaudio ffmpeg ipv6\"/g" /etc/portage/make.conf
+sed -i -r "s/^USE=\"([^\"]*)\"$/USE=\"\1 elogind -consolekit -systemd udev dbus X wayland gles vulkan plymouth pulseaudio ffmpeg ipv6 infinality\"/g" /etc/portage/make.conf
 FEATURES="-userpriv" emerge dev-lang/yasm  # yasm fails to build otherwise
 
 #echo 'sys-kernel/genkernel-next plymouth
@@ -302,7 +306,7 @@ sed -i '1s/^/NTHREADS="12"\n/' /etc/portage/make.conf
 
 echo -e '\nkde-plasma/plasma-meta discover networkmanager thunderbolt
 kde-apps/kio-extras samba' >> /etc/portage/package.use/gentoox
-emerge -v --jobs=4 --keep-going=y --autounmask=y --autounmask-write=y --deep --newuse kde-plasma/plasma-meta kde-apps/kde-apps-meta kde-apps/kmail latte-dock calamares gparted plasma-sdk gdb dos2unix qt-creator firefox mpv app-misc/screen audacious-plugins audacious net-irc/hexchat
+emerge -v --jobs=4 --keep-going=y --autounmask=y --autounmask-write=y --deep --newuse kde-plasma/plasma-meta kde-apps/kde-apps-meta kde-apps/kmail latte-dock calamares gparted plasma-sdk gdb atop dos2unix qt-creator firefox mpv app-misc/screen audacious-plugins audacious net-irc/hexchat
 
 yes | layman -o https://raw.githubusercontent.com/fosero/flatpak-overlay/master/repositories.xml -f -a flatpak-overlay -q
 emerge -v sys-apps/flatpak
@@ -423,7 +427,13 @@ gpasswd -a $username wheel
 gpasswd -a $username weston-launch
 
 cp /usr/share/zoneinfo/UTC /etc/localtime
-echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
+echo -e '\nen_US.UTF-8 UTF-8
+ja_JP.EUC-JP EUC-JP
+ja_JP.UTF-8 UTF-8
+ko_KR.EUC-KR EUC-KR
+ko_KR.UTF-8 UTF-8
+pl_PL ISO-8859-2
+pl_PL.UTF-8 UTF-8' >> /etc/locale.gen
 locale-gen
 eselect locale set en_US.utf8
 
@@ -435,6 +445,7 @@ echo -e "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=wheel\nupdate_config=1
 eselect fontconfig enable 52-infinality.conf
 eselect infinality set infinality
 eselect lcdfilter set infinality
+emerge -v ja-ipafonts source-han-sans
 
 echo 'kernel.sysrq=1' >> /etc/sysctl.d/local.conf
 
