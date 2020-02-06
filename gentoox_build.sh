@@ -190,18 +190,19 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   git clone https://github.com/graysky2/kernel_gcc_patch.git
   wget --quiet https://gitlab.com/post-factum/pf-kernel/commit/cf7a8ad26e0bd6ca8afba89f53d2e9dc43ee2598.diff -O O3-always-available.diff
   #wget --quiet -m -np -c 'ck.kolivas.org/patches/5.0/5.5/5.5-ck1/patches/'
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/raw/master/5.5/aufs-patches/0001-aufs-20200127.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/raw/master/5.5/aufs-patches/0001-aufs-20200203.patch
   wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux55-tkg/linux55-tkg-patches/0001-add-sysctl-to-disallow-unprivileged-CLONE_NEWUSER-by.patch
   wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux55-tkg/linux55-tkg-patches/0002-clear-patches.patch
   wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux55-tkg/linux55-tkg-patches/0006-add-acs-overrides_iommu.patch
   wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux55-tkg/linux55-tkg-patches/0007-v5.5-fsync.patch
   wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux55-tkg/linux55-tkg-patches/0011-ZFS-fix.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.5/wireguard-patches/0001-WireGuard-20200205.patch
 
   patch -p1 < kernel_gcc_patch/enable_additional_cpu_optimizations_for_gcc_v9.1+_kernel_v5.5+.patch
   patch -p1 < O3-always-available.diff
   #for f in ck.kolivas.org/patches/5.0/5.5/5.5-ck1/patches/*.patch; do patch -p1 < "\$f"; done
   patch -p0 < ../$KERNEL_CONFIG_DIFF
-  patch -p1 < 0001-aufs-20200127.patch
+  patch -p1 < 0001-aufs-20200203.patch
   echo -e "CONFIG_AUFS_FS=y\nCONFIG_AUFS_BRANCH_MAX_127=y\nCONFIG_AUFS_BRANCH_MAX_511=n\nCONFIG_AUFS_BRANCH_MAX_1023=n\nCONFIG_AUFS_BRANCH_MAX_32767=n\nCONFIG_AUFS_HNOTIFY=y\nCONFIG_AUFS_EXPORT=n\nCONFIG_AUFS_XATTR=y\nCONFIG_AUFS_FHSM=y\nCONFIG_AUFS_RDU=n\nCONFIG_AUFS_DIRREN=n\nCONFIG_AUFS_SHWH=n\nCONFIG_AUFS_BR_RAMFS=y\nCONFIG_AUFS_BR_FUSE=n\nCONFIG_AUFS_BR_HFSPLUS=n\nCONFIG_AUFS_DEBUG=n" >> .config
   sed -i "s/CONFIG_ISO9660_FS=m/CONFIG_ISO9660_FS=y/" .config
   patch -p1 < 0001-add-sysctl-to-disallow-unprivileged-CLONE_NEWUSER-by.patch
@@ -209,6 +210,7 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   patch -p1 < 0006-add-acs-overrides_iommu.patch
   patch -p1 < 0007-v5.5-fsync.patch
   patch -p1 < 0011-ZFS-fix.patch
+  patch -p1 < 0001-WireGuard-20200205.patch
   sed -i 's/CONFIG_DEFAULT_HOSTNAME="artixlinux"/CONFIG_DEFAULT_HOSTNAME="gentoox"/' .config
   make oldconfig
   touch /tmp/gentoox-kernelpatches-applied
