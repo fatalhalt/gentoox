@@ -515,6 +515,8 @@ if [[ ! -z $build_iso ]]; then
 cat <<HEREDOC | chroot .
   rm -f /tmp/*
   rm -rf /var/tmp/portage/*
+  rm -f /usr/src/linux/.tmp*
+  find /usr/src/linux/ -name "*.o" -exec rm -f {} \;
   history -c
   history -w
 HEREDOC

@@ -1,0 +1,57 @@
+--- gstreamer-1.14.5.old/common/glib-gen.mak	2018-03-23 20:44:39.000000000 -0000
++++ gstreamer-1.14.5/common/glib-gen.mak	2020-01-25 01:43:33.857056864 -0000
+@@ -1,11 +1,13 @@
+ # these are the variables your Makefile.am should set
+ # the example is based on the colorbalance interface
+ 
++H := \#
++
+ #glib_enum_headers=$(colorbalance_headers)
+ #glib_enum_define=GST_COLOR_BALANCE
+ #glib_enum_prefix=gst_color_balance
+ 
+-enum_headers=$(foreach h,$(glib_enum_headers),\n\#include \"$(h)\")
++enum_headers=$(foreach h,$(glib_enum_headers),\n$(H)include \"$(h)\")
+ 
+ # these are all the rules generating the relevant files
+ %-marshal.h: %-marshal.list
+diff -Naur gstreamer-1.14.5.old/common/gst-glib-gen.mak gstreamer-1.14.5/common/gst-glib-gen.mak
+--- gstreamer-1.14.5.old/common/gst-glib-gen.mak	2018-03-23 20:44:39.000000000 -0000
++++ gstreamer-1.14.5/common/gst-glib-gen.mak	2020-01-25 01:44:18.698052973 -0000
+@@ -1,14 +1,16 @@
+ # these are the variables your Makefile.am should set
+ # the example is based on the colorbalance interface
+ 
++H := \#
++
+ #glib_enum_headers=$(colorbalance_headers)
+ #glib_enum_define=GST_COLOR_BALANCE
+ #glib_gen_prefix=gst_color_balance
+ #glib_gen_basename=colorbalance
+ #glib_gen_decl_banner=GST_EXPORT
+-#glib_gen_decl_include=\#include <gst/foo/foo-prelude.h>
++#glib_gen_decl_include=$(H)include <gst/foo/foo-prelude.h>
+ 
+-enum_headers=$(foreach h,$(glib_enum_headers),\n\#include \"$(h)\")
++enum_headers=$(foreach h,$(glib_enum_headers),\n$(H)include \"$(h)\")
+ 
+ # these are all the rules generating the relevant files
+ $(glib_gen_basename)-marshal.h: $(glib_gen_basename)-marshal.list
+diff -Naur gstreamer-1.14.5.old/libs/gst/controller/Makefile.am gstreamer-1.14.5/libs/gst/controller/Makefile.am
+--- gstreamer-1.14.5.old/libs/gst/controller/Makefile.am	2018-03-23 20:44:36.000000000 -0000
++++ gstreamer-1.14.5/libs/gst/controller/Makefile.am	2020-01-25 01:45:03.465049088 -0000
+@@ -4,11 +4,13 @@
+ 	gstinterpolationcontrolsource.h \
+ 	gstlfocontrolsource.h
+ 
++H := \#
++
+ glib_enum_define = GST_CONTROLLER
+ glib_gen_prefix = gst
+ glib_gen_basename = controller
+ glib_gen_decl_banner=GST_CONTROLLER_API
+-glib_gen_decl_include=\#include <gst/controller/controller-prelude.h>
++glib_gen_decl_include=$(H)include <gst/controller/controller-prelude.h>
+ 
+ built_sources = controller-enumtypes.c
+ built_headers = controller-enumtypes.h
