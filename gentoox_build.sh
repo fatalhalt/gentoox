@@ -10,6 +10,7 @@ fi
 # • plymouth graphical splash via genkernel-next is commented out as it only supports systemd, GentooX is using OpenRC
 # • ZFS temporarily disabled as it's not officially supported in Linux 5.5 and also errors with:
 #     FATAL: modpost: GPL-incompatible module zfs.ko uses GPL-only symbol '__rcu_read_lock'
+# • CONFIG_ISO9660_FS=y must be a module and not 'm' otherwise livecd won't boot, squashfs cannot be bigger than 4GB, also empty 'livecd' file should exist on iso's /
 #
 # dependencies
 #   base install: genkernel btrfs-progs portage-utils gentoolkit cpuid2cpuflags cryptsetup lvm2 mdadm dev-vcs/git
@@ -214,6 +215,9 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   patch -p1 < ../zfs-ungpl-rcu_read_unlock-export.diff
   patch -p1 < 0001-WireGuard-20200205.patch
   sed -i 's/CONFIG_DEFAULT_HOSTNAME="artixlinux"/CONFIG_DEFAULT_HOSTNAME="gentoox"/' .config
+  sed -i 's/CONFIG_LOCALVERSION=""/CONFIG_LOCALVERSION="-x86_64"/' .config
+  sed -i 's/CONFIG_NET_IP_TUNNEL=y/CONFIG_NET_IP_TUNNEL=m/' .config
+  sed -i 's/CONFIG_NET_UDP_TUNNEL=y/CONFIG_NET_UDP_TUNNEL=m/' .config
   make oldconfig
   touch /tmp/gentoox-kernelpatches-applied
 fi
@@ -222,7 +226,7 @@ cd /usr/src
 rm -f $KERNEL_CONFIG_DIFF
 #mkdir -p /usr/share/genkernel/distfiles/
 #wget https://www.busybox.net/downloads/busybox-1.20.2.tar.bz2 -d /usr/share/genkernel/distfiles/
-#cho -e '\nMAKEOPTS="-j12"' >> /etc/genkernel.conf
+#echo -e '\nMAKEOPTS="-j12"' >> /etc/genkernel.conf
 
 # former command is genkernel-next (systemd only), latter is for genkernel
 #genkernel --kernel-config=/usr/src/linux-\$KERNELVERSION-gentoo/.config --no-mrproper --udev --plymouth --luks --lvm --mdadm --btrfs --zfs all
