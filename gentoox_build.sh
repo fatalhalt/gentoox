@@ -22,9 +22,9 @@ rootpassword=gentoox
 username=gentoox
 userpassword=gentoox
 #builddate="$(date +%Y%m%d).graphite"
-builddate="20200127.graphite"
+builddate="20200210.graphite"
 #builddir="build-$(date +%Y%m%d)"
-builddir="build-20200127"
+builddir="build-20200210"
 KERNEL_CONFIG_DIFF="0001-kernel-config-cfs-r3.patch"
 
 binpkgs=/root/var/cache/binpkgs/

@@ -67,7 +67,7 @@ setup_btrfs () {
 	# ls /mnt/install should respond with empty result
 
 	mkdir /mnt/install/.snapshots
-    mkdir /mnt/install/boot
+	mkdir /mnt/install/boot
 	#mkdir -p /mnt/install/boot/grub/i386-pc
 	#mkdir -p /mnt/install/boot/grub/x86_64-efi
 	mkdir /mnt/install/home
@@ -125,7 +125,7 @@ if [[ $partitioning_mode = "a" ]]; then
     mkdir -p /mnt/install/boot/efi
     mount $UEFI_PART /mnt/install/boot/efi
   else
-	echo -e "o\nn\np\n1\n\n\nw" | fdisk /dev/$drive
+	echo -e "o\nn\np\n1\n\n\nw" | fdisk $drive
 	setup_btrfs "${drive}1"
   fi
 else
