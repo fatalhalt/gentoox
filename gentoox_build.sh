@@ -59,6 +59,13 @@ if [[ ! -f 'image/etc/gentoo-release' ]]; then
   cp -r ../../patches/* etc/portage/patches/
   mkdir -p etc/portage/patches/app-crypt/efitools
   cp ../../efitools-1.9.2-fixup-UNKNOWN_GLYPH.patch etc/portage/patches/app-crypt/efitools/
+
+  mkdir -p etc/portage/patches/www-client/firefox
+  wget --quiet -P etc/portage/patches/www-client/firefox/ 'https://raw.githubusercontent.com/bmwiedemann/openSUSE/master/packages/m/MozillaFirefox/firefox-branded-icons.patch'
+  wget --quiet -P etc/portage/patches/www-client/firefox/ 'https://raw.githubusercontent.com/bmwiedemann/openSUSE/master/packages/m/MozillaFirefox/firefox-kde.patch'
+  wget --quiet -P etc/portage/patches/www-client/firefox/ 'https://raw.githubusercontent.com/bmwiedemann/openSUSE/master/packages/m/MozillaFirefox/mozilla-kde.patch'
+  wget --quiet -P etc/portage/patches/www-client/firefox/ 'http://bazaar.launchpad.net/~mozillateam/firefox/firefox-trunk.head/download/head:/unitymenubar.patch-20130215095938-1n6mqqau8tdfqwhg-1/unity-menubar.patch'
+
   cp ../../arch-chroot usr/local/sbin/
   cp ../../genfstab usr/local/sbin/
 
