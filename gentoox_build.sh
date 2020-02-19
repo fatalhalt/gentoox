@@ -170,7 +170,8 @@ x11-libs/libxcb xkb
 dev-db/sqlite secure-delete
 x11-base/xorg-server xvfb
 sys-apps/xdg-desktop-portal screencast
-dev-vcs/git tk' > /etc/portage/package.use/gentoox
+dev-vcs/git tk
+dev-libs/libdbusmenu gtk3' > /etc/portage/package.use/gentoox
 
 rm -rf /etc/portage/package.accept_keywords/
 echo -n > /etc/portage/package.accept_keywords
@@ -317,7 +318,7 @@ sed -i '1s/^/NTHREADS="12"\n/' /etc/portage/make.conf
 
 echo -e '\nkde-plasma/plasma-meta discover networkmanager thunderbolt
 kde-apps/kio-extras samba' >> /etc/portage/package.use/gentoox
-emerge -v --jobs=4 --keep-going=y --autounmask=y --autounmask-write=y --deep --newuse kde-plasma/plasma-meta kde-apps/kde-apps-meta kde-apps/kmail latte-dock calamares gparted plasma-sdk gdb atop dos2unix qt-creator firefox mpv app-misc/screen audacious-plugins audacious net-irc/hexchat
+emerge -v --jobs=4 --keep-going=y --autounmask=y --autounmask-write=y --deep --newuse kde-plasma/plasma-meta kde-apps/kde-apps-meta kde-apps/kmail latte-dock calamares gparted plasma-sdk gdb atop dos2unix qt-creator libdbusmenu firefox mpv app-misc/screen audacious-plugins audacious net-irc/hexchat
 
 yes | layman -o https://raw.githubusercontent.com/fosero/flatpak-overlay/master/repositories.xml -f -a flatpak-overlay -q
 emerge -v sys-apps/flatpak

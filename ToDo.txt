@@ -33,3 +33,8 @@ for (i=0;i<Desktops.length;i++) {
 - preliminary install instructions
   unsquash -f -i -d /mnt/install/ /mnt/cdrom/image.squashfs
 
+- openSuse KDE patches, ubuntu unity global menu patch
+https://build.opensuse.org/package/show/mozilla:Factory/MozillaFirefox
+https://github.com/bmwiedemann/openSUSE/tree/master/packages/m/MozillaFirefox
+http://bazaar.launchpad.net/~mozillateam/firefox/firefox-trunk.head/changes
+https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=firefox-kde-opensuse
