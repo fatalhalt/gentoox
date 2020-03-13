@@ -66,6 +66,9 @@ if [[ ! -f 'image/etc/gentoo-release' ]]; then
   wget --quiet -P etc/portage/patches/www-client/firefox/ 'https://raw.githubusercontent.com/bmwiedemann/openSUSE/master/packages/m/MozillaFirefox/mozilla-kde.patch'
   wget --quiet -P etc/portage/patches/www-client/firefox/ 'http://bazaar.launchpad.net/~mozillateam/firefox/firefox-trunk.head/download/head:/unitymenubar.patch-20130215095938-1n6mqqau8tdfqwhg-1/unity-menubar.patch'
 
+  mkdir -p /etc/portage/package.mask
+  cp ../../package.mask/* etc/portage/package.mask/
+
   cp ../../arch-chroot usr/local/sbin/
   cp ../../genfstab usr/local/sbin/
 
@@ -177,7 +180,7 @@ rm -rf /etc/portage/package.accept_keywords/
 echo -n > /etc/portage/package.accept_keywords
 
 emerge --autounmask=y --autounmask-write=y -vDN @world
-emerge -v gentoo-sources genkernel portage-utils gentoolkit cpuid2cpuflags cryptsetup lvm2 mdadm dev-vcs/git btrfs-progs app-arch/lz4 ntfs3g dosfstools exfat-utils gptfdisk efitools shim
+emerge -v gentoo-sources genkernel portage-utils gentoolkit cpuid2cpuflags cryptsetup lvm2 mdadm dev-vcs/git btrfs-progs app-arch/lz4 ntfs3g dosfstools exfat-utils f2fs-tools gptfdisk efitools shim
 touch /tmp/gentoox-base-done
 HEREDOC
 #rsync -av --delete var/cache/{binpkgs,distfiles} ../var/cache/
@@ -376,7 +379,8 @@ x11-libs/libXrender abi_x86_32
 x11-libs/libxshmfence abi_x86_32
 x11-libs/libXv abi_x86_32
 x11-libs/libXvMC abi_x86_32
-x11-libs/libXxf86vm abi_x86_32' >> /etc/portage/package.use/gentoox
+x11-libs/libXxf86vm abi_x86_32
+media-libs/libglvnd abi_x86_32' >> /etc/portage/package.use/gentoox
 emerge -av steam-meta
 touch /tmp/gentoox-steam-done
 HEREDOC
@@ -389,7 +393,8 @@ cat <<HEREDOC | chroot .
 source /etc/profile  && export PS1="(chroot) \$PS1"
 
 echo -e '\nmedia-gfx/gimp heif jpeg2k openexr python vector-icons webp wmf xpm
-media-video/ffmpeg bluray cdio dav1d rubberband libass ogg vpx rtmp aac wavpack opus gme v4l webp theora xcb cpudetection x265 libaom truetype libsoxr modplug vdpau
+media-video/mpv archive bluray drm gbm samba vaapi vdpau
+media-video/ffmpeg bluray cdio dav1d rubberband libass ogg vpx rtmp aac wavpack opus gme v4l webp theora xcb cpudetection x265 libaom truetype libsoxr modplug samba vaapi vdpau
 dev-lang/php gd truetype pcntl zip curl sockets' >> /etc/portage/package.use/gentoox
 
 yes | layman -a bobwya -q
