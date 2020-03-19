@@ -2,7 +2,7 @@
 
 
 # allow Xorg to start and kde to settle
-sleep 20
+sleep 15
 
 
 #ln -s /usr/share/applications/audacious.desktop ~/Desktop/
@@ -27,7 +27,7 @@ Y_RES=$(xdpyinfo | awk '/dimensions/{print $2}' | tr 'x' ' ' | awk '{print $2}')
 
 # install and apply GentooX theme
 kpackagetool5 -i "/usr/src/theme/GentooX Breeze Dark Transparent.tar.gz"
-lookandfeeltool --apply GentooX
+lookandfeeltool --apply GentooX --resetLayout
 
 # put panel on top and set thickness to 24 pixels
 kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 3 --key location --type string  3
@@ -67,6 +67,7 @@ kwriteconfig5 --file ~/.config/kdeglobals --group General --key menuFont --type 
 kwriteconfig5 --file ~/.config/kdeglobals --group General --key smallestReadableFont --type string "Noto Sans,9,-1,5,50,0,0,0,0,0,Regular"
 kwriteconfig5 --file ~/.config/kdeglobals --group General --key toolBarFont --type string "Noto Sans,9,-1,5,50,0,0,0,0,0,Regular"
 kwriteconfig5 --file ~/.config/kdeglobals --group WM --key activeFont --type string "Noto Sans,9,-1,5,50,0,0,0,0,0,Regular"
+kwriteconfig5 --file ~/.config/kdeglobals --group KDE --key LookAndFeelPackage --type string "GentooX"
 
 kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key FlipSwitchAll --type string "none,none,Toggle Flip Switch (All desktops)"
 kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key lipSwitchCurrent --type string "none,none,Toggle Flip Switch (Current desktop)"
@@ -107,9 +108,10 @@ mkdir -p ~/.config/autostart
 ln -s /usr/share/applications/org.kde.latte-dock.desktop ~/.config/autostart/
 latte-dock &
 sleep 5
-kwriteconfig5 --file ~/.config/latte/Default.layout.latte --group Containments --group 1  --group General --key iconSize --type string 48
-kwriteconfig5 --file ~/.config/latte/Default.layout.latte --group Containments --group 1  --group General --key panelTransparency --type string 30
-pkill latte-dock
+kill -s 15 $(pidof latte-dock)
+kwriteconfig5 --file ~/.config/latte/My\ Layout.layout.latte --group Containments --group 1  --group General --key iconSize --type string 48
+kwriteconfig5 --file ~/.config/latte/My\ Layout.layout.latte --group Containments --group 1  --group General --key panelTransparency --type string 30
+kwriteconfig5 --file ~/.config/latte/My\ Layout.layout.latte --group Containments --group 1  --group Applets --group 2 --group Configuration --group General --key launchers59 --type string "applications:firefox.desktop,applications:org.kde.dolphin.desktop,applications:org.kde.konsole.desktop"
 latte-dock &
 
 

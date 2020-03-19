@@ -166,6 +166,8 @@ x11-libs/libdrm libkms
 media-libs/mesa d3d9 lm-sensors opencl -vaapi vdpau vulkan vulkan-overlay xa xvmc
 www-client/firefox -system-libvpx hwaccel pgo lto wayland
 dev-libs/boost python
+dev-libs/boost python_targets_python3_7
+dev-libs/libpwquality python_targets_python3_7
 dev-lang/python sqlite
 sys-fs/squashfs-tools zstd
 sys-boot/grub:2 mount # libzfs
@@ -443,7 +445,9 @@ yes $userpassword  | passwd $username
 gpasswd -a $username wheel
 gpasswd -a $username weston-launch
 
-cp /usr/share/zoneinfo/UTC /etc/localtime
+#cp /usr/share/zoneinfo/UTC /etc/localtime
+echo "America/Chicago" > /etc/timezone
+cp /usr/share/zoneinfo/America/Chicago /etc/localtime
 echo -e '\nen_US.UTF-8 UTF-8
 ja_JP.EUC-JP EUC-JP
 ja_JP.UTF-8 UTF-8
@@ -536,7 +540,7 @@ HEREDOC
 cd ..
 umount -l image/var/cache/{binpkgs,distfiles}
 umount -l image/*
-mksquashfs image/ image.squashfs -b 1M -comp zstd -Xcompression-level 10
+mksquashfs image/ image.squashfs -b 1M -comp zstd -Xcompression-level 16
 mkdir iso/
 isobuilddate=$(wget -O - http://distfiles.gentoo.org/releases/amd64/autobuilds/current-install-amd64-minimal/ | sed -nr "s/.*href=\"install-amd64-minimal-([0-9].*).iso\">.*/\1/p")
 if [[ ! -f "current-install-amd64-minimal/install-amd64-minimal-$isobuilddate.iso" ]]; then
