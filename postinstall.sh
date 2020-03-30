@@ -68,6 +68,7 @@ kwriteconfig5 --file ~/.config/kdeglobals --group General --key smallestReadable
 kwriteconfig5 --file ~/.config/kdeglobals --group General --key toolBarFont --type string "Noto Sans,9,-1,5,50,0,0,0,0,0,Regular"
 kwriteconfig5 --file ~/.config/kdeglobals --group WM --key activeFont --type string "Noto Sans,9,-1,5,50,0,0,0,0,0,Regular"
 kwriteconfig5 --file ~/.config/kdeglobals --group KDE --key LookAndFeelPackage --type string "GentooX"
+kwriteconfig5 --file ~/.config/kdeglobals --group KDE --key SingleClick --type bool false
 
 kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key FlipSwitchAll --type string "none,none,Toggle Flip Switch (All desktops)"
 kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key lipSwitchCurrent --type string "none,none,Toggle Flip Switch (Current desktop)"
@@ -157,7 +158,7 @@ TabBoxAlternative=false
 
 [Effect-PresentWindows]
 BorderActivate=9
-BorderActivateAll=3
+BorderActivateAll=5
 BorderActivateClass=9
 
 [Effect-kwin4_effect_translucency]
