@@ -32,7 +32,7 @@ setup_btrfs () {
 
 	mkfs.btrfs -f -L GENTOO $DEVICE
 	mkdir /mnt/install
-	mount $DEVICE /mnt/install
+	mount -o compress=lzo $DEVICE /mnt/install
 
 	btrfs subvolume create /mnt/install/@
 	btrfs subvolume create /mnt/install/@/.snapshots
@@ -62,7 +62,7 @@ setup_btrfs () {
 
 	btrfs subvolume set-default $(btrfs subvolume list /mnt/install | grep "@/.snapshots/1/snapshot" | grep -oP '(?<=ID )[0-9]+') /mnt/install
 	umount /mnt/install
-	mount $DEVICE /mnt/install
+	mount -o compress=lzo $DEVICE /mnt/install
 
 	# ls /mnt/install should respond with empty result
 

@@ -295,7 +295,7 @@ dev-ruby/rubygems ruby_targets_ruby27
 dev-ruby/kpeg ruby_targets_ruby27
 dev-ruby/racc ruby_targets_ruby27' >> /etc/portage/package.use/gentoox
 
-emerge -v --autounmask=y --autounmask-write=y --keep-going=y --deep --newuse xorg-server elogind sudo vim weston wpa_supplicant snapper \
+emerge -v --autounmask=y --autounmask-write=y --keep-going=y --deep --newuse xorg-server arandr elogind sudo vim weston wpa_supplicant snapper \
 nfs-utils cifs-utils samba dhcpcd nss-mdns zsh zsh-completions powertop lm-sensors screenfetch #plymouth-openrc-plugin
 #emerge -v --depclean
 groupadd weston-launch
@@ -323,8 +323,10 @@ sed -i '1s/^/source make.conf.lto\n/' /etc/portage/make.conf
 sed -i '1s/^/NTHREADS="12"\n/' /etc/portage/make.conf
 
 echo -e '\nkde-plasma/plasma-meta discover networkmanager thunderbolt
-kde-apps/kio-extras samba' >> /etc/portage/package.use/gentoox
-emerge -v --jobs=4 --keep-going=y --autounmask=y --autounmask-write=y --deep --newuse kde-plasma/plasma-meta kde-apps/kde-apps-meta kde-apps/kmail latte-dock calamares gparted plasma-sdk gdb atop dos2unix qt-creator libdbusmenu firefox mpv app-misc/screen audacious-plugins audacious net-irc/hexchat
+kde-apps/kio-extras samba
+media-video/vlc archive bluray dav1d libcaca live opus speex theora vaapi vdpau x265
+gnome-base/gvfs afp archive bluray fuse gphoto2 ios mtp nfs samba zeroconf' >> /etc/portage/package.use/gentoox
+emerge -v --jobs=4 --keep-going=y --autounmask=y --autounmask-write=y --deep --newuse kde-plasma/plasma-meta kde-apps/kde-apps-meta kde-apps/kmail kde-apps/knotes latte-dock calamares gparted plasma-sdk gdb atop dos2unix qt-creator libdbusmenu gvfs firefox mpv app-misc/screen audacious-plugins audacious net-irc/hexchat
 
 yes | layman -o https://raw.githubusercontent.com/fosero/flatpak-overlay/master/repositories.xml -f -a flatpak-overlay -q
 emerge -v sys-apps/flatpak
@@ -398,7 +400,7 @@ source /etc/profile  && export PS1="(chroot) \$PS1"
 
 echo -e '\nmedia-gfx/gimp heif jpeg2k openexr python vector-icons webp wmf xpm
 media-video/mpv archive bluray drm gbm samba vaapi vdpau
-media-video/ffmpeg bluray cdio dav1d rubberband libass ogg vpx rtmp aac wavpack opus gme v4l webp theora xcb cpudetection x265 libaom truetype libsoxr modplug samba vaapi vdpau
+media-video/ffmpeg bluray cdio dav1d rubberband libass ogg vpx rtmp aac wavpack opus gme v4l webp theora xcb cpudetection x265 libaom truetype libsoxr modplug samba vaapi vdpau libcaca libdrm librtmp opencl openssl speex
 dev-lang/php gd truetype pcntl zip curl sockets' >> /etc/portage/package.use/gentoox
 
 yes | layman -a bobwya -q
@@ -407,7 +409,7 @@ echo '*/*::bobwya' >> /etc/portage/package.mask/lowprio
 echo 'app-benchmarks/phoronix-test-suite::bobwya' >> /etc/portage/package.unmask/wanted
 echo 'dev-php/fpdf::bobwya' >> /etc/portage/package.unmask/wanted
 
-emerge -v gimp avidemux blender tuxkart phoronix-test-suite # libreoffice
+emerge -v gimp avidemux blender tuxkart phoronix-test-suite keepassxc libreoffice
 touch /tmp/gentoox-extra-done
 HEREDOC
 exit 0
