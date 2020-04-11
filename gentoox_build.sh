@@ -171,7 +171,7 @@ dev-libs/boost python_targets_python3_7
 dev-libs/libpwquality python_targets_python3_7
 dev-lang/python sqlite
 sys-fs/squashfs-tools zstd
-sys-boot/grub:2 mount # libzfs
+sys-boot/grub:2 mount libzfs
 x11-libs/libxcb xkb
 dev-db/sqlite secure-delete
 x11-base/xorg-server xvfb
@@ -247,23 +247,23 @@ rm -f $KERNEL_CONFIG_DIFF
 genkernel --kernel-config=/usr/src/linux-\$KERNELVERSION-gentoo/.config --no-mrproper kernel
 
 #unmask zfs to prompt installation of masked zfs-9999 zfs-kmod-9999
-#echo 'sys-fs/zfs
-#sys-fs/zfs-kmod' >> /etc/portage/package.unmask/zfs
-#echo 'sys-fs/zfs **
-#sys-fs/zfs-kmod **' >> /etc/portage/package.accept_keywords
-emerge -v squashfs-tools linux-firmware os-prober # zfs zfs-kmod
-#hostid > /etc/hostid
-#dd if=/dev/urandom of=/dev/stdout bs=1 count=4 > /etc/hostid
+echo 'sys-fs/zfs
+sys-fs/zfs-kmod' >> /etc/portage/package.unmask/zfs
+echo 'sys-fs/zfs **
+sys-fs/zfs-kmod **' >> /etc/portage/package.accept_keywords
+emerge -v squashfs-tools linux-firmware os-prober zfs zfs-kmod
+hostid > /etc/hostid
+dd if=/dev/urandom of=/dev/stdout bs=1 count=4 > /etc/hostid
 
-genkernel --microcode --luks --lvm --mdadm --btrfs --disklabel initramfs # --zfs
+genkernel --microcode --luks --lvm --mdadm --btrfs --disklabel --zfs initramfs
 XZ_OPT="--lzma1=preset=9e,dict=128MB,nice=273,depth=200,lc=4" tar --lzma -cf /usr/src/kernel-gentoox.tar.lzma /boot/*\${KERNELVERSION}* -C /lib/modules/ .
 
 emerge -v grub:2
 sed -i "s/#GRUB_CMDLINE_LINUX_DEFAULT=\"\"/GRUB_CMDLINE_LINUX_DEFAULT=\"zswap.enabled=1 zswap.compressor=lz4 zswap.max_pool_percent=20 zswap.zpool=z3fold dobtrfs\"/" /etc/default/grub
 sed -i "s/#GRUB_GFXMODE=640x480/GRUB_GFXMODE=auto/" /etc/default/grub
 sed -i "s/#GRUB_GFXPAYLOAD_LINUX=/GRUB_GFXPAYLOAD_LINUX=keep/" /etc/default/grub
-#rc-update add zfs-import boot
-#rc-update add zfs-mount boot
+rc-update add zfs-import boot
+rc-update add zfs-mount boot
 touch /tmp/gentoox-kernel-done
 HEREDOC
 cp -v usr/src/kernel-gentoox.tar.lzma ../
