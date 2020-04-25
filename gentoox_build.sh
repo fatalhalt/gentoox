@@ -163,7 +163,7 @@ echo 'sys-devel/gcc graphite
 sys-apps/kmod lzma
 sys-kernel/linux-firmware initramfs redistributable unknown-license
 x11-libs/libdrm libkms
-media-libs/mesa d3d9 lm-sensors opencl -vaapi vdpau vulkan vulkan-overlay xa xvmc
+media-libs/mesa d3d9 lm-sensors opencl vaapi vdpau vulkan vulkan-overlay xa xvmc
 media-libs/libsdl2 gles2
 www-client/firefox -system-libvpx hwaccel pgo lto wayland
 dev-libs/boost python
@@ -224,7 +224,7 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   patch -p1 < 0001-add-sysctl-to-disallow-unprivileged-CLONE_NEWUSER-by.patch
   patch -p1 < 0002-clear-patches.patch
   patch -p1 < 0006-add-acs-overrides_iommu.patch
-  patch -p1 < 0007-v5.5-fsync.patch
+  patch -p1 < 0007-v5.6-fsync.patch
   patch -p1 < 0011-ZFS-fix.patch
   patch -p1 < ../zfs-ungpl-rcu_read_unlock-export.diff
   #patch -p1 < 0001-WireGuard-20200205.patch
@@ -295,7 +295,7 @@ dev-ruby/rubygems ruby_targets_ruby27
 dev-ruby/kpeg ruby_targets_ruby27
 dev-ruby/racc ruby_targets_ruby27' >> /etc/portage/package.use/gentoox
 
-emerge -v --autounmask=y --autounmask-write=y --keep-going=y --deep --newuse xorg-server arandr elogind sudo vim weston wpa_supplicant snapper \
+emerge -v --autounmask=y --autounmask-write=y --keep-going=y --deep --newuse xorg-server nvidia-firmware arandr elogind sudo vim weston wpa_supplicant snapper \
 nfs-utils cifs-utils samba dhcpcd nss-mdns zsh zsh-completions powertop lm-sensors screenfetch #plymouth-openrc-plugin
 #emerge -v --depclean
 groupadd weston-launch
@@ -326,7 +326,7 @@ echo -e '\nkde-plasma/plasma-meta discover networkmanager thunderbolt
 kde-apps/kio-extras samba
 media-video/vlc archive bluray dav1d libcaca live opus speex theora vaapi vdpau x265
 gnome-base/gvfs afp archive bluray fuse gphoto2 ios mtp nfs samba zeroconf' >> /etc/portage/package.use/gentoox
-emerge -v --jobs=4 --keep-going=y --autounmask=y --autounmask-write=y --deep --newuse kde-plasma/plasma-meta kde-apps/kde-apps-meta kde-apps/kmail kde-apps/knotes latte-dock calamares gparted plasma-sdk gdb atop dos2unix qt-creator libdbusmenu gvfs firefox mpv app-misc/screen audacious-plugins audacious net-irc/hexchat
+emerge -v --jobs=4 --keep-going=y --autounmask=y --autounmask-write=y --deep --newuse kde-plasma/plasma-meta kde-apps/kde-apps-meta kde-apps/kmail kde-apps/knotes latte-dock calamares gparted plasma-sdk gdb atop dos2unix qt-creator libdbusmenu gvfs firefox adobe-flash mpv app-misc/screen audacious-plugins audacious net-irc/hexchat
 
 yes | layman -o https://raw.githubusercontent.com/fosero/flatpak-overlay/master/repositories.xml -f -a flatpak-overlay -q
 emerge -v sys-apps/flatpak
@@ -538,13 +538,14 @@ cat <<HEREDOC | chroot .
   rm -rf /var/tmp/portage/*
   rm -f /usr/src/linux/.tmp*
   find /usr/src/linux/ -name "*.o" -exec rm -f {} \;
+  find /usr/src/linux/ -name "*.ko" -exec rm -f {} \;
   history -c
   history -w
 HEREDOC
 cd ..
 umount -l image/var/cache/{binpkgs,distfiles}
 umount -l image/*
-mksquashfs image/ image.squashfs -b 1M -comp zstd -Xcompression-level 16
+mksquashfs image/ image.squashfs -b 1M -comp zstd -Xcompression-level 20
 mkdir iso/
 isobuilddate=$(wget -O - http://distfiles.gentoo.org/releases/amd64/autobuilds/current-install-amd64-minimal/ | sed -nr "s/.*href=\"install-amd64-minimal-([0-9].*).iso\">.*/\1/p")
 if [[ ! -f "current-install-amd64-minimal/install-amd64-minimal-$isobuilddate.iso" ]]; then
