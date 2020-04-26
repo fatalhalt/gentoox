@@ -137,6 +137,13 @@ fi
 echo "extracting precompiled image.squashfs GentooX image to the target partition..."
 unsquashfs -f -d /mnt/install/ /mnt/cdrom/image.squashfs
 /usr/local/sbin/genfstab -U /mnt/install/ >> /mnt/install/etc/fstab
+echo -e "extraction complete.\n"
+
+read -erp "set hostname: " -i "gentoox" hostname
+read -erp "set domain name " -i "haxx.dafuq" domainname
+read -erp "set username: " -i "gentoox" username
+read -erp "set user password: " -i "gentoox" userpassword
+read -erp "set root password: " -i "gentoox" rootpassword
 
 mount -t proc none /mnt/install/proc
 mount --rbind /dev /mnt/install/dev
@@ -147,13 +154,26 @@ cat <<HEREDOC | chroot .
 source /etc/profile && export PS1="(chroot) \$PS1"
 if [[ -d /sys/firmware/efi/ ]]; then UEFI_MODE=y; fi
 if [[ -z $drive ]]; then drive=$(echo $partition | sed 's/[0-9]\+\$//'); fi
+
 sensors-detect --auto
 rc-update add lm_sensors default
+
 NCORES=\$(getconf _NPROCESSORS_ONLN)
 sed -i -r "s/^MAKEOPTS=\"([^\"]*)\"$/MAKEOPTS=\"-j\$NCORES\"/g" /etc/portage/make.conf
 sed -i -r "s/^NTHREADS=\"([^\"]*)\"$/NTHREADS=\"\$NCORES\"/g" /etc/portage/make.conf
 #rc-update add zfs-import boot
 #rc-update add zfs-mount boot
+
+sed -i "s/gentoox/$hostname/g" /etc/conf.d/hostname
+sed -i "s/gentoox/$hostname/g" /etc/hosts
+sed -i "s/haxx.dafuq/$domainname/g" /etc/conf.d/net
+yes $rootpassword | passwd root
+if [[ $username != "gentoox" ]]; then
+  usermod --login $username --move-home --home /home/$username gentoox
+  groupmod --new-name $username gentoox
+fi
+yes $userpassword | passwd $username
+
 if [[ ! -z $UEFI_MODE ]]; then
   grub-install --target=x86_64-efi
 else
@@ -162,5 +182,5 @@ fi
 grub-mkconfig -o /boot/grub/grub.cfg
 HEREDOC
 
-umount -l /mnt/install/boot/efi /mnt/install/var /mnt/install/usr/local /mnt/install/tmp /mnt/install/srv /mnt/install/root /mnt/install/opt /mnt/install/home /mnt/install/boot/grub/x86_64-efi /mnt/install/boot/grub/i386-pc /mnt/install/.snapshots /mnt/install
+umount -l /mnt/install/boot/efi /mnt/install/var /mnt/install/usr/local /mnt/install/tmp /mnt/install/srv /mnt/install/root /mnt/install/opt /mnt/install/home /mnt/install/boot/grub/x86_64-efi /mnt/install/boot/grub/i386-pc /mnt/install/.snapshots /mnt/install 1>/dev/null 2>&1
 echo "Installation complete, you may remove the install media and reboot"

@@ -427,8 +427,8 @@ source /etc/profile  && export PS1="(chroot) \$PS1"
 sed -i "s/localhost/gentoox/g" /etc/conf.d/hostname
 sed -i "s/127.0.0.1	localhost/127.0.0.1	gentoox.haxx.dafuq gentoox localhost/" /etc/hosts
 sed -i "s/::1		localhost/::1		gentoox.haxx.dafuq gentoox localhost/" /etc/hosts
-echo 'dns_domain_lo="haxx.local"
-nis_domain_lo="haxx.local"' > /etc/conf.d/net
+echo 'dns_domain_lo="haxx.dafuq"
+nis_domain_lo="haxx.dafuq"' > /etc/conf.d/net
 echo 'nameserver 1.1.1.1
 nameserver 2606:4700:4700::1111' > /etc/resolv.conf
 

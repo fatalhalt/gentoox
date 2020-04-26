@@ -19,6 +19,7 @@ for (i=0;i<Desktops.length;i++) {
 - cyrillic, Kanji&Katakana, kr fonts
 - tweak Firefox?
 - edit 'GentooX Breeze Dark Transparent.tar.gz' wallpaper path to /usr/src/theme/1518039301698.png
+- include app-emulation/virtualbox-guest-additions?
 
 - adjust weston USE flags
 - adjust mpv USE flags
