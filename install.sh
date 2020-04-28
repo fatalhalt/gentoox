@@ -166,6 +166,7 @@ sed -i -r "s/^NTHREADS=\"([^\"]*)\"$/NTHREADS=\"\$NCORES\"/g" /etc/portage/make.
 
 sed -i "s/gentoox/$hostname/g" /etc/conf.d/hostname
 sed -i "s/gentoox/$hostname/g" /etc/hosts
+sed -i "s/haxx.dafuq/$domainname/g" /etc/hosts
 sed -i "s/haxx.dafuq/$domainname/g" /etc/conf.d/net
 yes $rootpassword | passwd root
 if [[ $username != "gentoox" ]]; then

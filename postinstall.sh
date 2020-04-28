@@ -10,9 +10,16 @@ ln -s /usr/share/applications/mpv.desktop ~/Desktop/
 ln -s /usr/share/applications/steam.desktop ~/Desktop/
 flatpak --user remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
+X_RES=$(xdpyinfo | awk '/dimensions/{print $2}' | tr 'x' ' ' | awk '{print $1}')
+Y_RES=$(xdpyinfo | awk '/dimensions/{print $2}' | tr 'x' ' ' | awk '{print $2}')
+
+# install and apply GentooX theme
+kpackagetool5 -i "/usr/src/theme/GentooX Breeze Dark Transparent.tar.gz"
+lookandfeeltool --apply GentooX --resetLayout
+
 # set wallpaper
 dbus-send --session --dest=org.kde.plasmashell --type=method_call /PlasmaShell org.kde.PlasmaShell.evaluateScript 'string:
-var Desktops = desktops();                                                                                                                       
+var Desktops = desktops();
 for (i=0;i<Desktops.length;i++) {
         d = Desktops[i];
         d.wallpaperPlugin = "org.kde.image";
@@ -21,13 +28,6 @@ for (i=0;i<Desktops.length;i++) {
                                     "General");
         d.writeConfig("Image", "file:///usr/src/theme/1518039301698.png");
 }'
-
-X_RES=$(xdpyinfo | awk '/dimensions/{print $2}' | tr 'x' ' ' | awk '{print $1}')
-Y_RES=$(xdpyinfo | awk '/dimensions/{print $2}' | tr 'x' ' ' | awk '{print $2}')
-
-# install and apply GentooX theme
-kpackagetool5 -i "/usr/src/theme/GentooX Breeze Dark Transparent.tar.gz"
-lookandfeeltool --apply GentooX --resetLayout
 
 # put panel on top and set thickness to 24 pixels
 kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 3 --key location --type string  3
