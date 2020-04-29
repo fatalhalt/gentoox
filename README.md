@@ -8,7 +8,7 @@ Comes with simple interactive *install.sh* script, supports BIOS and UEFI x86_64
 * OpenRC init system
 * latest KDE Desktop Environment with custom GentooX theme, global menus enabled by default, latte dock
 * Firefox global menu support patched in, OpenGL acceleration enabled by default, PGO build
-* gentoLTO overly
+* [gentooLTO overly](https://github.com/InBetweenNames/gentooLTO)
 * BTRFS used by default with lzo compression and snapshot setup modeled after openSUSE
 * phoronix-suite available out-of-the-box for benchmarking purposes
 * Steam installed out-of-the-box with necessary lib32 dependencies and fsync Linux kernel patched in
