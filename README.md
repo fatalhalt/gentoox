@@ -17,6 +17,8 @@ Comes with simple interactive *install.sh* script, supports BIOS and UEFI x86_64
 * Linux 5.6.7 kernel built with 1000Hz -03 Sandybridge and aufs, ClearLinux, fsync, unprivileged CLONE_NEWUSER, and IOMMU missing ACS capabilities overrides
 * KDE 5.18.4, KDE Applications 20.04, KDE Frameworks 5.69.0, Qt 5.14.2
 
+## Download
+http://gentoox.cryptohash.nl/
 
 ![kicker](https://raw.githubusercontent.com/fatalhalt/gentoox/master/kicker.jpg?raw=true)
 
@@ -64,14 +66,24 @@ The installation carried by install.sh is very simple, besides interactive parti
 
 Gentoox is source based, you should run **emerge --sync** after the install. After that, to update the system run:
 ```sh
-emerge -avuDN --with-bdeps=y --exclude gentoo-sources @world**
+emerge -avuDN --with-bdeps=y --exclude gentoo-sources @world
 ```
-> (Q) **can I use login manager such as SDDM instead of 'startx'
+> (Q) **can I use login manager such as SDDM instead of 'startx'?**
 
 yes, SDDM can be enabled, follow see https://wiki.gentoo.org/wiki/SDDM#Service
+> (Q) **how does the custom GentooX KDE theme get applied?**
+
+when 'startx' is issued the ~/.xinitrc contains a 1-time line to run /usr/src/postinstall.sh
+> (Q) **can I build GentooX from scratch myself? Could I e.g. optimize it solely for 3rd Gen AMD Ryzen?**
+
+Yes! I will include a write up at some point. Building GentooX from scratch involves building a stage3 tarball with help of build-stage3.sh and then building actual GentooX with gentoox_build.sh
 > (Q) **why GentooX name?**
  
 I couldn't come up with anything better at time, I know there's a Gentoo distribution aimed at original XBOX named 'gentoox'. My distro uses capital X at the end for now (Gentoo**X**).
+
+## Credits
+Gentoo project, https://www.gentoo.org/, note: Gentoo Foundation, Inc. is the owner of the Gentoo trademark.
+CloverOS, https://cloveros.ga/, GentooX has been heavily inspired by CloverOS, if you want fvwm based optimized Gentoo distribution, look no further!
 
 ## Known issues
 * a "hwclock: settimeofday() failed: Invalid argument" message can be seen during bootup, I believe this is upstream Gentoo issue.
