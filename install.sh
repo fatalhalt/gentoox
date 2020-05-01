@@ -97,7 +97,11 @@ while :; do
 	read -erp "Automatic partitioning (a) or manual partitioning (will launch gparted)? [a/m] " -n 1 partitioning_mode
 	if [[ $partitioning_mode = "a" ]]; then
 		read -erp "Enter drive to be formatted for GentooX installation: " -i "/dev/sda" drive
-        if [[ ! -z $UEFI_MODE ]]; then partition="${drive}2"; else partition="${drive}1"; fi
+        if [[ ! -z $UEFI_MODE ]]; then
+          if [[ $drive =~ "nvme" ]]; then partition="${drive}p2"; else partition="${drive}2"; fi # UEFI mode
+        else
+          if [[ $drive =~ "nvme" ]]; then partition="${drive}p1"; else partition="${drive}1"; fi # BIOS mode
+        fi
 	elif [[ $partitioning_mode = "m" ]]; then
         if [[ ! -z $UEFI_MODE ]]; then echo "EFI boot detected, please also create EF00 ESP EFI partition..."; fi
 		gparted &> /dev/null &
@@ -108,7 +112,10 @@ while :; do
 	fi
 
 	read -erp "Partitioning: ${PART_SCHEME[$partitioning_mode]}
-    Partition: $partition
+    NOTE: in BIOS mode only 1 partition is used for whole OS including /boot,
+          in UEFI 2 partitions are used, 1st is ESP EFI and 2nd is for GentooX
+          (e.g. you'll see /dev/sda1 below, or /dev/sda2 or /dev/nvme0n1p2 when in UEFI mode)
+    Partition: $partition  (for GentooX)
     Is this correct? [y/n] " -n 1 yn
 	if [[ $yn == "y" ]]; then
 		break
@@ -119,19 +126,29 @@ done
 if [[ $partitioning_mode = "a" ]]; then
   if [[ ! -z $UEFI_MODE ]]; then
 	echo -e "o\nY\nn\n\n\n+256M\nEF00\nn\n2\n\n\n\nw\nY\n" | gdisk $drive
-    mkfs.vfat -F32 "${drive}1"
-    UEFI_PART="${drive}1"
-	setup_btrfs "${drive}2"
+    if [[ $drive =~ "nvme" ]]; then
+      mkfs.vfat -F32 "${drive}p1"
+      UEFI_PART="${drive}p1"
+      setup_btrfs "${drive}p2"
+    else
+      mkfs.vfat -F32 "${drive}1"
+      UEFI_PART="${drive}1"
+      setup_btrfs "${drive}2"
+    fi
+
     mkdir -p /mnt/install/boot/efi
     mount $UEFI_PART /mnt/install/boot/efi
   else
-	echo -e "o\nn\np\n1\n\n\nw" | fdisk $drive
-	setup_btrfs "${drive}1"
+	echo -e "o\nn\np\n1\n\n\nw" | fdisk $drive # BIOS mode
+    if [[ $drive =~ "nvme" ]]; then setup_btrfs "${drive}p1"; else setup_btrfs "${drive}1"; fi
   fi
 else
   # user done the partitioning
-  read -erp "Enter formatted EF00 ESP partition for EFI: " -i "/dev/sda1" efi_partition
   setup_btrfs $partition
+  if [[ ! -z $UEFI_MODE ]]; then
+    read -erp "Enter formatted EF00 ESP partition for EFI: " -i "/dev/sda1" efi_partition
+    mount $efi_partition /mnt/install/boot/efi
+  fi
 fi
 
 echo "extracting precompiled image.squashfs GentooX image to the target partition..."
