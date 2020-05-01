@@ -92,6 +92,9 @@ Gentoo project, https://www.gentoo.org/, note: Gentoo Foundation, Inc. is the ow
 CloverOS, https://cloveros.ga/, GentooX has been heavily inspired by CloverOS, if you want fvwm based optimized Gentoo distribution, look no further!
 
 ## Known issues
-* a "hwclock: settimeofday() failed: Invalid argument" message can be seen during bootup, I believe this is upstream Gentoo issue.
+* a "hwclock: settimeofday() failed: Invalid argument" message can be seen during bootup: run
+```sh
+rc-update delete hwclock boot
+```
 * 'sudo su' by default grants root without asking for password, to be decided, can be disabled by editing sudoers
  
