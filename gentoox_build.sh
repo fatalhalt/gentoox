@@ -47,7 +47,7 @@ if [[ ! -f 'image/etc/gentoo-release' ]]; then
   cd image/
 
   cp -v /var/tmp/catalyst/builds/default/stage3-amd64-$builddate.tar.xz .
-  if [[ $? -ne 0 ]]; then exit 1; fi
+  if [[ $? -ne 0 ]]; then echo "you need to build stage3 tarball that has gcc graphite support first via build-stage3.sh"; exit 1; fi
 
   echo 'extracting stage3 tarball...'
   tar xJpf /var/tmp/catalyst/builds/default/stage3-amd64-$builddate.tar.xz --xattrs --numeric-owner
