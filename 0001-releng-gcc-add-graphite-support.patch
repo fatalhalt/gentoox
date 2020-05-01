@@ -4,42 +4,42 @@ Date: Thu, 2 Jan 2020 11:13:46 -0600
 Subject: [PATCH] gcc: add graphite support
 
 ---
- releases/weekly/portage/isos/package.accept_keywords/gcc   | 1 +
- releases/weekly/portage/isos/package.use/gcc               | 1 +
- releases/weekly/portage/stages/package.accept_keywords/gcc | 1 +
- releases/weekly/portage/stages/package.use/gcc             | 1 +
+ releases/portage/isos/package.accept_keywords/gcc   | 1 +
+ releases/portage/isos/package.use/gcc               | 1 +
+ releases/portage/stages/package.accept_keywords/gcc | 1 +
+ releases/portage/stages/package.use/gcc             | 1 +
  4 files changed, 4 insertions(+)
- create mode 100644 releases/weekly/portage/isos/package.accept_keywords/gcc
- create mode 100644 releases/weekly/portage/isos/package.use/gcc
- create mode 100644 releases/weekly/portage/stages/package.accept_keywords/gcc
- create mode 100644 releases/weekly/portage/stages/package.use/gcc
+ create mode 100644 releases/portage/isos/package.accept_keywords/gcc
+ create mode 100644 releases/portage/isos/package.use/gcc
+ create mode 100644 releases/portage/stages/package.accept_keywords/gcc
+ create mode 100644 releases/portage/stages/package.use/gcc
 
-diff --git a/releases/weekly/portage/isos/package.accept_keywords/gcc b/releases/weekly/portage/isos/package.accept_keywords/gcc
+diff --git a/releases/portage/isos/package.accept_keywords/gcc b/releases/portage/isos/package.accept_keywords/gcc
 new file mode 100644
 index 00000000..e30528a1
 --- /dev/null
-+++ b/releases/weekly/portage/isos/package.accept_keywords/gcc
++++ b/releases/portage/isos/package.accept_keywords/gcc
 @@ -0,0 +1 @@
 +dev-libs/isl
-diff --git a/releases/weekly/portage/isos/package.use/gcc b/releases/weekly/portage/isos/package.use/gcc
+diff --git a/releases/portage/isos/package.use/gcc b/releases/portage/isos/package.use/gcc
 new file mode 100644
 index 00000000..da4356e2
 --- /dev/null
-+++ b/releases/weekly/portage/isos/package.use/gcc
++++ b/releases/portage/isos/package.use/gcc
 @@ -0,0 +1 @@
 +sys-devel/gcc graphite
-diff --git a/releases/weekly/portage/stages/package.accept_keywords/gcc b/releases/weekly/portage/stages/package.accept_keywords/gcc
+diff --git a/releases/portage/stages/package.accept_keywords/gcc b/releases/portage/stages/package.accept_keywords/gcc
 new file mode 100644
 index 00000000..e30528a1
 --- /dev/null
-+++ b/releases/weekly/portage/stages/package.accept_keywords/gcc
++++ b/releases/portage/stages/package.accept_keywords/gcc
 @@ -0,0 +1 @@
 +dev-libs/isl
-diff --git a/releases/weekly/portage/stages/package.use/gcc b/releases/weekly/portage/stages/package.use/gcc
+diff --git a/releases/portage/stages/package.use/gcc b/releases/portage/stages/package.use/gcc
 new file mode 100644
 index 00000000..da4356e2
 --- /dev/null
-+++ b/releases/weekly/portage/stages/package.use/gcc
++++ b/releases/portage/stages/package.use/gcc
 @@ -0,0 +1 @@
 +sys-devel/gcc graphite
 -- 

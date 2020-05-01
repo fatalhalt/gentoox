@@ -22,9 +22,9 @@ rootpassword=gentoox
 username=gentoox
 userpassword=gentoox
 #builddate="$(date +%Y%m%d).graphite"
-builddate="20200425.graphite"
+builddate="20200501.graphite"
 #builddir="build-$(date +%Y%m%d)"
-builddir="build-20200425"
+builddir="build-20200501"
 KERNEL_CONFIG_DIFF="0001-kernel-config-cfs-r4.patch"
 
 binpkgs=/root/var/cache/binpkgs/
@@ -177,6 +177,7 @@ dev-db/sqlite secure-delete
 x11-base/xorg-server xvfb
 sys-apps/xdg-desktop-portal screencast
 dev-vcs/git tk
+dev-libs/libjcat pkcs7 gpg
 dev-libs/libdbusmenu gtk3' > /etc/portage/package.use/gentoox
 
 rm -rf /etc/portage/package.accept_keywords/
@@ -324,6 +325,7 @@ sed -i '1s/^/NTHREADS="12"\n/' /etc/portage/make.conf
 
 echo -e '\nkde-plasma/plasma-meta discover networkmanager thunderbolt
 kde-apps/kio-extras samba
+sed -i "s/DBUILD_FlatpakBackend=OFF/DBUILD_FlatpakBackend=ON/" /var/db/repos/gentoo/kde-plasma/discover/discover-5.18.4.1.ebuild
 media-video/vlc archive bluray dav1d libcaca live opus speex theora vaapi vdpau x265
 gnome-base/gvfs afp archive bluray fuse gphoto2 ios mtp nfs samba zeroconf' >> /etc/portage/package.use/gentoox
 emerge -v --jobs=4 --keep-going=y --autounmask=y --autounmask-write=y --deep --newuse kde-plasma/plasma-meta kde-apps/kde-apps-meta kde-apps/kmail kde-apps/knotes latte-dock calamares gparted plasma-sdk gdb atop dos2unix qt-creator libdbusmenu gvfs firefox adobe-flash mpv app-misc/screen audacious-plugins audacious net-irc/hexchat

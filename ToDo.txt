@@ -46,3 +46,32 @@ https://build.opensuse.org/package/show/mozilla:Factory/MozillaFirefox
 https://github.com/bmwiedemann/openSUSE/tree/master/packages/m/MozillaFirefox
 http://bazaar.launchpad.net/~mozillateam/firefox/firefox-trunk.head/changes
 https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=firefox-kde-opensuse
+
+
+
+
+
+
+
+[May Release]
+ToDo:
+change headline: "mention that GentooX is bleeding edge, aka ~amd64"
+FAQ:
+-add note that Secure Boot has to be disabled
+-fix 'overly' spelling typo
+-fix "follow see" typo in FAQ
+-merge back FAQ from website (if any) back to README.md
+-recommend automatic partitioning, clarify how GentooX takes over whole drive
+
+-do not build AVX
+-KWinFT?
+-handle NVMe
+-add Konsole transparency
+-have Discover handle flatpak
+-test drive installing nvidia blob
+-what about llvm10?
+
+
+- original idea was for GentooX OS files to be read-only, and user apps would
+  only be installed via flatpak, freebsd like system separation, GentooX would be updatable via binary delta files,
+  thanks to CoW feature of BTRFS, you would be able to e.g. boot April or May release of GentooX

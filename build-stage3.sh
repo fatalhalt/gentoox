@@ -17,15 +17,18 @@ if [[ ! -f .catalyst-prep-done ]]; then
   touch .catalyst-prep-done
 fi
 
-cp -v releng/releases/weekly/specs/amd64/stage{1,2,3}.spec .
+cp -v releng/releases/specs/amd64/stage{1,2,3}.spec .
 
-sed -i "s/version_stamp: latest/version_stamp: $version_stamp/" stage1.spec
+sed -i "s/version_stamp: @TIMESTAMP@/version_stamp: $version_stamp/" stage1.spec
+sed -i "s/snapshot: @TIMESTAMP@/snapshot: latest/" stage1.spec
 sed -i "s#@REPO_DIR@#$(pwd)/releng#g" stage1.spec
-sed -i "s/version_stamp: latest/version_stamp: $version_stamp/" stage2.spec
-sed -i "s/source_subpath: default\/stage1-amd64-latest/source_subpath: default\/stage1-amd64-$version_stamp/" stage2.spec
+sed -i "s/version_stamp: @TIMESTAMP@/version_stamp: $version_stamp/" stage2.spec
+sed -i "s/snapshot: @TIMESTAMP@/snapshot: latest/" stage2.spec
+sed -i "s/source_subpath: default\/stage1-amd64-@TIMESTAMP@/source_subpath: default\/stage1-amd64-$version_stamp/" stage2.spec
 sed -i "s#@REPO_DIR@#$(pwd)/releng#g" stage2.spec
-sed -i "s/version_stamp: latest/version_stamp: $version_stamp/" stage3.spec
-sed -i "s/source_subpath: default\/stage2-amd64-latest/source_subpath: default\/stage2-amd64-$version_stamp/" stage3.spec
+sed -i "s/version_stamp: @TIMESTAMP@/version_stamp: $version_stamp/" stage3.spec
+sed -i "s/snapshot: @TIMESTAMP@/snapshot: latest/" stage3.spec
+sed -i "s/source_subpath: default\/stage2-amd64-@TIMESTAMP@/source_subpath: default\/stage2-amd64-$version_stamp/" stage3.spec
 sed -i "s#@REPO_DIR@#$(pwd)/releng#g" stage3.spec
 
 catalyst -f stage1.spec
