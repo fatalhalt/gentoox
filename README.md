@@ -2,20 +2,27 @@
 
 an -O3, AVX, Graphite, and LTO optimized x86_64 LiveCD Gentoo distribution with installer. Aimed at gamers and benchmarking.
 
-Comes with simple interactive *install.sh* script, supports BIOS and UEFI x86_64 systems, at minimum requires AVX capable CPUs released since 2011 such as Intel Sandybridge or AMD Bulldozer, among KDE, it includes Steam flatpak and phoronix-suite out-of-the-box.
+GentooX comes with simple interactive *install.sh* script, supports BIOS and UEFI x86_64 systems, at minimum requires AVX capable CPUs released since 2011 such as Intel Sandybridge or AMD Bulldozer, among KDE, it includes Steam flatpak and phoronix-suite out-of-the-box.
 
-* based on Gentoo's ~amd64
+* based on Gentoo's bleeding edge ~amd64 testing branch
 * OpenRC init system
 * latest KDE Desktop Environment with custom GentooX theme, global menus enabled by default, latte dock
 * Firefox global menu support patched in, OpenGL acceleration enabled by default, PGO build
-* [gentooLTO overly](https://github.com/InBetweenNames/gentooLTO)
+* [gentooLTO overlay](https://github.com/InBetweenNames/gentooLTO)
 * BTRFS used by default with lzo compression and snapshot setup modeled after openSUSE
 * phoronix-suite available out-of-the-box for benchmarking purposes
 * Steam installed out-of-the-box with necessary lib32 dependencies and fsync Linux kernel patched in
 * flatpak is included, easily install VSCode or Discord in sandboxed environment
 * ZFS support, kernel patched to export FPU functions
-* Linux 5.6.7 kernel built with 1000Hz -03 Sandybridge and aufs, ClearLinux, fsync, unprivileged CLONE_NEWUSER, and IOMMU missing ACS capabilities overrides
+* Linux 5.6.7 kernel built with 1000Hz -03 for Sandybridge arch. Patches include aufs, ClearLinux, fsync, unprivileged CLONE_NEWUSER, and IOMMU missing ACS capabilities overrides
 * KDE 5.18.4, KDE Applications 20.04, KDE Frameworks 5.69.0, Qt 5.14.2
+
+## Changelog
+* 2020.05 Release
+  * add support for NVMe drives to install.sh installation script
+  * enable flatpak support in KDE Discover
+  * update all packages to May 1 2020
+* 2020.04 Release -- initial release
 
 ## Download
 http://gentoox.cryptohash.nl/
@@ -34,7 +41,6 @@ FCFLAGS="${COMMON_FLAGS}"
 FFLAGS="${COMMON_FLAGS}"
 RUSTFLAGS="-C target-cpu=sandybridge"
 CPU_FLAGS_X86="aes avx mmx mmxext pclmul popcnt sse sse2 sse3 sse4_1 sse4_2 ssse3"
-MAKEOPTS="-j12"
 ```
 ## USE flags
 ```sh
@@ -64,13 +70,13 @@ boot LiveCD, login with gentoox/gentoox credentials, sudo su, and run ./install.
 The installation carried by install.sh is very simple, besides interactive partitioning the setup extracts 4GB image.squashfs into root partition that ends up taking 13GB of space which includes all the pre-compiled software such as KDE and Steam.
 > (Q) **is GentooX source based? How can I install additional software or update the system after installation?**
 
-Gentoox is source based, you should run **emerge --sync** after the install. After that, to update the system run:
+GentooX is source based, you should run **emerge --sync** after the install. After that, to update the system run:
 ```sh
 emerge -avuDN --with-bdeps=y --exclude gentoo-sources @world
 ```
 > (Q) **can I use login manager such as SDDM instead of 'startx'?**
 
-yes, SDDM can be enabled, follow see https://wiki.gentoo.org/wiki/SDDM#Service
+yes, SDDM can be enabled, follow https://wiki.gentoo.org/wiki/SDDM#Service
 > (Q) **how does the custom GentooX KDE theme get applied?**
 
 when 'startx' is issued the ~/.xinitrc contains a 1-time line to run /usr/src/postinstall.sh
