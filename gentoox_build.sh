@@ -22,13 +22,13 @@ rootpassword=gentoox
 username=gentoox
 userpassword=gentoox
 #builddate="$(date +%Y%m%d).graphite"
-builddate="20200501.graphite"
+builddate="20200504.graphite"
 #builddir="build-$(date +%Y%m%d)"
-builddir="build-20200501"
+builddir="build-20200504"
 KERNEL_CONFIG_DIFF="0001-kernel-config-cfs-r4.patch"
 
-binpkgs=/root/var/cache/binpkgs/
-distfiles=/root/var/cache/distfiles/
+binpkgs="$(pwd)/var/cache/binpkgs/"
+distfiles="$(pwd)/var/cache/distfiles/"
 
 #build_weston=y
 #build_kde=y
@@ -66,7 +66,7 @@ if [[ ! -f 'image/etc/gentoo-release' ]]; then
   wget --quiet -P etc/portage/patches/www-client/firefox/ 'https://raw.githubusercontent.com/bmwiedemann/openSUSE/master/packages/m/MozillaFirefox/mozilla-kde.patch'
   wget --quiet -P etc/portage/patches/www-client/firefox/ 'http://bazaar.launchpad.net/~mozillateam/firefox/firefox-trunk.head/download/head:/unitymenubar.patch-20130215095938-1n6mqqau8tdfqwhg-1/unity-menubar.patch'
 
-  mkdir -p /etc/portage/package.mask
+  mkdir -p etc/portage/package.mask
   cp ../../package.mask/* etc/portage/package.mask/
 
   cp ../../arch-chroot usr/local/sbin/
@@ -75,6 +75,8 @@ if [[ ! -f 'image/etc/gentoo-release' ]]; then
   if [[ ! -z $binpkgs ]] && [[ ! -z $distfiles ]]; then
     #rsync -a $binpkgs var/cache/binpkgs/
     #rsync -a $distfiles var/cache/distfiles/
+    mkdir -p $binpkgs
+    mkdir -p $distfiles
     mount --bind $binpkgs var/cache/binpkgs/
     mount --bind $distfiles var/cache/distfiles/
   fi
@@ -119,7 +121,7 @@ CXXFLAGS="\${COMMON_FLAGS}"
 FCFLAGS="\${COMMON_FLAGS}"
 FFLAGS="\${COMMON_FLAGS}"
 RUSTFLAGS="-C target-cpu=native"
-CPU_FLAGS_X86="aes avx mmx mmxext pclmul popcnt sse sse2 sse3 sse4_1 sse4_2 ssse3"
+CPU_FLAGS_X86="aes mmx mmxext pclmul popcnt sse sse2 sse3 sse4_1 sse4_2 ssse3"
 MAKEOPTS="-j12"
 USE="-bindist"
 #FEATURES="buildpkg noclean"
@@ -165,10 +167,8 @@ sys-kernel/linux-firmware initramfs redistributable unknown-license
 x11-libs/libdrm libkms
 media-libs/mesa d3d9 lm-sensors opencl vaapi vdpau vulkan vulkan-overlay xa xvmc
 media-libs/libsdl2 gles2
-www-client/firefox -system-libvpx hwaccel pgo lto wayland
+www-client/firefox -system-av1 -system-icu -system-jpeg -system-libevent -system-libvpx -system-sqlite -system-harfbuzz -system-webp hwaccel pgo lto wayland clang
 dev-libs/boost python
-dev-libs/boost python_targets_python3_7
-dev-libs/libpwquality python_targets_python3_7
 dev-lang/python sqlite
 sys-fs/squashfs-tools zstd
 sys-boot/grub:2 mount libzfs
@@ -178,7 +178,9 @@ x11-base/xorg-server xvfb
 sys-apps/xdg-desktop-portal screencast
 dev-vcs/git tk
 dev-libs/libjcat pkcs7 gpg
-dev-libs/libdbusmenu gtk3' > /etc/portage/package.use/gentoox
+dev-libs/libdbusmenu gtk3
+*/* PYTHON_TARGETS: python2_7 python3_7
+*/* PYTHON_SINGLE_TARGET: -python3_6 python3_7' > /etc/portage/package.use/gentoox
 
 rm -rf /etc/portage/package.accept_keywords/
 echo -n > /etc/portage/package.accept_keywords
@@ -252,14 +254,13 @@ echo 'sys-fs/zfs
 sys-fs/zfs-kmod' >> /etc/portage/package.unmask/zfs
 echo 'sys-fs/zfs **
 sys-fs/zfs-kmod **' >> /etc/portage/package.accept_keywords
-emerge -v squashfs-tools linux-firmware os-prober zfs zfs-kmod
+emerge -v grub:2 squashfs-tools linux-firmware os-prober zfs zfs-kmod
 hostid > /etc/hostid
 dd if=/dev/urandom of=/dev/stdout bs=1 count=4 > /etc/hostid
 
 genkernel --microcode --luks --lvm --mdadm --btrfs --disklabel --zfs initramfs
 XZ_OPT="--lzma1=preset=9e,dict=128MB,nice=273,depth=200,lc=4" tar --lzma -cf /usr/src/kernel-gentoox.tar.lzma /boot/*\${KERNELVERSION}* -C /lib/modules/ .
 
-emerge -v grub:2
 sed -i "s/#GRUB_CMDLINE_LINUX_DEFAULT=\"\"/GRUB_CMDLINE_LINUX_DEFAULT=\"zswap.enabled=1 zswap.compressor=lz4 zswap.max_pool_percent=20 zswap.zpool=z3fold dobtrfs\"/" /etc/default/grub
 sed -i "s/#GRUB_GFXMODE=640x480/GRUB_GFXMODE=auto/" /etc/default/grub
 sed -i "s/#GRUB_GFXPAYLOAD_LINUX=/GRUB_GFXPAYLOAD_LINUX=keep/" /etc/default/grub
@@ -294,10 +295,11 @@ dev-ruby/rdoc ruby_targets_ruby27
 virtual/rubygems ruby_targets_ruby27
 dev-ruby/rubygems ruby_targets_ruby27
 dev-ruby/kpeg ruby_targets_ruby27
-dev-ruby/racc ruby_targets_ruby27' >> /etc/portage/package.use/gentoox
+dev-ruby/racc ruby_targets_ruby27
+virtual/ruby-ssl ruby_targets_ruby27' >> /etc/portage/package.use/gentoox
 
 emerge -v --autounmask=y --autounmask-write=y --keep-going=y --deep --newuse xorg-server nvidia-firmware arandr elogind sudo vim weston wpa_supplicant snapper \
-nfs-utils cifs-utils samba dhcpcd nss-mdns zsh zsh-completions powertop lm-sensors screenfetch #plymouth-openrc-plugin
+nfs-utils cifs-utils samba dhcpcd nss-mdns zsh zsh-completions powertop cpupower lm-sensors screenfetch #plymouth-openrc-plugin
 #emerge -v --depclean
 groupadd weston-launch
 touch /tmp/gentoox-weston-done
