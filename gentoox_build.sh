@@ -59,6 +59,7 @@ if [[ ! -f 'image/etc/gentoo-release' ]]; then
   cp -r ../../patches/* etc/portage/patches/
   mkdir -p etc/portage/patches/app-crypt/efitools
   cp ../../efitools-1.9.2-fixup-UNKNOWN_GLYPH.patch etc/portage/patches/app-crypt/efitools/
+  cp ../../qt-creator-use-llvm9.patch usr/src/
 
   mkdir -p etc/portage/patches/www-client/firefox
   wget --quiet -P etc/portage/patches/www-client/firefox/ 'https://raw.githubusercontent.com/bmwiedemann/openSUSE/master/packages/m/MozillaFirefox/firefox-branded-icons.patch'
@@ -162,6 +163,7 @@ dev-libs/weston nolto.conf
 dev-util/umockdev O2nolto.conf' > /etc/portage/package.env
 
 echo 'sys-devel/gcc graphite
+sys-devel/llvm gold
 sys-apps/kmod lzma
 sys-kernel/linux-firmware initramfs redistributable unknown-license
 x11-libs/libdrm libkms
@@ -187,6 +189,7 @@ echo -n > /etc/portage/package.accept_keywords
 
 emerge --autounmask=y --autounmask-write=y -vDN @world
 emerge -v gentoo-sources genkernel portage-utils gentoolkit cpuid2cpuflags cryptsetup lvm2 mdadm dev-vcs/git btrfs-progs app-arch/lz4 ntfs3g dosfstools exfat-utils f2fs-tools gptfdisk efitools shim
+emerge --noreplace app-editors/nano
 touch /tmp/gentoox-base-done
 HEREDOC
 #rsync -av --delete var/cache/{binpkgs,distfiles} ../var/cache/
@@ -327,9 +330,17 @@ sed -i '1s/^/NTHREADS="12"\n/' /etc/portage/make.conf
 
 echo -e '\nkde-plasma/plasma-meta discover networkmanager thunderbolt
 kde-apps/kio-extras samba
-sed -i "s/DBUILD_FlatpakBackend=OFF/DBUILD_FlatpakBackend=ON/" /var/db/repos/gentoo/kde-plasma/discover/discover-5.18.4.1.ebuild
 media-video/vlc archive bluray dav1d libcaca live opus speex theora vaapi vdpau x265
+media-video/ffmpeg bluray cdio dav1d rubberband libass ogg vpx rtmp aac wavpack opus gme v4l webp theora xcb cpudetection x265 libaom truetype libsoxr modplug samba vaapi vdpau libcaca libdrm librtmp opencl openssl speex
+dev-qt/qtmultimedia gstreamer
 gnome-base/gvfs afp archive bluray fuse gphoto2 ios mtp nfs samba zeroconf' >> /etc/portage/package.use/gentoox
+
+# enable flatpak backend in discover, patch qt-creator to use clang9 effectively dropping clang8
+sed -i "s/DBUILD_FlatpakBackend=OFF/DBUILD_FlatpakBackend=ON/" /var/db/repos/gentoo/kde-plasma/discover/discover-5.18.4.1.ebuild
+ebuild /var/db/repos/gentoo/kde-plasma/discover/discover-5.18.4.1.ebuild manifest
+patch -p1 /var/db/repos/gentoo/dev-qt/qt-creator/qt-creator-4.10.1.ebuild /usr/src/qt-creator-use-llvm9.patch
+ebuild /var/db/repos/gentoo/dev-qt/qt-creator/qt-creator-4.10.1.ebuild manifest
+
 emerge -v --jobs=4 --keep-going=y --autounmask=y --autounmask-write=y --deep --newuse kde-plasma/plasma-meta kde-apps/kde-apps-meta kde-apps/kmail kde-apps/knotes latte-dock calamares gparted plasma-sdk gdb atop dos2unix qt-creator libdbusmenu gvfs firefox adobe-flash mpv app-misc/screen audacious-plugins audacious net-irc/hexchat
 
 yes | layman -o https://raw.githubusercontent.com/fosero/flatpak-overlay/master/repositories.xml -f -a flatpak-overlay -q
@@ -404,7 +415,6 @@ source /etc/profile  && export PS1="(chroot) \$PS1"
 
 echo -e '\nmedia-gfx/gimp heif jpeg2k openexr python vector-icons webp wmf xpm
 media-video/mpv archive bluray drm gbm samba vaapi vdpau
-media-video/ffmpeg bluray cdio dav1d rubberband libass ogg vpx rtmp aac wavpack opus gme v4l webp theora xcb cpudetection x265 libaom truetype libsoxr modplug samba vaapi vdpau libcaca libdrm librtmp opencl openssl speex
 dev-lang/php gd truetype pcntl zip curl sockets' >> /etc/portage/package.use/gentoox
 
 yes | layman -a bobwya -q
