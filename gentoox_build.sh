@@ -302,7 +302,8 @@ dev-ruby/racc ruby_targets_ruby27
 virtual/ruby-ssl ruby_targets_ruby27' >> /etc/portage/package.use/gentoox
 
 emerge -v --autounmask=y --autounmask-write=y --keep-going=y --deep --newuse xorg-server nvidia-firmware arandr elogind sudo vim weston wpa_supplicant snapper \
-nfs-utils cifs-utils samba dhcpcd nss-mdns zsh zsh-completions powertop cpupower lm-sensors screenfetch #plymouth-openrc-plugin
+nfs-utils cifs-utils samba dhcpcd nss-mdns zsh zsh-completions powertop cpupower lm-sensors screenfetch gparted gdb atop dos2unix app-misc/screen #plymouth-openrc-plugin
+#emerge -avuDN --with-bdeps=y @world
 #emerge -v --depclean
 groupadd weston-launch
 touch /tmp/gentoox-weston-done
@@ -341,7 +342,8 @@ ebuild /var/db/repos/gentoo/kde-plasma/discover/discover-5.18.4.1.ebuild manifes
 patch -p1 /var/db/repos/gentoo/dev-qt/qt-creator/qt-creator-4.10.1.ebuild /usr/src/qt-creator-use-llvm9.patch
 ebuild /var/db/repos/gentoo/dev-qt/qt-creator/qt-creator-4.10.1.ebuild manifest
 
-emerge -v --jobs=4 --keep-going=y --autounmask=y --autounmask-write=y --deep --newuse kde-plasma/plasma-meta kde-apps/kde-apps-meta kde-apps/kmail kde-apps/knotes latte-dock calamares gparted plasma-sdk gdb atop dos2unix qt-creator libdbusmenu gvfs firefox adobe-flash mpv app-misc/screen audacious-plugins audacious net-irc/hexchat
+emerge -v --jobs=4 --keep-going=y --autounmask=y --autounmask-write=y --deep --newuse kde-plasma/plasma-meta kde-apps/kde-apps-meta kde-apps/kmail kde-apps/knotes \
+latte-dock calamares plasma-sdk qt-creator libdbusmenu gvfs
 
 yes | layman -o https://raw.githubusercontent.com/fosero/flatpak-overlay/master/repositories.xml -f -a flatpak-overlay -q
 emerge -v sys-apps/flatpak
@@ -401,8 +403,9 @@ x11-libs/libXv abi_x86_32
 x11-libs/libXvMC abi_x86_32
 x11-libs/libXxf86vm abi_x86_32
 media-libs/libglvnd abi_x86_32
-virtual/opencl abi_x86_32' >> /etc/portage/package.use/gentoox
-emerge -av steam-meta
+virtual/opencl abi_x86_32
+app-arch/zstd abi_x86_32' >> /etc/portage/package.use/gentoox
+emerge -v steam-meta
 touch /tmp/gentoox-steam-done
 HEREDOC
 exit 0
@@ -415,7 +418,8 @@ source /etc/profile  && export PS1="(chroot) \$PS1"
 
 echo -e '\nmedia-gfx/gimp heif jpeg2k openexr python vector-icons webp wmf xpm
 media-video/mpv archive bluray drm gbm samba vaapi vdpau
-dev-lang/php gd truetype pcntl zip curl sockets' >> /etc/portage/package.use/gentoox
+dev-lang/php gd truetype pcntl zip curl sockets
+media-gfx/blender python_single_target_python3_6' >> /etc/portage/package.use/gentoox
 
 yes | layman -a bobwya -q
 mkdir -p /etc/portage/package.mask /etc/portage/package.unmask
@@ -423,7 +427,7 @@ echo '*/*::bobwya' >> /etc/portage/package.mask/lowprio
 echo 'app-benchmarks/phoronix-test-suite::bobwya' >> /etc/portage/package.unmask/wanted
 echo 'dev-php/fpdf::bobwya' >> /etc/portage/package.unmask/wanted
 
-emerge -v gimp avidemux blender tuxkart phoronix-test-suite keepassxc libreoffice
+emerge -v gimp avidemux blender tuxkart phoronix-test-suite keepassxc libreoffice firefox adobe-flash mpv audacious-plugins audacious net-irc/hexchat
 touch /tmp/gentoox-extra-done
 HEREDOC
 exit 0

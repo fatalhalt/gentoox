@@ -1,5 +1,6 @@
 #!/bin/bash
 
+emerge -u catalyst pixz
 version_stamp="$(date +%Y%m%d).graphite"
 
 if [[ ! -f .catalyst-prep-done ]]; then
