@@ -21,10 +21,8 @@ gitprefix="https://gitgud.io/cloveros/cloveros/raw/master"
 rootpassword=gentoox
 username=gentoox
 userpassword=gentoox
-#builddate="$(date +%Y%m%d).graphite"
-builddate="20200504.graphite"
-#builddir="build-$(date +%Y%m%d)"
-builddir="build-20200504"
+builddate="$(date +%Y%m%d).graphite"
+builddir="build-$(date +%Y%m%d)"
 KERNEL_CONFIG_DIFF="0001-kernel-config-cfs-r4.patch"
 
 binpkgs="$(pwd)/var/cache/binpkgs/"
@@ -131,7 +129,7 @@ ACCEPT_KEYWORDS="~amd64"
 ACCEPT_LICENSE="*"
 PORTAGE_NICENESS=19
 GENTOO_MIRRORS="http://gentoo.ussg.indiana.edu/"
-EMERGE_DEFAULT_OPTS="--jobs=4"
+EMERGE_DEFAULT_OPTS="--jobs=2"
 PORTDIR="/var/db/repos/gentoo"
 DISTDIR="/var/cache/distfiles"
 PKGDIR="/var/cache/binpkgs"
@@ -160,7 +158,10 @@ x11-drivers/xf86-video-ati nolto.conf
 x11-drivers/xf86-video-intel nolto.conf
 x11-base/xorg-server nolto.conf
 dev-libs/weston nolto.conf
-dev-util/umockdev O2nolto.conf' > /etc/portage/package.env
+dev-util/umockdev O2nolto.conf
+media-libs/avidemux-core nolto.conf
+dev-qt/qtcore nolto.conf
+app-office/libreoffice nolto.conf' > /etc/portage/package.env
 
 echo 'sys-devel/gcc graphite
 sys-devel/llvm gold
@@ -182,7 +183,14 @@ dev-vcs/git tk
 dev-libs/libjcat pkcs7 gpg
 dev-libs/libdbusmenu gtk3
 */* PYTHON_TARGETS: python2_7 python3_7
-*/* PYTHON_SINGLE_TARGET: -python3_6 python3_7' > /etc/portage/package.use/gentoox
+*/* PYTHON_SINGLE_TARGET: -* python3_7
+dev-python/certifi python_targets_python3_6
+dev-python/setuptools python_targets_python3_6
+dev-python/six python_targets_python3_6
+dev-libs/libnatspec python_single_target_python2_7
+dev-lang/yasm python_single_target_python2_7
+media-libs/libcaca python_single_target_python2_7
+gnome-base/libglade python_single_target_python2_7' > /etc/portage/package.use/gentoox
 
 rm -rf /etc/portage/package.accept_keywords/
 echo -n > /etc/portage/package.accept_keywords
@@ -302,7 +310,7 @@ dev-ruby/racc ruby_targets_ruby27
 virtual/ruby-ssl ruby_targets_ruby27' >> /etc/portage/package.use/gentoox
 
 emerge -v --autounmask=y --autounmask-write=y --keep-going=y --deep --newuse xorg-server nvidia-firmware arandr elogind sudo vim weston wpa_supplicant snapper \
-nfs-utils cifs-utils samba dhcpcd nss-mdns zsh zsh-completions powertop cpupower lm-sensors screenfetch gparted gdb atop dos2unix app-misc/screen #plymouth-openrc-plugin
+nfs-utils cifs-utils samba dhcpcd nss-mdns zsh zsh-completions powertop cpupower lm-sensors screenfetch gparted gdb atop dos2unix app-misc/screen app-text/tree #plymouth-openrc-plugin
 #emerge -avuDN --with-bdeps=y @world
 #emerge -v --depclean
 groupadd weston-launch
@@ -325,6 +333,10 @@ yes | layman --add lto-overlay
 echo 'sys-config/ltoize ~amd64
 app-portage/portage-bashrc-mv ~amd64
 app-shells/runtitle ~amd64' >> /etc/portage/package.accept_keywords
+#mkdir -p /etc/portage/package.mask /etc/portage/package.unmask
+#echo '*/*::mv' >> /etc/portage/package.mask/lowprio
+#echo 'app-portage/portage-bashrc-mv::mv
+#app-shells/runtitle::mv' >> /etc/portage/package.unmask/wanted
 emerge sys-config/ltoize
 sed -i '1s/^/source make.conf.lto\n/' /etc/portage/make.conf
 sed -i '1s/^/NTHREADS="12"\n/' /etc/portage/make.conf
@@ -334,7 +346,8 @@ kde-apps/kio-extras samba
 media-video/vlc archive bluray dav1d libcaca live opus speex theora vaapi vdpau x265
 media-video/ffmpeg bluray cdio dav1d rubberband libass ogg vpx rtmp aac wavpack opus gme v4l webp theora xcb cpudetection x265 libaom truetype libsoxr modplug samba vaapi vdpau libcaca libdrm librtmp opencl openssl speex
 dev-qt/qtmultimedia gstreamer
-gnome-base/gvfs afp archive bluray fuse gphoto2 ios mtp nfs samba zeroconf' >> /etc/portage/package.use/gentoox
+gnome-base/gvfs afp archive bluray fuse gphoto2 ios mtp nfs samba zeroconf
+net-irc/telepathy-idle python_single_target_python2_7' >> /etc/portage/package.use/gentoox
 
 # enable flatpak backend in discover, patch qt-creator to use clang9 effectively dropping clang8
 sed -i "s/DBUILD_FlatpakBackend=OFF/DBUILD_FlatpakBackend=ON/" /var/db/repos/gentoo/kde-plasma/discover/discover-5.18.4.1.ebuild
@@ -342,8 +355,10 @@ ebuild /var/db/repos/gentoo/kde-plasma/discover/discover-5.18.4.1.ebuild manifes
 patch -p1 /var/db/repos/gentoo/dev-qt/qt-creator/qt-creator-4.10.1.ebuild /usr/src/qt-creator-use-llvm9.patch
 ebuild /var/db/repos/gentoo/dev-qt/qt-creator/qt-creator-4.10.1.ebuild manifest
 
-emerge -v --jobs=4 --keep-going=y --autounmask=y --autounmask-write=y --deep --newuse kde-plasma/plasma-meta kde-apps/kde-apps-meta kde-apps/kmail kde-apps/knotes \
+emerge -v --jobs=2 --keep-going=y --autounmask=y --autounmask-write=y --deep --newuse kde-plasma/plasma-meta kde-apps/kde-apps-meta kde-apps/kmail kde-apps/knotes \
 latte-dock calamares plasma-sdk qt-creator libdbusmenu gvfs
+emerge --noreplace dev-qt/qt-creator
+echo 'dev-qt/qt-creator' >> /etc/portage/package.mask/gentoox
 
 yes | layman -o https://raw.githubusercontent.com/fosero/flatpak-overlay/master/repositories.xml -f -a flatpak-overlay -q
 emerge -v sys-apps/flatpak
@@ -416,7 +431,7 @@ if [[ ! -z $build_extra ]] && [[ ! -f 'tmp/gentoox-extra-done' ]]; then
 cat <<HEREDOC | chroot .
 source /etc/profile  && export PS1="(chroot) \$PS1"
 
-echo -e '\nmedia-gfx/gimp heif jpeg2k openexr python vector-icons webp wmf xpm
+echo -e '\nmedia-gfx/gimp heif jpeg2k openexr python vector-icons webp wmf xpm python_single_target_python2_7
 media-video/mpv archive bluray drm gbm samba vaapi vdpau
 dev-lang/php gd truetype pcntl zip curl sockets
 media-gfx/blender python_single_target_python3_6' >> /etc/portage/package.use/gentoox
@@ -492,7 +507,7 @@ emerge -v ja-ipafonts source-han-sans
 
 echo 'kernel.sysrq=1' >> /etc/sysctl.d/local.conf
 
-usermod -aG users,portage,lp,adm,audio,cdrom,disk,games,input,usb,video,cron $username
+usermod -aG users,portage,lp,adm,audio,cdrom,disk,input,usb,video,cron $username
 
 cp /etc/samba/smb.conf.default /etc/samba/smb.conf
 sed -i "s/   workgroup = MYGROUP/   workgroup = WORKGROUP/" /etc/samba/smb.conf
@@ -507,7 +522,7 @@ cp /usr/src/postinstall.sh /home/$username/
 cd /home/$username/
 echo '~/postinstall.sh &' >> .xinitrc
 echo 'exec dbus-launch --exit-with-session startplasma-x11' >> .xinitrc
-chown -R $username /home/$username/
+chown -R $username.$username /home/$username/
 su - gentoox
 
 touch /tmp/gentoox-user-configured
@@ -557,6 +572,9 @@ cat <<HEREDOC | chroot .
   rm -f /usr/src/linux/.tmp*
   find /usr/src/linux/ -name "*.o" -exec rm -f {} \;
   find /usr/src/linux/ -name "*.ko" -exec rm -f {} \;
+  rm -f /var/tmp/genkernel/*
+  #rm -rm /var/cache/genkernel/*
+  #rm -f /var/cache/eix/portage.eix
   history -c
   history -w
 HEREDOC
@@ -569,6 +587,7 @@ isobuilddate=$(wget -O - http://distfiles.gentoo.org/releases/amd64/autobuilds/c
 if [[ ! -f "current-install-amd64-minimal/install-amd64-minimal-$isobuilddate.iso" ]]; then
   wget http://distfiles.gentoo.org/releases/amd64/autobuilds/current-install-amd64-minimal/install-amd64-minimal-$isobuilddate.iso
 fi
+#emerge -u dev-libs/libisoburn sys-fs/squashfs-tools
 xorriso -osirrox on -indev *-$isobuilddate.iso -extract / iso/
 mv image.squashfs iso/image.squashfs
 tar -xOf kernel-gentoox.tar.lzma --wildcards \*vmlinuz-\* > iso/boot/gentoo
