@@ -157,7 +157,7 @@ unsquashfs -f -d /mnt/install/ /mnt/cdrom/image.squashfs
 echo -e "extraction complete.\n"
 
 read -erp "set hostname: " -i "gentoox" hostname
-read -erp "set domain name " -i "haxx.dafuq" domainname
+read -erp "set domain name: " -i "haxx.dafuq" domainname
 read -erp "set username: " -i "gentoox" username
 read -erp "set user password: " -i "gentoox" userpassword
 read -erp "set root password: " -i "gentoox" rootpassword
@@ -192,7 +192,7 @@ if [[ $username != "gentoox" ]]; then
 fi
 yes $userpassword | passwd $username
 
-if [[ ! -z $UEFI_MODE ]]; then
+if [[ ! -z "$UEFI_MODE" ]]; then
   grub-install --target=x86_64-efi
 else
   grub-install --target=i386-pc $drive
