@@ -350,8 +350,8 @@ gnome-base/gvfs afp archive bluray fuse gphoto2 ios mtp nfs samba zeroconf
 net-irc/telepathy-idle python_single_target_python2_7' >> /etc/portage/package.use/gentoox
 
 # enable flatpak backend in discover, patch qt-creator to use clang9 effectively dropping clang8
-sed -i "s/DBUILD_FlatpakBackend=OFF/DBUILD_FlatpakBackend=ON/" /var/db/repos/gentoo/kde-plasma/discover/discover-5.18.4.1.ebuild
-ebuild /var/db/repos/gentoo/kde-plasma/discover/discover-5.18.4.1.ebuild manifest
+sed -i "s/DBUILD_FlatpakBackend=OFF/DBUILD_FlatpakBackend=ON/" /var/db/repos/gentoo/kde-plasma/discover/discover-5.18.5.1.ebuild
+ebuild /var/db/repos/gentoo/kde-plasma/discover/discover-5.18.5.ebuild manifest
 patch -p1 /var/db/repos/gentoo/dev-qt/qt-creator/qt-creator-4.10.1.ebuild /usr/src/qt-creator-use-llvm9.patch
 ebuild /var/db/repos/gentoo/dev-qt/qt-creator/qt-creator-4.10.1.ebuild manifest
 
@@ -575,6 +575,7 @@ cat <<HEREDOC | chroot .
   rm -f /var/tmp/genkernel/*
   #rm -rm /var/cache/genkernel/*
   #rm -f /var/cache/eix/portage.eix
+  rm -f /var/cache/edb/mtimedb
   history -c
   history -w
 HEREDOC

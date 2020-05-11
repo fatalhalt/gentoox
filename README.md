@@ -1,8 +1,8 @@
 # GentooX
 
-an -O3, AVX, Graphite, and LTO optimized x86_64 LiveCD Gentoo distribution with installer. Aimed at gamers and benchmarking.
+an -O3, Graphite, and LTO optimized x86_64 LiveCD Gentoo distribution with installer. Aimed at gamers and benchmarking.
 
-GentooX comes with simple interactive *install.sh* script, supports BIOS and UEFI x86_64 systems, at minimum requires AVX capable CPUs released since 2011 such as Intel Sandybridge or AMD Bulldozer, among KDE, it includes Steam flatpak and phoronix-suite out-of-the-box.
+GentooX comes with simple interactive *install.sh* script, supports BIOS and UEFI x86_64 systems, at minimum requires ~~AVX~~ capable CPUs released since 2011 such as Intel Sandybridge or AMD Bulldozer, among KDE, it includes Steam flatpak and phoronix-suite out-of-the-box.
 
 * based on Gentoo's bleeding edge ~amd64 testing branch
 * OpenRC init system
@@ -14,15 +14,22 @@ GentooX comes with simple interactive *install.sh* script, supports BIOS and UEF
 * Steam installed out-of-the-box with necessary lib32 dependencies and fsync Linux kernel patched in
 * flatpak is included, easily install VSCode or Discord in sandboxed environment
 * ZFS support, kernel patched to export FPU functions
-* Linux 5.6.7 kernel built with 1000Hz -03 for Sandybridge arch. Patches include aufs, ClearLinux, fsync, unprivileged CLONE_NEWUSER, and IOMMU missing ACS capabilities overrides
-* KDE 5.18.4, KDE Applications 20.04, KDE Frameworks 5.69.0, Qt 5.14.2
+* Linux 5.6.11 kernel built with 1000Hz -03 for Sandybridge arch. Patches include aufs, ClearLinux, fsync, unprivileged CLONE_NEWUSER, and IOMMU missing ACS capabilities overrides
+* KDE 5.18.5, KDE Applications 20.04, KDE Frameworks 5.70.0, Qt 5.14.2
 
 ## Changelog
-* 2020.05 Release
+* 2020.05.11 Release
+  * drop system-wide AVX CPU compile flag, it is a [net loss](https://old.reddit.com/r/Gentoo/comments/ga1tah/gentoox_202004_new_distro/foxisn2/), 2020.05.01 is the last AVX build
+  * KDE 5.18.5, KDE Frameworks 5.70.0, Linux 5.6.11
+  * make Python 3.7 default
+  * Fix checking for UEFI_MODE during GRUB setup, thanks [lotharsm](https://github.com/fatalhalt/gentoox/commit/1da62330b78d462b885e16d038b8439bd2144fae)
+  * all packages updated as of 5/11
+  * as always, LiveCD credentials are **gentoox/gentoox** for user and password, automatic partitioning recommended, test and get familiar with install.sh in virtualbox, do not forget to run **emerge --sync** after the install
+* 2020.05.01 Release
   * add support for NVMe drives to install.sh installation script
   * enable flatpak support in KDE Discover
   * update all packages to May 1 2020
-* 2020.04 Release -- initial release
+* 2020.04.25 Release -- initial release
 
 ## Download
 http://gentoox.cryptohash.nl/
@@ -34,13 +41,14 @@ http://gentoox.cryptohash.nl/
 The ISO weighs around 4GB and following settings were used to build it:
 ## CFLAGS
 ```sh
+source make.conf.lto
 COMMON_FLAGS="-O3 -march=sandybridge -mtune=sandybridge -mfpmath=both -pipe -funroll-loops -fgraphite-identity -floop-nest-optimize -fdevirtualize-at-ltrans -fipa-pta -fno-semantic-interposition -flto=12 -fuse-linker-plugin -malign-data=cacheline -Wl,--hash-style=gnu"
 CFLAGS="${COMMON_FLAGS}"
 CXXFLAGS="${COMMON_FLAGS}"
 FCFLAGS="${COMMON_FLAGS}"
 FFLAGS="${COMMON_FLAGS}"
 RUSTFLAGS="-C target-cpu=sandybridge"
-CPU_FLAGS_X86="aes avx mmx mmxext pclmul popcnt sse sse2 sse3 sse4_1 sse4_2 ssse3"
+CPU_FLAGS_X86="aes mmx mmxext pclmul popcnt sse sse2 sse3 sse4_1 sse4_2 ssse3"
 ```
 ## USE flags
 ```sh
@@ -92,7 +100,7 @@ Gentoo project, https://www.gentoo.org/, note: Gentoo Foundation, Inc. is the ow
 CloverOS, https://cloveros.ga/, GentooX has been heavily inspired by CloverOS, if you want fvwm based optimized Gentoo distribution, look no further!
 
 ## Known issues
-* a "hwclock: settimeofday() failed: Invalid argument" message can be seen during bootup: run
+* a "hwclock: settimeofday() failed: Invalid argument" message may be seen during bootup: run
 ```sh
 rc-update delete hwclock boot
 ```
