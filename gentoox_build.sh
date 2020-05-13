@@ -23,6 +23,7 @@ username=gentoox
 userpassword=gentoox
 builddate="$(date +%Y%m%d).graphite"
 builddir="build-$(date +%Y%m%d)"
+stage3tarball="stage3-amd64-20200504.graphite.tar.xz"
 KERNEL_CONFIG_DIFF="0001-kernel-config-cfs-r4.patch"
 
 binpkgs="$(pwd)/var/cache/binpkgs/"
@@ -44,11 +45,15 @@ if [[ ! -f 'image/etc/gentoo-release' ]]; then
   mkdir image/
   cd image/
 
-  cp -v /var/tmp/catalyst/builds/default/stage3-amd64-$builddate.tar.xz .
+  if [[ -f "../../$stage3tarball" ]]; then
+    cp -v "../../$stage3tarball" .
+  else
+    cp -v /var/tmp/catalyst/builds/default/stage3-amd64-$builddate.tar.xz .
+  fi
   if [[ $? -ne 0 ]]; then echo "you need to build stage3 tarball that has gcc graphite support first via build-stage3.sh"; exit 1; fi
 
   echo 'extracting stage3 tarball...'
-  tar xJpf /var/tmp/catalyst/builds/default/stage3-amd64-$builddate.tar.xz --xattrs --numeric-owner
+  tar xJpf stage3* --xattrs --numeric-owner
   rm -f stage3*
 
   cp ../../$KERNEL_CONFIG_DIFF usr/src
