@@ -124,7 +124,7 @@ CFLAGS="\${COMMON_FLAGS}"
 CXXFLAGS="\${COMMON_FLAGS}"
 FCFLAGS="\${COMMON_FLAGS}"
 FFLAGS="\${COMMON_FLAGS}"
-RUSTFLAGS="-C target-cpu=native"
+RUSTFLAGS="-C target-cpu=sandybridge"
 CPU_FLAGS_X86="aes mmx mmxext pclmul popcnt sse sse2 sse3 sse4_1 sse4_2 ssse3"
 MAKEOPTS="-j12"
 USE="-bindist"
@@ -314,7 +314,7 @@ dev-ruby/kpeg ruby_targets_ruby27
 dev-ruby/racc ruby_targets_ruby27
 virtual/ruby-ssl ruby_targets_ruby27' >> /etc/portage/package.use/gentoox
 
-emerge -v --autounmask=y --autounmask-write=y --keep-going=y --deep --newuse xorg-server nvidia-firmware arandr elogind sudo vim weston wpa_supplicant snapper \
+emerge -v --autounmask=y --autounmask-write=y --keep-going=y --deep --newuse xorg-server nvidia-firmware arandr elogind sudo vim weston wpa_supplicant ntp bind-tools telnet-bsd snapper \
 nfs-utils cifs-utils samba dhcpcd nss-mdns zsh zsh-completions powertop cpupower lm-sensors screenfetch gparted gdb atop dos2unix app-misc/screen app-text/tree #plymouth-openrc-plugin
 #emerge -avuDN --with-bdeps=y @world
 #emerge -v --depclean
