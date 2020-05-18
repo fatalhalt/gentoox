@@ -105,6 +105,28 @@ kquitapp5 plasmashell; kstart5 plasmashell &
 sleep 1
 
 
+
+# add systemtray 
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 24 --group Applets --group 32 --key immutability --type string 1
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 24 --group Applets --group 32 --key plugin --type string "org.kde.plasma.systemtray"
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 24 --group Applets --group 32 --group Configuration --key SystrayContainmentId --type string 33
+
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 24 --group General --key AppletOrder --type string "25;26;27;28;32;29;30;31"
+
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --key activityId --type string ""
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --key formfactor --type string 2
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --key immutability --type string 1
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --key lastScreen --type string 0
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --key location --type string 3
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --key plugin --type string "org.kde.plasma.private.systemtray"
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --key wallpaperplugin --type string "org.kde.image"
+
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --group General --key extraItems --type string "org.kde.kdeconnect,org.kde.ktp-contactlist,org.kde.plasma.battery,org.kde.plasma.bluetooth,org.kde.plasma.clipboard,org.kde.plasma.devicenotifier,org.kde.plasma.keyboardindicator,org.kde.plasma.mediacontroller,org.kde.plasma.networkmanagement,org.kde.plasma.nightcolorcontrol,org.kde.plasma.notifications,org.kde.plasma.printmanager,org.kde.plasma.vault,KMix"
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --group General --key hiddenItems --type string "KMix"
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --group General --key knownItems --type string "org.kde.kdeconnect,org.kde.ktp-contactlist,org.kde.plasma.battery,org.kde.plasma.bluetooth,org.kde.plasma.clipboard,org.kde.plasma.devicenotifier,org.kde.plasma.keyboardindicator,org.kde.plasma.mediacontroller,org.kde.plasma.networkmanagement,org.kde.plasma.nightcolorcontrol,org.kde.plasma.notifications,org.kde.plasma.printmanager,org.kde.plasma.vault,org.kde.plasma.volume"
+
+
+
 mkdir -p ~/.config/autostart
 ln -s /usr/share/applications/org.kde.latte-dock.desktop ~/.config/autostart/
 latte-dock &
