@@ -121,6 +121,29 @@ kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group C
 kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --key plugin --type string "org.kde.plasma.private.systemtray"
 kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --key wallpaperplugin --type string "org.kde.image"
 
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --group Applets --group 35 --key immutability --type string 1
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --group Applets --group 35 --key plugin --type string "org.kde.plasma.clipboard"
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --group Applets --group 36 --key immutability --type string 1
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --group Applets --group 36 --key plugin --type string "org.kde.plasma.devicenotifier"
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --group Applets --group 37 --key immutability --type string 1
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --group Applets --group 37 --key plugin --type string "org.kde.kdeconnect"
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --group Applets --group 38 --key immutability --type string 1
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --group Applets --group 38 --key plugin --type string "org.kde.plasma.keyboardindicator"
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --group Applets --group 39 --key immutability --type string 1
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --group Applets --group 39 --key plugin --type string "org.kde.plasma.nightcolorcontrol"
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --group Applets --group 40 --key immutability --type string 1
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --group Applets --group 40 --key plugin --type string "org.kde.plasma.notifications"
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --group Applets --group 41 --key immutability --type string 1
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --group Applets --group 41 --key plugin --type string "org.kde.plasma.printmanager"
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --group Applets --group 42 --key immutability --type string 1
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --group Applets --group 42 --key plugin --type string "org.kde.plasma.vault"
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --group Applets --group 43 --key immutability --type string 1
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --group Applets --group 43 --key plugin --type string "org.kde.plasma.battery"
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --group Applets --group 44 --key immutability --type string 1
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --group Applets --group 44 --key plugin --type string "org.kde.ktp-contactlist"
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --group Applets --group 45 --key immutability --type string 1
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --group Applets --group 45 --key plugin --type string "org.kde.plasma.mediacontroller"
+
 kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --group General --key extraItems --type string "org.kde.kdeconnect,org.kde.ktp-contactlist,org.kde.plasma.battery,org.kde.plasma.bluetooth,org.kde.plasma.clipboard,org.kde.plasma.devicenotifier,org.kde.plasma.keyboardindicator,org.kde.plasma.mediacontroller,org.kde.plasma.networkmanagement,org.kde.plasma.nightcolorcontrol,org.kde.plasma.notifications,org.kde.plasma.printmanager,org.kde.plasma.vault,KMix"
 kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --group General --key hiddenItems --type string "KMix"
 kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --group General --key knownItems --type string "org.kde.kdeconnect,org.kde.ktp-contactlist,org.kde.plasma.battery,org.kde.plasma.bluetooth,org.kde.plasma.clipboard,org.kde.plasma.devicenotifier,org.kde.plasma.keyboardindicator,org.kde.plasma.mediacontroller,org.kde.plasma.networkmanagement,org.kde.plasma.nightcolorcontrol,org.kde.plasma.notifications,org.kde.plasma.printmanager,org.kde.plasma.vault,org.kde.plasma.volume"
@@ -249,6 +272,9 @@ library=org.kde.sierrabreeze
 theme=Sierra Breeze' > ~/.config/kwinrc
 qdbus org.kde.KWin /KWin reconfigure
 
+
+# systemtray, 2nd attempt to apply the widget
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 24 --group General --key AppletOrder --type string "25;26;27;28;32;29;30;31"
 
 # after script runs delete it
 sed -i "s/~\/postinstall.sh &//" ~/.xinitrc
