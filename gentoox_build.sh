@@ -578,8 +578,8 @@ cat <<HEREDOC | chroot .
   find /usr/src/linux/ -name "*.o" -exec rm -f {} \;
   find /usr/src/linux/ -name "*.ko" -exec rm -f {} \;
   rm -f /var/tmp/genkernel/*
-  #rm -rm /var/cache/genkernel/*
-  #rm -f /var/cache/eix/portage.eix
+  rm -rf /var/cache/genkernel/*
+  rm -f /var/cache/eix/portage.eix
   rm -f /var/cache/edb/mtimedb
   history -c
   history -w
