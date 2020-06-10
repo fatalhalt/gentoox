@@ -102,16 +102,25 @@ kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group C
 kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 3 --group General --key AppletOrder --type string "4;5;21;20;7;9;10"
 
 kquitapp5 plasmashell; kstart5 plasmashell &
-sleep 1
+sleep 5
 
 
 
-# add systemtray 
-kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 11 --group Applets --group 32 --key immutability --type string 1
-kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 11 --group Applets --group 32 --key plugin --type string "org.kde.plasma.systemtray"
-kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 11 --group Applets --group 32 --group Configuration --key PreloadWeight --type string 47
-kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 11 --group Applets --group 32 --group Configuration --key SystrayContainmentId --type string 33
-kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 11 --group General --key AppletOrder --type string "12;13;14;15;32;16;17;18"
+# add systemtray
+CONTAINMENT_ID=$(grep -B6 -F 'org.kde.panel' ~/.config/plasma-org.kde.plasma.desktop-appletsrc | grep Containments | tr '[]' ' ' | awk '{print $2}')
+
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group $CONTAINMENT_ID --group Applets --group 32 --key immutability --type string 1
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group $CONTAINMENT_ID --group Applets --group 32 --key plugin --type string "org.kde.plasma.systemtray"
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group $CONTAINMENT_ID --group Applets --group 32 --group Configuration --key PreloadWeight --type string 47
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group $CONTAINMENT_ID --group Applets --group 32 --group Configuration --key SystrayContainmentId --type string 33
+
+#kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group $CONTAINMENT_ID --group General --key AppletOrder --type string "12;13;14;15;32;16;17;18"
+LINE_NUM=$(grep -n -A1 -F "[Containments][$CONTAINMENT_ID][General]" ~/.config/plasma-org.kde.plasma.desktop-appletsrc | tail -n1 | cut -d- -f1)
+APPLET_ORDER=$(grep -A1 -F "[Containments][$CONTAINMENT_ID][General]" ~/.config/plasma-org.kde.plasma.desktop-appletsrc | tail -n1)
+NEW_APPLET_ORDER="$(echo $APPLET_ORDER | awk -F';' -v v=32 '{print $1,$2,$3,$4,v,$5,$6,$7}' | tr ' ' ';')"
+NEW_APPLET_ORDER_STRING="${NEW_APPLET_ORDER#*=}"
+#sed -i "${LINE_NUM}c$NEW_APPLET_ORDER" ~/.config/plasma-org.kde.plasma.desktop-appletsrc
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group $CONTAINMENT_ID --group General --key AppletOrder --type string "$NEW_APPLET_ORDER_STRING"
 
 kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --key activityId --type string ""
 kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 33 --key formfactor --type string 2
@@ -390,7 +399,7 @@ Wallpaper=' > ~/.local/share/konsole/Breeze.colorscheme
 
 
 # systemtray, 2nd attempt to apply the widget
-kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group 11 --group General --key AppletOrder --type string "12;13;14;15;32;16;17;18"
+kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group $CONTAINMENT_ID --group General --key AppletOrder --type string "$NEW_APPLET_ORDER_STRING"
 
 
 # after script runs delete it

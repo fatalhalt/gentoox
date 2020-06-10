@@ -24,7 +24,7 @@ userpassword=gentoox
 builddate="$(date +%Y%m%d).graphite"
 builddir="build-$(date +%Y%m%d)"
 stage3tarball="stage3-amd64-20200504.graphite.tar.xz"
-KERNEL_CONFIG_DIFF="0001-kernel-config-cfs-r4.patch"
+KERNEL_CONFIG_DIFF="0001-kernel-config-cfs-r5.patch"
 
 binpkgs="$(pwd)/var/cache/binpkgs/"
 distfiles="$(pwd)/var/cache/distfiles/"
@@ -192,6 +192,9 @@ dev-libs/libdbusmenu gtk3
 dev-python/certifi python_targets_python3_6
 dev-python/setuptools python_targets_python3_6
 dev-python/six python_targets_python3_6
+dev-python/cffi python_targets_python3_6
+dev-python/numpy python_targets_python3_6
+dev-python/cython python_targets_python3_6
 dev-libs/libnatspec python_single_target_python2_7
 dev-lang/yasm python_single_target_python2_7
 media-libs/libcaca python_single_target_python2_7
@@ -221,33 +224,31 @@ KERNELVERSION=\$(qlist -Iv gentoo-sources | tr '-' ' ' | awk '{print \$4}')
 cd /usr/src/linux/
 
 if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
-  wget --quiet 'https://gitea.artixlinux.org/artixlinux/packages-kernel/raw/branch/master/linux/trunk/config' -O .config
+  wget --quiet 'https://git.archlinux.org/svntogit/packages.git/plain/trunk/config?h=packages/linux' -O .config
   git clone https://github.com/graysky2/kernel_gcc_patch.git
-  wget --quiet https://gitlab.com/post-factum/pf-kernel/commit/cf7a8ad26e0bd6ca8afba89f53d2e9dc43ee2598.diff -O O3-always-available.diff
-  #wget --quiet -m -np -c 'ck.kolivas.org/patches/5.0/5.5/5.5-ck1/patches/'
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.6/aufs-patches/0001-aufs-20200302.patch
+  wget --quiet https://gitlab.com/post-factum/pf-kernel/commit/6401ed9bdf5c3d13b959c938e5d38a3b03cfa062.diff -O O3-always-available.diff
+  #wget --quiet -m -np -c 'ck.kolivas.org/patches/5.0/5.7/5.7-ck1/patches/'
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.7/aufs-patches/0001-aufs-20200518.patch
   wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0001-add-sysctl-to-disallow-unprivileged-CLONE_NEWUSER-by.patch
-  wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0002-clear-patches.patch
-  wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0006-add-acs-overrides_iommu.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.7/clearlinux-patches/0001-clearlinux-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.7/fixes-miscellaneous/0001-fixes-miscellaneous.patch
   wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0007-v5.6-fsync.patch
   wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0011-ZFS-fix.patch
-  #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.5/wireguard-patches/0001-WireGuard-20200205.patch
 
-  patch -p1 < kernel_gcc_patch/enable_additional_cpu_optimizations_for_gcc_v9.1+_kernel_v5.5+.patch
+  patch -p1 < kernel_gcc_patch/enable_additional_cpu_optimizations_for_gcc_v9.1+_kernel_v5.7+.patch
   patch -p1 < O3-always-available.diff
-  #for f in ck.kolivas.org/patches/5.0/5.5/5.5-ck1/patches/*.patch; do patch -p1 < "\$f"; done
+  #for f in ck.kolivas.org/patches/5.0/5.7/5.7-ck1/patches/*.patch; do patch -p1 < "\$f"; done
   patch -p0 < ../$KERNEL_CONFIG_DIFF
-  patch -p1 < 0001-aufs-20200302.patch
+  patch -p1 < 0001-aufs-20200518.patch
   echo -e "CONFIG_AUFS_FS=y\nCONFIG_AUFS_BRANCH_MAX_127=y\nCONFIG_AUFS_BRANCH_MAX_511=n\nCONFIG_AUFS_BRANCH_MAX_1023=n\nCONFIG_AUFS_BRANCH_MAX_32767=n\nCONFIG_AUFS_HNOTIFY=y\nCONFIG_AUFS_EXPORT=n\nCONFIG_AUFS_XATTR=y\nCONFIG_AUFS_FHSM=y\nCONFIG_AUFS_RDU=n\nCONFIG_AUFS_DIRREN=n\nCONFIG_AUFS_SHWH=n\nCONFIG_AUFS_BR_RAMFS=y\nCONFIG_AUFS_BR_FUSE=n\nCONFIG_AUFS_BR_HFSPLUS=n\nCONFIG_AUFS_DEBUG=n" >> .config
   sed -i "s/CONFIG_ISO9660_FS=m/CONFIG_ISO9660_FS=y/" .config
   patch -p1 < 0001-add-sysctl-to-disallow-unprivileged-CLONE_NEWUSER-by.patch
-  patch -p1 < 0002-clear-patches.patch
-  patch -p1 < 0006-add-acs-overrides_iommu.patch
+  patch -p1 < 0001-clearlinux-patches.patch
+  patch -p1 < 0001-fixes-miscellaneous.patch
   patch -p1 < 0007-v5.6-fsync.patch
   patch -p1 < 0011-ZFS-fix.patch
   patch -p1 < ../zfs-ungpl-rcu_read_unlock-export.diff
-  #patch -p1 < 0001-WireGuard-20200205.patch
-  sed -i 's/CONFIG_DEFAULT_HOSTNAME="artixlinux"/CONFIG_DEFAULT_HOSTNAME="gentoox"/' .config
+  sed -i 's/CONFIG_DEFAULT_HOSTNAME="archlinux"/CONFIG_DEFAULT_HOSTNAME="gentoox"/' .config
   sed -i 's/CONFIG_LOCALVERSION=""/CONFIG_LOCALVERSION="-x86_64"/' .config
   sed -i 's/CONFIG_NET_IP_TUNNEL=y/CONFIG_NET_IP_TUNNEL=m/' .config
   sed -i 's/CONFIG_NET_UDP_TUNNEL=y/CONFIG_NET_UDP_TUNNEL=m/' .config
@@ -581,6 +582,9 @@ cat <<HEREDOC | chroot .
   rm -rf /var/cache/genkernel/*
   rm -f /var/cache/eix/portage.eix
   rm -f /var/cache/edb/mtimedb
+  rm -rf /var/db/repos/gentoo/*
+  rm -rf /var/db/repos/gentoo/.*
+  truncate -s 0 /var/log/*.log
   history -c
   history -w
 HEREDOC

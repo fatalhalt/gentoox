@@ -7,7 +7,7 @@ fi
 set -e
 echo -e 'Welcome to the GentooX setup, the installation script mainly consists of:
 \t- providing this script with a target partition where system will be installed
-\t- extracting precompiled squashfs system image into the specified parition
+\t- extracting precompiled squashfs system image into the specified partition
 \t- setting up GRUB, BIOS or UEFI mode will be used depending how system was booted
 \tGentooX uses openSUSE-style BTRFS root partition & subvolumes for snapshotting with snapper
 \tGentooX requires minimum of 16GB of space, and use of BTRFS is hardcoded
@@ -96,6 +96,7 @@ while :; do
 	echo
 	read -erp "Automatic partitioning (a) or manual partitioning (will launch gparted)? [a/m] " -n 1 partitioning_mode
 	if [[ $partitioning_mode = "a" ]]; then
+        if [[ ! -z $UEFI_MODE ]]; then echo "EFI boot detected"; fi
 		read -erp "Enter drive to be formatted for GentooX installation: " -i "/dev/sda" drive
         if [[ ! -z $UEFI_MODE ]]; then
           if [[ $drive =~ "nvme" ]]; then partition="${drive}p2"; else partition="${drive}2"; fi # UEFI mode
@@ -151,7 +152,7 @@ else
   fi
 fi
 
-echo "extracting precompiled image.squashfs GentooX image to the target partition..."
+echo "extracting precompiled GentooX image.squashfs to the target partition..."
 unsquashfs -f -d /mnt/install/ /mnt/cdrom/image.squashfs
 /usr/local/sbin/genfstab -U /mnt/install/ >> /mnt/install/etc/fstab
 echo -e "extraction complete.\n"
