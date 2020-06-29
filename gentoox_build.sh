@@ -166,7 +166,8 @@ dev-libs/weston nolto.conf
 dev-util/umockdev O2nolto.conf
 media-libs/avidemux-core nolto.conf
 dev-qt/qtcore nolto.conf
-app-office/libreoffice nolto.conf' > /etc/portage/package.env
+app-office/libreoffice nolto.conf
+sys-auth/passwdqc O2nolto.conf' > /etc/portage/package.env
 
 echo 'sys-devel/gcc graphite
 sys-devel/llvm gold
@@ -195,6 +196,7 @@ dev-python/six python_targets_python3_6
 dev-python/cffi python_targets_python3_6
 dev-python/numpy python_targets_python3_6
 dev-python/cython python_targets_python3_6
+dev-python/requests python_targets_python3_6
 dev-libs/libnatspec python_single_target_python2_7
 dev-lang/yasm python_single_target_python2_7
 media-libs/libcaca python_single_target_python2_7
@@ -585,6 +587,7 @@ cat <<HEREDOC | chroot .
   rm -rf /var/db/repos/gentoo/*
   rm -rf /var/db/repos/gentoo/.*
   truncate -s 0 /var/log/*.log
+  truncate -s 0 /var/log/portage/elog/summary.log
   history -c
   history -w
 HEREDOC
