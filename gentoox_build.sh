@@ -145,6 +145,8 @@ echo 'CFLAGS="\${CFLAGS} -fno-lto"
 CXXFLAGS="\${CFLAGS} -fno-lto"' > /etc/portage/env/nolto.conf
 echo 'CFLAGS="-O2 -march=sandybridge -mtune=sandybridge -pipe"
 CXXFLAGS="\${CFLAGS}"' > /etc/portage/env/O2nolto.conf
+echo 'CFLAGS="-O3 -march=sandybridge -mtune=sandybridge -pipe"
+CXXFLAGS="\${CFLAGS}"' > /etc/portage/env/O3nolto.conf
 
 echo 'dev-libs/elfutils nolto.conf
 app-crypt/efitools nolto.conf
@@ -167,7 +169,8 @@ dev-util/umockdev O2nolto.conf
 media-libs/avidemux-core nolto.conf
 dev-qt/qtcore nolto.conf
 app-office/libreoffice nolto.conf
-sys-auth/passwdqc O2nolto.conf' > /etc/portage/package.env
+sys-auth/passwdqc O2nolto.conf
+www-client/firefox O3nolto.conf' > /etc/portage/package.env
 
 echo 'sys-devel/gcc graphite
 sys-devel/llvm gold
@@ -176,7 +179,7 @@ sys-kernel/linux-firmware initramfs redistributable unknown-license
 x11-libs/libdrm libkms
 media-libs/mesa d3d9 lm-sensors opencl vaapi vdpau vulkan vulkan-overlay xa xvmc
 media-libs/libsdl2 gles2
-www-client/firefox -system-av1 -system-icu -system-jpeg -system-libevent -system-libvpx -system-sqlite -system-harfbuzz -system-webp hwaccel pgo lto wayland clang
+www-client/firefox -system-av1 -system-icu -system-jpeg -system-libevent -system-libvpx -system-sqlite -system-harfbuzz -system-webp hwaccel pgo lto wayland
 dev-libs/boost python
 dev-lang/python sqlite
 sys-fs/squashfs-tools zstd
@@ -197,6 +200,8 @@ dev-python/cffi python_targets_python3_6
 dev-python/numpy python_targets_python3_6
 dev-python/cython python_targets_python3_6
 dev-python/requests python_targets_python3_6
+dev-python/idna python_targets_python3_6
+dev-python/cryptography python_targets_python3_6
 dev-libs/libnatspec python_single_target_python2_7
 dev-lang/yasm python_single_target_python2_7
 media-libs/libcaca python_single_target_python2_7
@@ -450,7 +455,7 @@ echo '*/*::bobwya' >> /etc/portage/package.mask/lowprio
 echo 'app-benchmarks/phoronix-test-suite::bobwya' >> /etc/portage/package.unmask/wanted
 echo 'dev-php/fpdf::bobwya' >> /etc/portage/package.unmask/wanted
 
-emerge -v gimp avidemux blender tuxkart phoronix-test-suite keepassxc libreoffice firefox adobe-flash mpv audacious-plugins audacious net-irc/hexchat
+emerge -v gimp avidemux blender tuxkart phoronix-test-suite keepassxc libreoffice firefox adobe-flash mpv audacious-plugins audacious net-irc/hexchat virtualbox-guest-additions smartmontools
 touch /tmp/gentoox-extra-done
 HEREDOC
 exit 0
@@ -489,6 +494,8 @@ useradd $username
 yes $userpassword  | passwd $username
 gpasswd -a $username wheel
 gpasswd -a $username weston-launch
+gpasswd -a $username vboxguest
+gpasswd -a $username vboxsf
 
 #cp /usr/share/zoneinfo/UTC /etc/localtime
 echo "America/Chicago" > /etc/timezone
@@ -523,6 +530,7 @@ rc-update add dbus default
 rc-update add dhcpcd default
 rc-update add avahi-daemon default
 rc-update add samba default
+rc-update add sshd default
 
 
 cp /usr/src/install.sh /home/$username/

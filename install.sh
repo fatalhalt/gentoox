@@ -181,6 +181,7 @@ sed -i -r "s/^MAKEOPTS=\"([^\"]*)\"$/MAKEOPTS=\"-j\$NCORES\"/g" /etc/portage/mak
 sed -i -r "s/^NTHREADS=\"([^\"]*)\"$/NTHREADS=\"\$NCORES\"/g" /etc/portage/make.conf
 #rc-update add zfs-import boot
 #rc-update add zfs-mount boot
+rc-update delete virtualbox-guest-additions default
 
 sed -i "s/gentoox/$hostname/g" /etc/conf.d/hostname
 sed -i "s/gentoox/$hostname/g" /etc/hosts
@@ -200,7 +201,7 @@ else
 fi
 grub-mkconfig -o /boot/grub/grub.cfg
 
-emerge --sync
+#emerge --sync
 HEREDOC
 
 umount -l /mnt/install/boot/efi /mnt/install/var /mnt/install/usr/local /mnt/install/tmp /mnt/install/srv /mnt/install/root /mnt/install/opt /mnt/install/home /mnt/install/boot/grub/x86_64-efi /mnt/install/boot/grub/i386-pc /mnt/install/.snapshots /mnt/install 1>/dev/null 2>&1
