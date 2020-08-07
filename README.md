@@ -14,10 +14,12 @@ GentooX comes with simple interactive *install.sh* script, supports BIOS and UEF
 * Steam installed out-of-the-box with necessary lib32 dependencies and fsync Linux kernel patched in
 * flatpak is included, easily install VSCode or Discord in sandboxed environment
 * ZFS support, kernel patched to export FPU functions
-* Linux 5.7.1 kernel built with 1000Hz -03 for Sandybridge arch. Patches include aufs, ClearLinux, fsync, unprivileged CLONE_NEWUSER, and IOMMU missing ACS capabilities overrides
-* KDE 5.19.0, KDE Applications 20.04.1, KDE Frameworks 5.70.0, Qt 5.15.0
+* Linux 5.7.11 kernel built with 1000Hz -03 for Sandybridge arch. Patches include aufs, ClearLinux, fsync, unprivileged CLONE_NEWUSER, and IOMMU missing ACS capabilities overrides
+* KDE 5.19.4, KDE Applications 20.04.3, KDE Frameworks 5.72.0, Qt 5.15.0
 
 ## Changelog
+* 2020.07.29 Release
+  * Linux 5.7.11, KDE 5.19.4, KDE Applications 20.04.3, KDE Frameworks 5.72.0, Qt 5.15.0, Firefox 78.0.2, updates as of 7/29.
 * 2020.06.10 Release
   * Linux 5.7.1, KDE 5.19.0, Qt 5.15.0, Firefox 77.0.1, updates as of 6/10. Compiled with GCC9.3. LLVM10 remains masked.
   * added KDE systemtray to the panel (in postinstall.sh script)
