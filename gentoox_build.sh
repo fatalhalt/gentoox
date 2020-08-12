@@ -15,6 +15,10 @@ fi
 # dependencies
 #   base install: genkernel btrfs-progs portage-utils gentoolkit cpuid2cpuflags cryptsetup lvm2 mdadm dev-vcs/git
 #
+# problem packages
+#   apache, calamares, avidemux: fail to build
+#   phoronix-test-suite: depends on apache
+#   qt-creator: pulls llvm9, masked
 #
 
 gitprefix="https://gitgud.io/cloveros/cloveros/raw/master"
@@ -24,7 +28,7 @@ userpassword=gentoox
 builddate="$(date +%Y%m%d).graphite"
 builddir="build-$(date +%Y%m%d)"
 stage3tarball="stage3-amd64-20200504.graphite.tar.xz"
-KERNEL_CONFIG_DIFF="0001-kernel-config-cfs-r5.patch"
+KERNEL_CONFIG_DIFF="0001-kernel-config-cfs-r6.patch"
 
 binpkgs="$(pwd)/var/cache/binpkgs/"
 distfiles="$(pwd)/var/cache/distfiles/"
@@ -62,7 +66,7 @@ if [[ ! -f 'image/etc/gentoo-release' ]]; then
   cp -r ../../patches/* etc/portage/patches/
   mkdir -p etc/portage/patches/app-crypt/efitools
   cp ../../efitools-1.9.2-fixup-UNKNOWN_GLYPH.patch etc/portage/patches/app-crypt/efitools/
-  cp ../../qt-creator-use-llvm9.patch usr/src/
+  #cp ../../qt-creator-use-llvm9.patch usr/src/
 
   mkdir -p etc/portage/patches/www-client/firefox
   wget --quiet -P etc/portage/patches/www-client/firefox/ 'https://raw.githubusercontent.com/bmwiedemann/openSUSE/master/packages/m/MozillaFirefox/firefox-branded-icons.patch'
@@ -71,6 +75,7 @@ if [[ ! -f 'image/etc/gentoo-release' ]]; then
   wget --quiet -P etc/portage/patches/www-client/firefox/ 'http://bazaar.launchpad.net/~mozillateam/firefox/firefox-trunk.head/download/head:/unitymenubar.patch-20130215095938-1n6mqqau8tdfqwhg-1/unity-menubar.patch'
 
   mkdir -p etc/portage/package.mask
+  mkdir -p etc/portage/package.unmask
   cp ../../package.mask/* etc/portage/package.mask/
 
   cp ../../arch-chroot usr/local/sbin/
@@ -170,7 +175,23 @@ media-libs/avidemux-core nolto.conf
 dev-qt/qtcore nolto.conf
 app-office/libreoffice nolto.conf
 sys-auth/passwdqc O2nolto.conf
-www-client/firefox O3nolto.conf' > /etc/portage/package.env
+www-client/firefox O3nolto.conf
+dev-util/pkgconf nolto.conf
+net-misc/curl nolto.conf
+sys-devel/gettext nolto.conf
+dev-libs/fribidi nolto.conf
+sys-auth/polkit nolto.conf
+net-dns/avahi nolto.conf
+x11-libs/pango nolto.conf
+gnome-base/librsvg nolto.conf
+app-pda/libplist O2nolto.conf
+media-libs/gavl nolto.conf
+media-libs/libbluray nolto.conf
+net-im/telepathy-mission-control nolto.conf
+net-libs/gupnp-igd nolto.conf
+app-accessibility/speech-dispatcher nolto.conf
+dev-python/pygobject nolto.conf
+dev-python/pygtk nolto.conf' > /etc/portage/package.env
 
 echo 'sys-devel/gcc graphite
 sys-devel/llvm gold
@@ -191,6 +212,7 @@ sys-apps/xdg-desktop-portal screencast
 dev-vcs/git tk
 dev-libs/libjcat pkcs7 gpg
 dev-libs/libdbusmenu gtk3
+net-misc/curl http2
 */* PYTHON_TARGETS: python2_7 python3_7
 */* PYTHON_SINGLE_TARGET: -* python3_7
 dev-python/certifi python_targets_python3_6
@@ -202,6 +224,12 @@ dev-python/cython python_targets_python3_6
 dev-python/requests python_targets_python3_6
 dev-python/idna python_targets_python3_6
 dev-python/cryptography python_targets_python3_6
+dev-python/chardet python_targets_python3_6
+dev-python/urllib3 python_targets_python3_6
+dev-python/pycparser python_targets_python3_6
+dev-python/ply python_targets_python3_6
+dev-python/PySocks python_targets_python3_6
+dev-python/pyopenssl python_targets_python3_6
 dev-libs/libnatspec python_single_target_python2_7
 dev-lang/yasm python_single_target_python2_7
 media-libs/libcaca python_single_target_python2_7
@@ -234,22 +262,24 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   wget --quiet 'https://git.archlinux.org/svntogit/packages.git/plain/trunk/config?h=packages/linux' -O .config
   git clone https://github.com/graysky2/kernel_gcc_patch.git
   wget --quiet https://gitlab.com/post-factum/pf-kernel/commit/6401ed9bdf5c3d13b959c938e5d38a3b03cfa062.diff -O O3-always-available.diff
-  #wget --quiet -m -np -c 'ck.kolivas.org/patches/5.0/5.7/5.7-ck1/patches/'
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.7/aufs-patches/0001-aufs-20200518.patch
-  wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0001-add-sysctl-to-disallow-unprivileged-CLONE_NEWUSER-by.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.7/clearlinux-patches/0001-clearlinux-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.7/fixes-miscellaneous/0001-fixes-miscellaneous.patch
+  #wget --quiet -m -np -c 'ck.kolivas.org/patches/5.0/5.8/5.8-ck1/patches/'
+  #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.7/aufs-patches/0001-aufs-20200622.patch
+  #wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0001-add-sysctl-to-disallow-unprivileged-CLONE_NEWUSER-by.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.8/clearlinux-patches/0001-clearlinux-patches.patch
+  #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.8/fixes-miscellaneous/0001-fixes-miscellaneous.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.8/fixes-miscellaneous-v3/0001-fixes-miscellaneous.patch
+  # https://aur.archlinux.org/cgit/aur.git/plain/futex-wait-multiple-5.2.1.patch?h=linux-fsync
   wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0007-v5.6-fsync.patch
   wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0011-ZFS-fix.patch
 
-  patch -p1 < kernel_gcc_patch/enable_additional_cpu_optimizations_for_gcc_v9.1+_kernel_v5.7+.patch
+  patch -p1 < kernel_gcc_patch/enable_additional_cpu_optimizations_for_gcc_v10.1+_kernel_v5.8+.patch
   patch -p1 < O3-always-available.diff
-  #for f in ck.kolivas.org/patches/5.0/5.7/5.7-ck1/patches/*.patch; do patch -p1 < "\$f"; done
+  #for f in ck.kolivas.org/patches/5.0/5.8/5.8-ck1/patches/*.patch; do patch -p1 < "\$f"; done
   patch -p0 < ../$KERNEL_CONFIG_DIFF
-  patch -p1 < 0001-aufs-20200518.patch
-  echo -e "CONFIG_AUFS_FS=y\nCONFIG_AUFS_BRANCH_MAX_127=y\nCONFIG_AUFS_BRANCH_MAX_511=n\nCONFIG_AUFS_BRANCH_MAX_1023=n\nCONFIG_AUFS_BRANCH_MAX_32767=n\nCONFIG_AUFS_HNOTIFY=y\nCONFIG_AUFS_EXPORT=n\nCONFIG_AUFS_XATTR=y\nCONFIG_AUFS_FHSM=y\nCONFIG_AUFS_RDU=n\nCONFIG_AUFS_DIRREN=n\nCONFIG_AUFS_SHWH=n\nCONFIG_AUFS_BR_RAMFS=y\nCONFIG_AUFS_BR_FUSE=n\nCONFIG_AUFS_BR_HFSPLUS=n\nCONFIG_AUFS_DEBUG=n" >> .config
-  sed -i "s/CONFIG_ISO9660_FS=m/CONFIG_ISO9660_FS=y/" .config
-  patch -p1 < 0001-add-sysctl-to-disallow-unprivileged-CLONE_NEWUSER-by.patch
+  #patch -p1 < 0001-aufs-20200622.patch
+  #echo -e "CONFIG_AUFS_FS=y\nCONFIG_AUFS_BRANCH_MAX_127=y\nCONFIG_AUFS_BRANCH_MAX_511=n\nCONFIG_AUFS_BRANCH_MAX_1023=n\nCONFIG_AUFS_BRANCH_MAX_32767=n\nCONFIG_AUFS_HNOTIFY=y\nCONFIG_AUFS_EXPORT=n\nCONFIG_AUFS_XATTR=y\nCONFIG_AUFS_FHSM=y\nCONFIG_AUFS_RDU=n\nCONFIG_AUFS_DIRREN=n\nCONFIG_AUFS_SHWH=n\nCONFIG_AUFS_BR_RAMFS=y\nCONFIG_AUFS_BR_FUSE=n\nCONFIG_AUFS_BR_HFSPLUS=n\nCONFIG_AUFS_DEBUG=n" >> .config
+  #sed -i "s/CONFIG_ISO9660_FS=m/CONFIG_ISO9660_FS=y/" .config
+  #patch -p1 < 0001-add-sysctl-to-disallow-unprivileged-CLONE_NEWUSER-by.patch
   patch -p1 < 0001-clearlinux-patches.patch
   patch -p1 < 0001-fixes-miscellaneous.patch
   patch -p1 < 0007-v5.6-fsync.patch
@@ -259,12 +289,13 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   sed -i 's/CONFIG_LOCALVERSION=""/CONFIG_LOCALVERSION="-x86_64"/' .config
   sed -i 's/CONFIG_NET_IP_TUNNEL=y/CONFIG_NET_IP_TUNNEL=m/' .config
   sed -i 's/CONFIG_NET_UDP_TUNNEL=y/CONFIG_NET_UDP_TUNNEL=m/' .config
+  sed -i 's/EXTRAVERSION = -gentoo-r1/EXTRAVERSION = -gentoo/' Makefile
   make oldconfig
   touch /tmp/gentoox-kernelpatches-applied
 fi
 
 cd /usr/src
-rm -f $KERNEL_CONFIG_DIFF
+#rm -f $KERNEL_CONFIG_DIFF
 #mkdir -p /usr/share/genkernel/distfiles/
 #wget https://www.busybox.net/downloads/busybox-1.20.2.tar.bz2 -d /usr/share/genkernel/distfiles/
 #echo -e '\nMAKEOPTS="-j12"' >> /etc/genkernel.conf
@@ -363,15 +394,17 @@ gnome-base/gvfs afp archive bluray fuse gphoto2 ios mtp nfs samba zeroconf
 net-irc/telepathy-idle python_single_target_python2_7' >> /etc/portage/package.use/gentoox
 
 # enable flatpak backend in discover, patch qt-creator to use clang9 effectively dropping clang8
-sed -i "s/DBUILD_FlatpakBackend=OFF/DBUILD_FlatpakBackend=ON/" /var/db/repos/gentoo/kde-plasma/discover/discover-5.18.5.1.ebuild
-ebuild /var/db/repos/gentoo/kde-plasma/discover/discover-5.18.5.ebuild manifest
-patch -p1 /var/db/repos/gentoo/dev-qt/qt-creator/qt-creator-4.10.1.ebuild /usr/src/qt-creator-use-llvm9.patch
-ebuild /var/db/repos/gentoo/dev-qt/qt-creator/qt-creator-4.10.1.ebuild manifest
+sed -i "s/DBUILD_FlatpakBackend=OFF/DBUILD_FlatpakBackend=ON/" /var/db/repos/gentoo/kde-plasma/discover/discover-5.19.4.ebuild
+ebuild /var/db/repos/gentoo/kde-plasma/discover/discover-5.19.4.ebuild manifest
+#patch -p1 /var/db/repos/gentoo/dev-qt/qt-creator/qt-creator-4.10.1.ebuild /usr/src/qt-creator-use-llvm9.patch
+#ebuild /var/db/repos/gentoo/dev-qt/qt-creator/qt-creator-4.10.1.ebuild manifest
 
-emerge -v --jobs=2 --keep-going=y --autounmask=y --autounmask-write=y --deep --newuse kde-plasma/plasma-meta kde-apps/kde-apps-meta kde-apps/kmail kde-apps/knotes \
-latte-dock calamares plasma-sdk qt-creator libdbusmenu gvfs
-emerge --noreplace dev-qt/qt-creator
+# mask qt-creator, it pulls llvm9 and we don't want that
 echo 'dev-qt/qt-creator' >> /etc/portage/package.mask/gentoox
+emerge -v --jobs=2 --keep-going=y --autounmask=y --autounmask-write=y --deep --newuse kde-plasma/plasma-meta kde-apps/kde-apps-meta kde-apps/kmail kde-apps/knotes \
+latte-dock plasma-sdk libdbusmenu gvfs #calamares
+#emerge --noreplace dev-qt/qt-creator
+#echo 'dev-qt/qt-creator' >> /etc/portage/package.mask/gentoox
 
 yes | layman -o https://raw.githubusercontent.com/fosero/flatpak-overlay/master/repositories.xml -f -a flatpak-overlay -q
 emerge -v sys-apps/flatpak
@@ -455,7 +488,14 @@ echo '*/*::bobwya' >> /etc/portage/package.mask/lowprio
 echo 'app-benchmarks/phoronix-test-suite::bobwya' >> /etc/portage/package.unmask/wanted
 echo 'dev-php/fpdf::bobwya' >> /etc/portage/package.unmask/wanted
 
-emerge -v gimp avidemux blender tuxkart phoronix-test-suite keepassxc libreoffice firefox adobe-flash mpv audacious-plugins audacious net-irc/hexchat virtualbox-guest-additions smartmontools
+echo -e '\nmedia-libs/avidemux-core::mv
+media-video/avidemux::mv
+media-libs/avidemux-plugins::mv' >> /etc/portage/package.mask/lowprio
+
+echo 'www-servers/apache O3nolto.conf
+media-gfx/gimp nolto.conf' >> /etc/portage/package.env
+
+emerge -v gimp avidemux blender tuxkart keepassxc libreoffice firefox adobe-flash mpv audacious-plugins audacious net-irc/hexchat smartmontools libisoburn #phoronix-test-suite virtualbox-guest-additions
 touch /tmp/gentoox-extra-done
 HEREDOC
 exit 0
@@ -583,7 +623,9 @@ fi
 
 if [[ ! -z $build_iso ]]; then
 cat <<HEREDOC | chroot .
-  rm -f /tmp/*
+  #eclean-dist --deep
+  #eclean-pkg --deep
+  #rm -f /tmp/*
   rm -rf /var/tmp/portage/*
   rm -f /usr/src/linux/.tmp*
   find /usr/src/linux/ -name "*.o" -exec rm -f {} \;

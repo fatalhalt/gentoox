@@ -1,6 +1,6 @@
->=sys-devel/llvm-10
->=sys-devel/llvm-common-10
->=sys-devel/clang-10
->=sys-devel/clang-common-10
->=sys-devel/llvmgold-10
->=sys-libs/libomp-10
+#>=sys-devel/llvm-10
+#>=sys-devel/llvm-common-10
+#>=sys-devel/clang-10
+#>=sys-devel/clang-common-10
+#>=sys-devel/llvmgold-10
+#>=sys-libs/libomp-10
