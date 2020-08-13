@@ -16,8 +16,6 @@ fi
 #   base install: genkernel btrfs-progs portage-utils gentoolkit cpuid2cpuflags cryptsetup lvm2 mdadm dev-vcs/git
 #
 # problem packages
-#   apache, calamares, avidemux: fail to build
-#   phoronix-test-suite: depends on apache
 #   qt-creator: pulls llvm9, masked
 #
 
@@ -171,7 +169,6 @@ x11-drivers/xf86-video-intel nolto.conf
 x11-base/xorg-server nolto.conf
 dev-libs/weston nolto.conf
 dev-util/umockdev O2nolto.conf
-media-libs/avidemux-core nolto.conf
 dev-qt/qtcore nolto.conf
 app-office/libreoffice nolto.conf
 sys-auth/passwdqc O2nolto.conf
@@ -271,6 +268,8 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   # https://aur.archlinux.org/cgit/aur.git/plain/futex-wait-multiple-5.2.1.patch?h=linux-fsync
   wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0007-v5.6-fsync.patch
   wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0011-ZFS-fix.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.8/fsgsbase-patches-v2/0001-fsgsbase-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.8/zstd-patches-v2/0001-zstd-patches.patch
 
   patch -p1 < kernel_gcc_patch/enable_additional_cpu_optimizations_for_gcc_v10.1+_kernel_v5.8+.patch
   patch -p1 < O3-always-available.diff
@@ -285,6 +284,8 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   patch -p1 < 0007-v5.6-fsync.patch
   patch -p1 < 0011-ZFS-fix.patch
   patch -p1 < ../zfs-ungpl-rcu_read_unlock-export.diff
+  patch -p1 < 0001-fsgsbase-patches.patch
+  patch -p1 < 0001-zstd-patches.patch
   sed -i 's/CONFIG_DEFAULT_HOSTNAME="archlinux"/CONFIG_DEFAULT_HOSTNAME="gentoox"/' .config
   sed -i 's/CONFIG_LOCALVERSION=""/CONFIG_LOCALVERSION="-x86_64"/' .config
   sed -i 's/CONFIG_NET_IP_TUNNEL=y/CONFIG_NET_IP_TUNNEL=m/' .config
@@ -402,7 +403,7 @@ ebuild /var/db/repos/gentoo/kde-plasma/discover/discover-5.19.4.ebuild manifest
 # mask qt-creator, it pulls llvm9 and we don't want that
 echo 'dev-qt/qt-creator' >> /etc/portage/package.mask/gentoox
 emerge -v --jobs=2 --keep-going=y --autounmask=y --autounmask-write=y --deep --newuse kde-plasma/plasma-meta kde-apps/kde-apps-meta kde-apps/kmail kde-apps/knotes \
-latte-dock plasma-sdk libdbusmenu gvfs #calamares
+latte-dock plasma-sdk libdbusmenu gvfs calamares
 #emerge --noreplace dev-qt/qt-creator
 #echo 'dev-qt/qt-creator' >> /etc/portage/package.mask/gentoox
 
@@ -491,9 +492,9 @@ echo 'dev-php/fpdf::bobwya' >> /etc/portage/package.unmask/wanted
 echo -e '\nmedia-libs/avidemux-core::mv
 media-video/avidemux::mv
 media-libs/avidemux-plugins::mv' >> /etc/portage/package.mask/lowprio
-
-echo 'www-servers/apache O3nolto.conf
-media-gfx/gimp nolto.conf' >> /etc/portage/package.env
+echo 'media-gfx/gimp nolto.conf
+media-libs/avidemux-core
+media-libs/avidemux-plugins' >> /etc/portage/package.env
 
 emerge -v gimp avidemux blender tuxkart keepassxc libreoffice firefox adobe-flash mpv audacious-plugins audacious net-irc/hexchat smartmontools libisoburn #phoronix-test-suite virtualbox-guest-additions
 touch /tmp/gentoox-extra-done
@@ -626,6 +627,7 @@ cat <<HEREDOC | chroot .
   #eclean-dist --deep
   #eclean-pkg --deep
   #rm -f /tmp/*
+  #emerge @preserved-rebuild
   rm -rf /var/tmp/portage/*
   rm -f /usr/src/linux/.tmp*
   find /usr/src/linux/ -name "*.o" -exec rm -f {} \;
