@@ -227,6 +227,7 @@ dev-python/pycparser python_targets_python3_6
 dev-python/ply python_targets_python3_6
 dev-python/PySocks python_targets_python3_6
 dev-python/pyopenssl python_targets_python3_6
+dev-python/setuptools_scm python_targets_python3_6
 dev-libs/libnatspec python_single_target_python2_7
 dev-lang/yasm python_single_target_python2_7
 media-libs/libcaca python_single_target_python2_7
@@ -236,7 +237,7 @@ rm -rf /etc/portage/package.accept_keywords/
 echo -n > /etc/portage/package.accept_keywords
 
 emerge --autounmask=y --autounmask-write=y -vDN @world
-emerge -v gentoo-sources genkernel portage-utils gentoolkit cpuid2cpuflags cryptsetup lvm2 mdadm dev-vcs/git btrfs-progs app-arch/lz4 ntfs3g dosfstools exfat-utils f2fs-tools gptfdisk efitools shim
+emerge -v gentoo-sources genkernel portage-utils gentoolkit cpuid2cpuflags cryptsetup lvm2 mdadm dev-vcs/git btrfs-progs app-arch/lz4 ntfs3g dosfstools exfat-utils f2fs-tools gptfdisk efitools shim syslog-ng logrotate
 emerge --noreplace app-editors/nano
 touch /tmp/gentoox-base-done
 HEREDOC
@@ -496,7 +497,7 @@ echo 'media-gfx/gimp nolto.conf
 media-libs/avidemux-core
 media-libs/avidemux-plugins' >> /etc/portage/package.env
 
-emerge -v gimp avidemux blender tuxkart keepassxc libreoffice firefox adobe-flash mpv audacious-plugins audacious net-irc/hexchat smartmontools libisoburn #phoronix-test-suite virtualbox-guest-additions
+emerge -v gimp avidemux blender tuxkart keepassxc libreoffice firefox adobe-flash mpv audacious-plugins audacious net-irc/hexchat smartmontools libisoburn phoronix-test-suite virtualbox-guest-additions
 touch /tmp/gentoox-extra-done
 HEREDOC
 exit 0
@@ -559,7 +560,7 @@ echo -e "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=wheel\nupdate_config=1
 eselect fontconfig enable 52-infinality.conf
 eselect infinality set infinality
 eselect lcdfilter set infinality
-emerge -v ja-ipafonts source-han-sans
+emerge -v ja-ipafonts source-han-sans fira-code fira-sans
 
 echo 'kernel.sysrq=1' >> /etc/sysctl.d/local.conf
 
@@ -652,7 +653,7 @@ isobuilddate=$(wget -O - http://distfiles.gentoo.org/releases/amd64/autobuilds/c
 if [[ ! -f "current-install-amd64-minimal/install-amd64-minimal-$isobuilddate.iso" ]]; then
   wget http://distfiles.gentoo.org/releases/amd64/autobuilds/current-install-amd64-minimal/install-amd64-minimal-$isobuilddate.iso
 fi
-#emerge -u dev-libs/libisoburn sys-fs/squashfs-tools
+#emerge -u dev-libs/libisoburn sys-fs/squashfs-tools sys-boot/syslinux
 xorriso -osirrox on -indev *-$isobuilddate.iso -extract / iso/
 mv image.squashfs iso/image.squashfs
 tar -xOf kernel-gentoox.tar.lzma --wildcards \*vmlinuz-\* > iso/boot/gentoo

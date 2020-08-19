@@ -175,6 +175,7 @@ if [[ -z $drive ]]; then drive=$(echo $partition | sed 's/[0-9]\+\$//'); fi
 
 sensors-detect --auto
 rc-update add lm_sensors default
+rc-update add syslog-ng default
 
 NCORES=\$(getconf _NPROCESSORS_ONLN)
 sed -i -r "s/^MAKEOPTS=\"([^\"]*)\"$/MAKEOPTS=\"-j\$NCORES\"/g" /etc/portage/make.conf

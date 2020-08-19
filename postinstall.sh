@@ -61,12 +61,18 @@ gtk-theme-name=Breeze-Dark' >> ~/.config/gtk-3.0/settings.ini
 
 kwriteconfig5 --file ~/.config/kdeglobals --group General --key XftHintStyle --type string hintslight
 kwriteconfig5 --file ~/.config/kdeglobals --group General --key XftSubPixel --type string rgb
-kwriteconfig5 --file ~/.config/kdeglobals --group General --key fixed --type string "Hack,9,-1,5,50,0,0,0,0,0,Regular"
-kwriteconfig5 --file ~/.config/kdeglobals --group General --key font --type string "Noto Sans,9,-1,5,50,0,0,0,0,0,Regular"
-kwriteconfig5 --file ~/.config/kdeglobals --group General --key menuFont --type string "Noto Sans,9,-1,5,50,0,0,0,0,0,Regular"
-kwriteconfig5 --file ~/.config/kdeglobals --group General --key smallestReadableFont --type string "Noto Sans,9,-1,5,50,0,0,0,0,0,Regular"
-kwriteconfig5 --file ~/.config/kdeglobals --group General --key toolBarFont --type string "Noto Sans,9,-1,5,50,0,0,0,0,0,Regular"
-kwriteconfig5 --file ~/.config/kdeglobals --group WM --key activeFont --type string "Noto Sans,9,-1,5,50,0,0,0,0,0,Regular"
+#kwriteconfig5 --file ~/.config/kdeglobals --group General --key fixed --type string "Hack,9,-1,5,50,0,0,0,0,0,Regular"
+#kwriteconfig5 --file ~/.config/kdeglobals --group General --key font --type string "Noto Sans,9,-1,5,50,0,0,0,0,0,Regular"
+#kwriteconfig5 --file ~/.config/kdeglobals --group General --key menuFont --type string "Noto Sans,9,-1,5,50,0,0,0,0,0,Regular"
+#kwriteconfig5 --file ~/.config/kdeglobals --group General --key smallestReadableFont --type string "Noto Sans,9,-1,5,50,0,0,0,0,0,Regular"
+#kwriteconfig5 --file ~/.config/kdeglobals --group General --key toolBarFont --type string "Noto Sans,9,-1,5,50,0,0,0,0,0,Regular"
+#kwriteconfig5 --file ~/.config/kdeglobals --group WM --key activeFont --type string "Noto Sans,9,-1,5,50,0,0,0,0,0,Regular"
+kwriteconfig5 --file ~/.config/kdeglobals --group General --key fixed --type string "Fira Code,9,-1,5,50,0,0,0,0,0"
+kwriteconfig5 --file ~/.config/kdeglobals --group General --key font --type string "Fira Sans,9,-1,5,57,0,0,0,0,0,Medium"
+kwriteconfig5 --file ~/.config/kdeglobals --group General --key menuFont --type string "Fira Sans,9,-1,5,57,0,0,0,0,0,Medium"
+kwriteconfig5 --file ~/.config/kdeglobals --group General --key smallestReadableFont --type string "Fira Sans,9,-1,5,50,0,0,0,0,0"
+kwriteconfig5 --file ~/.config/kdeglobals --group General --key toolBarFont --type string "Fira Sans,9,-1,5,57,0,0,0,0,0,Medium"
+kwriteconfig5 --file ~/.config/kdeglobals --group WM --key activeFont --type string "Fira Sans,10,-1,5,63,0,0,0,0,0,SemiBold"
 kwriteconfig5 --file ~/.config/kdeglobals --group KDE --key LookAndFeelPackage --type string "GentooX"
 kwriteconfig5 --file ~/.config/kdeglobals --group KDE --key SingleClick --type bool false
 
