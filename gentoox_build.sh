@@ -263,13 +263,12 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   #wget --quiet -m -np -c 'ck.kolivas.org/patches/5.0/5.8/5.8-ck1/patches/'
   #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.7/aufs-patches/0001-aufs-20200622.patch
   #wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0001-add-sysctl-to-disallow-unprivileged-CLONE_NEWUSER-by.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.8/clearlinux-patches/0001-clearlinux-patches.patch
-  #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.8/fixes-miscellaneous/0001-fixes-miscellaneous.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.8/fixes-miscellaneous-v3/0001-fixes-miscellaneous.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.8/clearlinux-patches-v2/0001-clearlinux-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.8/fixes-miscellaneous-v5/0001-fixes-miscellaneous.patch
   # https://aur.archlinux.org/cgit/aur.git/plain/futex-wait-multiple-5.2.1.patch?h=linux-fsync
   wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0007-v5.6-fsync.patch
   wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0011-ZFS-fix.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.8/fsgsbase-patches-v2/0001-fsgsbase-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.8/fsgsbase-patches-v3/0001-fsgsbase-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.8/zstd-patches-v2/0001-zstd-patches.patch
 
   patch -p1 < kernel_gcc_patch/enable_additional_cpu_optimizations_for_gcc_v10.1+_kernel_v5.8+.patch
