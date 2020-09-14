@@ -408,6 +408,13 @@ Wallpaper=' > ~/.local/share/konsole/Breeze.colorscheme
 kwriteconfig5 --file ~/.config/plasma-org.kde.plasma.desktop-appletsrc --group Containments --group $CONTAINMENT_ID --group General --key AppletOrder --type string "$NEW_APPLET_ORDER_STRING"
 
 
+# create KIO aware mpv .desktop shortcut
+mkdir -p ~/.local/share/applications
+cp /usr/share/applications/mpv.desktop ~/.local/share/applications/mpv-kio.desktop
+sed -i -r "s/^Name=(.*)$/Name=mpv Media Player \(KIO cat from smb\)/g" ~/.local/share/applications/mpv-kio.desktop
+sed -i -r "s/^Exec=(.*)$/Exec=mpv-kio.sh/g" ~/.local/share/applications/mpv-kio.desktop
+
+
 # after script runs delete it
 sed -i "s/~\/postinstall.sh &//" ~/.xinitrc
 rm -- "$0"

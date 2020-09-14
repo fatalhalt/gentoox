@@ -79,6 +79,8 @@ if [[ ! -f 'image/etc/gentoo-release' ]]; then
   cp ../../arch-chroot usr/local/sbin/
   cp ../../genfstab usr/local/sbin/
 
+  cp ../../mpv-kio.sh usr/local/bin/
+
   if [[ ! -z $binpkgs ]] && [[ ! -z $distfiles ]]; then
     #rsync -a $binpkgs var/cache/binpkgs/
     #rsync -a $distfiles var/cache/distfiles/
@@ -210,6 +212,8 @@ dev-vcs/git tk
 dev-libs/libjcat pkcs7 gpg
 dev-libs/libdbusmenu gtk3
 net-misc/curl http2
+dev-libs/apr-util ldap
+sys-apps/util-linux caps
 */* PYTHON_TARGETS: python2_7 python3_7
 */* PYTHON_SINGLE_TARGET: -* python3_7
 dev-python/certifi python_targets_python3_6
@@ -314,7 +318,7 @@ emerge -v grub:2 squashfs-tools linux-firmware os-prober zfs zfs-kmod
 hostid > /etc/hostid
 dd if=/dev/urandom of=/dev/stdout bs=1 count=4 > /etc/hostid
 
-genkernel --microcode --luks --lvm --mdadm --btrfs --disklabel --zfs initramfs
+genkernel --microcode --luks --lvm --mdadm --btrfs --zfs initramfs
 XZ_OPT="--lzma1=preset=9e,dict=128MB,nice=273,depth=200,lc=4" tar --lzma -cf /usr/src/kernel-gentoox.tar.lzma /boot/*\${KERNELVERSION}* -C /lib/modules/ .
 
 sed -i "s/#GRUB_CMDLINE_LINUX_DEFAULT=\"\"/GRUB_CMDLINE_LINUX_DEFAULT=\"zswap.enabled=1 zswap.compressor=lz4 zswap.max_pool_percent=20 zswap.zpool=z3fold dobtrfs\"/" /etc/default/grub
@@ -355,7 +359,7 @@ dev-ruby/racc ruby_targets_ruby27
 virtual/ruby-ssl ruby_targets_ruby27' >> /etc/portage/package.use/gentoox
 
 emerge -v --autounmask=y --autounmask-write=y --keep-going=y --deep --newuse xorg-server nvidia-firmware arandr elogind sudo vim weston wpa_supplicant ntp bind-tools telnet-bsd snapper \
-nfs-utils cifs-utils samba dhcpcd nss-mdns zsh zsh-completions powertop cpupower lm-sensors screenfetch gparted gdb atop dos2unix app-misc/screen app-text/tree #plymouth-openrc-plugin
+nfs-utils cifs-utils samba dhcpcd nss-mdns zsh zsh-completions powertop cpupower lm-sensors screenfetch gparted gdb atop dos2unix app-misc/screen app-text/tree openbsd-netcat #plymouth-openrc-plugin
 #emerge -avuDN --with-bdeps=y @world
 #emerge -v --depclean
 groupadd weston-launch
@@ -388,7 +392,7 @@ sed -i '1s/^/NTHREADS="12"\n/' /etc/portage/make.conf
 
 echo -e '\nkde-plasma/plasma-meta discover networkmanager thunderbolt
 kde-apps/kio-extras samba
-media-video/vlc archive bluray dav1d libcaca live opus speex theora vaapi vdpau x265
+media-video/vlc archive bluray dav1d libass libcaca lirc live opus samba speex skins theora vaapi v4l vdpau x265
 media-video/ffmpeg bluray cdio dav1d rubberband libass ogg vpx rtmp aac wavpack opus gme v4l webp theora xcb cpudetection x265 libaom truetype libsoxr modplug samba vaapi vdpau libcaca libdrm librtmp opencl openssl speex
 dev-qt/qtmultimedia gstreamer
 gnome-base/gvfs afp archive bluray fuse gphoto2 ios mtp nfs samba zeroconf
@@ -485,18 +489,19 @@ media-gfx/blender python_single_target_python3_6' >> /etc/portage/package.use/ge
 
 yes | layman -a bobwya -q
 mkdir -p /etc/portage/package.mask /etc/portage/package.unmask
-echo '*/*::bobwya' >> /etc/portage/package.mask/lowprio
-echo 'app-benchmarks/phoronix-test-suite::bobwya' >> /etc/portage/package.unmask/wanted
-echo 'dev-php/fpdf::bobwya' >> /etc/portage/package.unmask/wanted
+echo '*/*::bobwya
+*/*::mv' >> /etc/portage/package.mask/lowprio
 
-echo -e '\nmedia-libs/avidemux-core::mv
-media-video/avidemux::mv
-media-libs/avidemux-plugins::mv' >> /etc/portage/package.mask/lowprio
+echo 'app-benchmarks/phoronix-test-suite::bobwya
+dev-php/fpdf::bobwya
+app-portage/portage-bashrc-mv::mv
+app-shells/runtitle::mv' >> /etc/portage/package.unmask/wanted
+
 echo 'media-gfx/gimp nolto.conf
 media-libs/avidemux-core
 media-libs/avidemux-plugins' >> /etc/portage/package.env
 
-emerge -v gimp avidemux blender tuxkart keepassxc libreoffice firefox adobe-flash mpv audacious-plugins audacious net-irc/hexchat smartmontools libisoburn phoronix-test-suite virtualbox-guest-additions
+emerge -v gimp avidemux blender tuxkart keepassxc libreoffice firefox adobe-flash mpv audacious-plugins audacious net-irc/hexchat smartmontools libisoburn phoronix-test-suite virtualbox-guest-additions pfl bash-completion dev-python/pip virtualenv jq
 touch /tmp/gentoox-extra-done
 HEREDOC
 exit 0
