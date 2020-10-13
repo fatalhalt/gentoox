@@ -190,7 +190,9 @@ net-im/telepathy-mission-control nolto.conf
 net-libs/gupnp-igd nolto.conf
 app-accessibility/speech-dispatcher nolto.conf
 dev-python/pygobject nolto.conf
-dev-python/pygtk nolto.conf' > /etc/portage/package.env
+dev-python/pygtk nolto.conf
+sys-libs/libomp O3nolto.conf
+app-arch/bzip2 O3nolto.conf' > /etc/portage/package.env
 
 echo 'sys-devel/gcc graphite
 sys-devel/llvm gold
@@ -264,16 +266,17 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   wget --quiet 'https://git.archlinux.org/svntogit/packages.git/plain/trunk/config?h=packages/linux' -O .config
   git clone https://github.com/graysky2/kernel_gcc_patch.git
   wget --quiet https://gitlab.com/post-factum/pf-kernel/commit/6401ed9bdf5c3d13b959c938e5d38a3b03cfa062.diff -O O3-always-available.diff
-  #wget --quiet -m -np -c 'ck.kolivas.org/patches/5.0/5.8/5.8-ck1/patches/'
+  #wget --quiet -m -np -c 'ck.kolivas.org/patches/5.0/5.9/5.9-ck1/patches/'
   #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.7/aufs-patches/0001-aufs-20200622.patch
   #wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0001-add-sysctl-to-disallow-unprivileged-CLONE_NEWUSER-by.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.8/clearlinux-patches-v2/0001-clearlinux-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.8/fixes-miscellaneous-v5/0001-fixes-miscellaneous.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/clearlinux-patches/0001-clearlinux-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/fixes-miscellaneous-v2/0001-fixes-miscellaneous.patch
   # https://aur.archlinux.org/cgit/aur.git/plain/futex-wait-multiple-5.2.1.patch?h=linux-fsync
-  wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0007-v5.6-fsync.patch
+  #wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0007-v5.6-fsync.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/futex-patches/0001-futex-patches.patch
   wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0011-ZFS-fix.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.8/fsgsbase-patches-v3/0001-fsgsbase-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.8/zstd-patches-v2/0001-zstd-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/fsgsbase-patches/0001-fsgsbase-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/zstd-dev-patches/0001-zstd-dev-patches.patch
 
   patch -p1 < kernel_gcc_patch/enable_additional_cpu_optimizations_for_gcc_v10.1+_kernel_v5.8+.patch
   patch -p1 < O3-always-available.diff
@@ -285,11 +288,12 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   #patch -p1 < 0001-add-sysctl-to-disallow-unprivileged-CLONE_NEWUSER-by.patch
   patch -p1 < 0001-clearlinux-patches.patch
   patch -p1 < 0001-fixes-miscellaneous.patch
-  patch -p1 < 0007-v5.6-fsync.patch
+  #patch -p1 < 0007-v5.6-fsync.patch
+  patch -p1 < 0001-futex-patches.patch
   patch -p1 < 0011-ZFS-fix.patch
   patch -p1 < ../zfs-ungpl-rcu_read_unlock-export.diff
   patch -p1 < 0001-fsgsbase-patches.patch
-  patch -p1 < 0001-zstd-patches.patch
+  patch -p1 < 0001-zstd-dev-patches.patch
   sed -i 's/CONFIG_DEFAULT_HOSTNAME="archlinux"/CONFIG_DEFAULT_HOSTNAME="gentoox"/' .config
   sed -i 's/CONFIG_LOCALVERSION=""/CONFIG_LOCALVERSION="-x86_64"/' .config
   sed -i 's/CONFIG_NET_IP_TUNNEL=y/CONFIG_NET_IP_TUNNEL=m/' .config
@@ -399,8 +403,8 @@ gnome-base/gvfs afp archive bluray fuse gphoto2 ios mtp nfs samba zeroconf
 net-irc/telepathy-idle python_single_target_python2_7' >> /etc/portage/package.use/gentoox
 
 # enable flatpak backend in discover, patch qt-creator to use clang9 effectively dropping clang8
-sed -i "s/DBUILD_FlatpakBackend=OFF/DBUILD_FlatpakBackend=ON/" /var/db/repos/gentoo/kde-plasma/discover/discover-5.19.4.ebuild
-ebuild /var/db/repos/gentoo/kde-plasma/discover/discover-5.19.4.ebuild manifest
+sed -i "s/DBUILD_FlatpakBackend=OFF/DBUILD_FlatpakBackend=ON/" /var/db/repos/gentoo/kde-plasma/discover/discover-5.20.0.ebuild
+ebuild /var/db/repos/gentoo/kde-plasma/discover/discover-5.20.0.ebuild manifest
 #patch -p1 /var/db/repos/gentoo/dev-qt/qt-creator/qt-creator-4.10.1.ebuild /usr/src/qt-creator-use-llvm9.patch
 #ebuild /var/db/repos/gentoo/dev-qt/qt-creator/qt-creator-4.10.1.ebuild manifest
 
@@ -577,6 +581,7 @@ rc-update add dhcpcd default
 rc-update add avahi-daemon default
 rc-update add samba default
 rc-update add sshd default
+rc-update add virtualbox-guest-additions default
 
 
 cp /usr/src/install.sh /home/$username/
