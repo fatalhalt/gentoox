@@ -1,8 +1,8 @@
 # GentooX
 
-an -O3, Graphite, and LTO optimized x86_64 LiveCD Gentoo distribution with installer. Aimed at gamers and benchmarking.
+an -O3, Graphite, and LTO optimized x86_64 LiveCD Gentoo distribution with installer.
 
-GentooX comes with simple interactive *install.sh* script, supports BIOS and UEFI x86_64 systems, at minimum requires ~~AVX~~ capable CPUs released since 2011 such as Intel Sandybridge or AMD Bulldozer, among KDE, it includes Steam flatpak and phoronix-suite out-of-the-box.
+GentooX comes with simple interactive *install.sh* script, supports BIOS and UEFI x86_64 systems, at minimum requires ~~AVX~~ capable CPUs released since 2011 such as Intel Sandybridge or AMD Bulldozer, among KDE, it includes Steam, flatpak, and phoronix-suite out-of-the-box.
 
 * based on Gentoo's bleeding edge ~amd64 testing branch
 * OpenRC init system
