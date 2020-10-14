@@ -14,10 +14,14 @@ GentooX comes with simple interactive *install.sh* script, supports BIOS and UEF
 * Steam installed out-of-the-box with necessary lib32 dependencies and fsync Linux kernel patched in
 * flatpak is included, easily install VSCode or Discord in sandboxed environment
 * ZFS support, kernel patched to export FPU functions
-* Linux 5.8.2 kernel built with 1000Hz -03 for Sandybridge arch. Patches include aufs, zstd, ClearLinux patches, Intel FSGSBASE patches, Valve's fsync, sirlucjan's [fixes-miscellaneous-v3](https://gitlab.com/sirlucjan/kernel-patches/-/tree/master/5.8/fixes-miscellaneous-v3), unprivileged CLONE_NEWUSER, and IOMMU missing ACS capabilities overrides. CFS remains as default scheduler.
-* KDE 5.19.4, KDE Applications 20.08, KDE Frameworks 5.73.0, Qt 5.15.0
+* Linux 5.9.0 kernel built with 1000Hz -03 for Sandybridge arch. Patches include aufs, zstd, ClearLinux patches, Intel FSGSBASE patches, Valve's fsync, sirlucjan's [fixes-miscellaneous-v3](https://gitlab.com/sirlucjan/kernel-patches/-/tree/master/5.8/fixes-miscellaneous-v3), unprivileged CLONE_NEWUSER, and IOMMU missing ACS capabilities overrides. CFS remains as default scheduler.
+* KDE 5.20.0, KDE Applications 20.08.2, KDE Frameworks 5.75.0, Qt 5.15.1
 
 ## Changelog
+* 2020.10.13 Release
+  * Linux 5.9.0, KDE 5.20.0, KDE Applications 20.08.2, KDE Frameworks 5.75.0, Firefox 81.0.2, updates as of 10/13.
+* 2020.09.17 Release
+  * Linux 5.8.10, KDE 5.19.5, KDE Applications 20.08.1, KDE Frameworks 5.74.0, Qt 5.15.1, Firefox 80.0.1, updates as of 9/17.
 * 2020.08.19 Release
   * everything recompiled against GCC 10.2.0
   * Linux 5.8.2, KDE Applications 20.08, KDE Frameworks 5.73.0, Firefox 79.0, updates as of 8/19.
