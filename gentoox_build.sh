@@ -8,11 +8,9 @@ fi
 # Notes
 # • start with clean /var/db/, if you have binpkgs or distfiles on a host you can mount --bind or rsync them to the chroot
 # • plymouth graphical splash via genkernel-next is commented out as it only supports systemd, GentooX is using OpenRC
-# • ZFS temporarily disabled as it's not officially supported in Linux 5.5 and also errors with:
-#     FATAL: modpost: GPL-incompatible module zfs.ko uses GPL-only symbol '__rcu_read_lock'
-# • CONFIG_ISO9660_FS=y must be a module and not 'm' otherwise livecd won't boot, squashfs cannot be bigger than 4GB, also empty 'livecd' file should exist on iso's /
+# • CONFIG_ISO9660_FS=y must be compiled-in and not 'm' otherwise livecd won't boot, squashfs cannot be bigger than 4GB, also empty 'livecd' file should exist on iso's /
 #
-# dependencies
+# host dependencies
 #   base install: genkernel btrfs-progs portage-utils gentoolkit cpuid2cpuflags cryptsetup lvm2 mdadm dev-vcs/git
 #
 # problem packages
@@ -59,6 +57,7 @@ if [[ ! -f 'image/etc/gentoo-release' ]]; then
   rm -f stage3*
 
   cp ../../$KERNEL_CONFIG_DIFF usr/src
+  cp ../../0011-ZFS-fix.patch usr/src
   cp ../../zfs-ungpl-rcu_read_unlock-export.diff usr/src
   mkdir -p etc/portage/patches
   cp -r ../../patches/* etc/portage/patches/
@@ -269,30 +268,53 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   #wget --quiet -m -np -c 'ck.kolivas.org/patches/5.0/5.9/5.9-ck1/patches/'
   #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.7/aufs-patches/0001-aufs-20200622.patch
   #wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0001-add-sysctl-to-disallow-unprivileged-CLONE_NEWUSER-by.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/clearlinux-patches/0001-clearlinux-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/fixes-miscellaneous-v2/0001-fixes-miscellaneous.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/android-patches/0001-android-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/arch-patches-v6/0001-arch-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/btrfs-patches-v7/0001-btrfs-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/clearlinux-patches-v2/0001-clearlinux-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/fixes-miscellaneous-v7/0001-fixes-miscellaneous.patch
   # https://aur.archlinux.org/cgit/aur.git/plain/futex-wait-multiple-5.2.1.patch?h=linux-fsync
   #wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0007-v5.6-fsync.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/futex-patches/0001-futex-patches.patch
-  wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0011-ZFS-fix.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/fsgsbase-patches/0001-fsgsbase-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/zstd-dev-patches/0001-zstd-dev-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/futex-patches-v3/0001-futex-patches.patch
+  #wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0011-ZFS-fix.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/fsgsbase-patches-v3/0001-fsgsbase-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/ntfs3-patches-v2/0001-ntfs3-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/zstd-dev-patches-v4/0001-zstd-dev-patches.patch
 
   patch -p1 < kernel_gcc_patch/enable_additional_cpu_optimizations_for_gcc_v10.1+_kernel_v5.8+.patch
   patch -p1 < O3-always-available.diff
   #for f in ck.kolivas.org/patches/5.0/5.8/5.8-ck1/patches/*.patch; do patch -p1 < "\$f"; done
   patch -p0 < ../$KERNEL_CONFIG_DIFF
-  #patch -p1 < 0001-aufs-20200622.patch
-  #echo -e "CONFIG_AUFS_FS=y\nCONFIG_AUFS_BRANCH_MAX_127=y\nCONFIG_AUFS_BRANCH_MAX_511=n\nCONFIG_AUFS_BRANCH_MAX_1023=n\nCONFIG_AUFS_BRANCH_MAX_32767=n\nCONFIG_AUFS_HNOTIFY=y\nCONFIG_AUFS_EXPORT=n\nCONFIG_AUFS_XATTR=y\nCONFIG_AUFS_FHSM=y\nCONFIG_AUFS_RDU=n\nCONFIG_AUFS_DIRREN=n\nCONFIG_AUFS_SHWH=n\nCONFIG_AUFS_BR_RAMFS=y\nCONFIG_AUFS_BR_FUSE=n\nCONFIG_AUFS_BR_HFSPLUS=n\nCONFIG_AUFS_DEBUG=n" >> .config
-  #sed -i "s/CONFIG_ISO9660_FS=m/CONFIG_ISO9660_FS=y/" .config
+
+  # Aufs
+  cp -r ../aufs5-standalone/fs/aufs/ fs/
+  cp ../aufs5-standalone/include/uapi/linux/aufs_type.h include/uapi/linux/
+  patch -p1 < ../aufs5-standalone/aufs5-kbuild.patch
+  patch -p1 < ../aufs5-standalone/aufs5-base.patch
+  patch -p1 < ../aufs5-standalone/aufs5-mmap.patch
+  patch -p1 < ../aufs5-standalone/aufs5-standalone.patch
+  echo -e "CONFIG_AUFS_FS=y\nCONFIG_AUFS_BRANCH_MAX_127=y\nCONFIG_AUFS_BRANCH_MAX_511=n\nCONFIG_AUFS_BRANCH_MAX_1023=n\nCONFIG_AUFS_BRANCH_MAX_32767=n\nCONFIG_AUFS_HNOTIFY=y\nCONFIG_AUFS_EXPORT=n\nCONFIG_AUFS_XATTR=y\nCONFIG_AUFS_FHSM=y\nCONFIG_AUFS_RDU=n\nCONFIG_AUFS_DIRREN=n\nCONFIG_AUFS_SHWH=n\nCONFIG_AUFS_BR_RAMFS=y\nCONFIG_AUFS_BR_FUSE=n\nCONFIG_AUFS_BR_HFSPLUS=n\nCONFIG_AUFS_DEBUG=n" >> .config
+  sed -i "s/CONFIG_ISO9660_FS=m/CONFIG_ISO9660_FS=y/" .config
+
+  # Anbox
+  patch -p1 < 0001-android-patches.patch
+  scripts/config --enable CONFIG_ASHMEM
+  scripts/config --enable CONFIG_ANDROID
+  scripts/config --enable CONFIG_ANDROID_BINDER_IPC
+  scripts/config --enable CONFIG_ANDROID_BINDERFS
+  scripts/config --set-str CONFIG_ANDROID_BINDER_DEVICES "binder,hwbinder,vndbinder"
+
   #patch -p1 < 0001-add-sysctl-to-disallow-unprivileged-CLONE_NEWUSER-by.patch
+  patch -p1 < 0001-arch-patches.patch
+  patch -p1 < 0001-btrfs-patches.patch
   patch -p1 < 0001-clearlinux-patches.patch
   patch -p1 < 0001-fixes-miscellaneous.patch
   #patch -p1 < 0007-v5.6-fsync.patch
   patch -p1 < 0001-futex-patches.patch
-  patch -p1 < 0011-ZFS-fix.patch
+  patch -p1 < ../0011-ZFS-fix.patch
   patch -p1 < ../zfs-ungpl-rcu_read_unlock-export.diff
   patch -p1 < 0001-fsgsbase-patches.patch
+  patch -p1 < 0001-ntfs3-patches.patch
   patch -p1 < 0001-zstd-dev-patches.patch
   sed -i 's/CONFIG_DEFAULT_HOSTNAME="archlinux"/CONFIG_DEFAULT_HOSTNAME="gentoox"/' .config
   sed -i 's/CONFIG_LOCALVERSION=""/CONFIG_LOCALVERSION="-x86_64"/' .config
