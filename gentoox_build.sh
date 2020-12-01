@@ -269,10 +269,10 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.7/aufs-patches/0001-aufs-20200622.patch
   #wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0001-add-sysctl-to-disallow-unprivileged-CLONE_NEWUSER-by.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/android-patches/0001-android-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/arch-patches-v6/0001-arch-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/arch-patches-v7/0001-arch-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/btrfs-patches-v7/0001-btrfs-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/clearlinux-patches-v2/0001-clearlinux-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/fixes-miscellaneous-v7/0001-fixes-miscellaneous.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/fixes-miscellaneous-v9/0001-fixes-miscellaneous.patch
   # https://aur.archlinux.org/cgit/aur.git/plain/futex-wait-multiple-5.2.1.patch?h=linux-fsync
   #wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0007-v5.6-fsync.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/futex-patches-v3/0001-futex-patches.patch
@@ -362,7 +362,7 @@ else echo "kernel already compiled, skipping..."; fi
 if [[ ! -z $build_weston ]] && [[ ! -f 'tmp/gentoox-weston-done' ]]; then
 cat <<HEREDOC | chroot .
 source /etc/profile  && export PS1="(chroot) \$PS1"
-sed -i -r "s/^USE=\"([^\"]*)\"$/USE=\"\1 elogind -consolekit -systemd udev dbus X wayland gles vulkan plymouth pulseaudio ffmpeg ipv6 infinality\"/g" /etc/portage/make.conf
+sed -i -r "s/^USE=\"([^\"]*)\"$/USE=\"\1 elogind -consolekit -systemd udev dbus X wayland gles vulkan plymouth pulseaudio ffmpeg ipv6 infinality bluetooth\"/g" /etc/portage/make.conf
 FEATURES="-userpriv" emerge dev-lang/yasm  # yasm fails to build otherwise
 
 #echo 'sys-kernel/genkernel-next plymouth
@@ -425,7 +425,7 @@ gnome-base/gvfs afp archive bluray fuse gphoto2 ios mtp nfs samba zeroconf
 net-irc/telepathy-idle python_single_target_python2_7' >> /etc/portage/package.use/gentoox
 
 # enable flatpak backend in discover, patch qt-creator to use clang9 effectively dropping clang8
-sed -i "s/DBUILD_FlatpakBackend=OFF/DBUILD_FlatpakBackend=ON/" /var/db/repos/gentoo/kde-plasma/discover/discover-5.20.0.ebuild
+sed -i "s/DBUILD_FlatpakBackend=OFF/DBUILD_FlatpakBackend=ON/" /var/db/repos/gentoo/kde-plasma/discover/discover-5.20.3-r1.ebuild
 ebuild /var/db/repos/gentoo/kde-plasma/discover/discover-5.20.0.ebuild manifest
 #patch -p1 /var/db/repos/gentoo/dev-qt/qt-creator/qt-creator-4.10.1.ebuild /usr/src/qt-creator-use-llvm9.patch
 #ebuild /var/db/repos/gentoo/dev-qt/qt-creator/qt-creator-4.10.1.ebuild manifest
@@ -437,7 +437,7 @@ latte-dock plasma-sdk libdbusmenu gvfs calamares
 #emerge --noreplace dev-qt/qt-creator
 #echo 'dev-qt/qt-creator' >> /etc/portage/package.mask/gentoox
 
-yes | layman -o https://raw.githubusercontent.com/fosero/flatpak-overlay/master/repositories.xml -f -a flatpak-overlay -q
+#yes | layman -o https://raw.githubusercontent.com/fosero/flatpak-overlay/master/repositories.xml -f -a flatpak-overlay -q
 emerge -v sys-apps/flatpak
 
 touch /tmp/gentoox-kde-done
@@ -601,6 +601,7 @@ sed -i "s/   workgroup = MYGROUP/   workgroup = WORKGROUP/" /etc/samba/smb.conf
 rc-update add dbus default
 rc-update add dhcpcd default
 rc-update add avahi-daemon default
+rc-update add bluetooth default
 rc-update add samba default
 rc-update add sshd default
 rc-update add virtualbox-guest-additions default
@@ -656,8 +657,8 @@ fi
 
 if [[ ! -z $build_iso ]]; then
 cat <<HEREDOC | chroot .
-  #eclean-dist --deep
-  #eclean-pkg --deep
+  eclean-dist --deep
+  eclean-pkg --deep
   #rm -f /tmp/*
   #emerge @preserved-rebuild
   rm -rf /var/tmp/portage/*
