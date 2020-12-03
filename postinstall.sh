@@ -5,6 +5,20 @@
 sleep 15
 
 
+kdialog --yesno "Would you like to proceed with running postinstall.sh script to apply GentooX theme?
+An internet connection is required to pull necessary theme dependency from https://store.kde.org
+Plese ensure network connectivity and logout/login for theme to properly apply after script finishes.
+
+All modifications can be removed by removing dotfiles with rm -rf ~/.* to go back to vanilla KDE theme
+
+Continue?"
+
+if [ "$?" = 1 ]; then
+  kdialog --sorry "exiting..."
+  exit 1
+fi;
+
+
 #ln -s /usr/share/applications/audacious.desktop ~/Desktop/
 ln -s /usr/share/applications/mpv.desktop ~/Desktop/
 ln -s /usr/share/applications/steam.desktop ~/Desktop/

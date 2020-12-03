@@ -215,24 +215,8 @@ dev-libs/libdbusmenu gtk3
 net-misc/curl http2
 dev-libs/apr-util ldap
 sys-apps/util-linux caps
-*/* PYTHON_TARGETS: python2_7 python3_7
-*/* PYTHON_SINGLE_TARGET: -* python3_7
-dev-python/certifi python_targets_python3_6
-dev-python/setuptools python_targets_python3_6
-dev-python/six python_targets_python3_6
-dev-python/cffi python_targets_python3_6
-dev-python/numpy python_targets_python3_6
-dev-python/cython python_targets_python3_6
-dev-python/requests python_targets_python3_6
-dev-python/idna python_targets_python3_6
-dev-python/cryptography python_targets_python3_6
-dev-python/chardet python_targets_python3_6
-dev-python/urllib3 python_targets_python3_6
-dev-python/pycparser python_targets_python3_6
-dev-python/ply python_targets_python3_6
-dev-python/PySocks python_targets_python3_6
-dev-python/pyopenssl python_targets_python3_6
-dev-python/setuptools_scm python_targets_python3_6
+*/* PYTHON_TARGETS: python2_7 python3_8
+*/* PYTHON_SINGLE_TARGET: -* python3_8
 dev-libs/libnatspec python_single_target_python2_7
 dev-lang/yasm python_single_target_python2_7
 media-libs/libcaca python_single_target_python2_7
@@ -269,7 +253,7 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.7/aufs-patches/0001-aufs-20200622.patch
   #wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0001-add-sysctl-to-disallow-unprivileged-CLONE_NEWUSER-by.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/android-patches/0001-android-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/arch-patches-v7/0001-arch-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/arch-patches-v9/0001-arch-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/btrfs-patches-v7/0001-btrfs-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/clearlinux-patches-v2/0001-clearlinux-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/fixes-miscellaneous-v9/0001-fixes-miscellaneous.patch
@@ -510,8 +494,7 @@ source /etc/profile  && export PS1="(chroot) \$PS1"
 
 echo -e '\nmedia-gfx/gimp heif jpeg2k openexr python vector-icons webp wmf xpm python_single_target_python2_7
 media-video/mpv archive bluray drm gbm samba vaapi vdpau
-dev-lang/php gd truetype pcntl zip curl sockets
-media-gfx/blender python_single_target_python3_6' >> /etc/portage/package.use/gentoox
+dev-lang/php gd truetype pcntl zip curl sockets' >> /etc/portage/package.use/gentoox
 
 yes | layman -a bobwya -q
 mkdir -p /etc/portage/package.mask /etc/portage/package.unmask
