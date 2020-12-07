@@ -9,7 +9,9 @@ kdialog --yesno "Would you like to proceed with running postinstall.sh script to
 An internet connection is required to pull necessary theme dependency from https://store.kde.org
 Plese ensure network connectivity and logout/login for theme to properly apply after script finishes.
 
-All modifications can be removed by removing dotfiles with rm -rf ~/.* to go back to vanilla KDE theme
+All modifications can be reverted by removing dotfiles with rm -rf ~/.* to go back to vanilla KDE theme.
+
+Note: You can run postinstall.sh at later time by executing /usr/src/postinstall.sh script
 
 Continue?"
 
@@ -432,3 +434,5 @@ sed -i -r "s/^Exec=(.*)$/Exec=mpv-kio.sh/g" ~/.local/share/applications/mpv-kio.
 # after script runs delete it
 sed -i "s/~\/postinstall.sh &//" ~/.xinitrc
 rm -- "$0"
+
+qdbus org.kde.ksmserver /KSMServer logout 1 0 0

@@ -177,12 +177,14 @@ sensors-detect --auto
 rc-update add lm_sensors default
 rc-update add syslog-ng default
 
-NCORES=\$(getconf _NPROCESSORS_ONLN)
-sed -i -r "s/^MAKEOPTS=\"([^\"]*)\"$/MAKEOPTS=\"-j\$NCORES\"/g" /etc/portage/make.conf
-sed -i -r "s/^NTHREADS=\"([^\"]*)\"$/NTHREADS=\"\$NCORES\"/g" /etc/portage/make.conf
+HWTHREADS=\$(getconf _NPROCESSORS_ONLN)
+sed -i -r "s/^MAKEOPTS=\"([^\"]*)\"$/MAKEOPTS=\"-j\$HWTHREADS\"/g" /etc/portage/make.conf
+sed -i -r "s/^NTHREADS=\"([^\"]*)\"$/NTHREADS=\"\$HWTHREADS\"/g" /etc/portage/make.conf
+sed -i "s/-flto=8/-flto=\$HWTHREADS/" /etc/portage/make.conf
 #rc-update add zfs-import boot
 #rc-update add zfs-mount boot
 rc-update delete virtualbox-guest-additions default
+rm -f /etc/xdg/autostart/vboxclient.desktop
 
 sed -i "s/gentoox/$hostname/g" /etc/conf.d/hostname
 sed -i "s/gentoox/$hostname/g" /etc/hosts

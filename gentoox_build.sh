@@ -42,6 +42,7 @@ if [[ ! -d $builddir ]]; then mkdir -v $builddir; fi
 cd $builddir
 
 if [[ ! -f 'image/etc/gentoo-release' ]]; then
+  ntpd -qg
   mkdir image/
   cd image/
 
@@ -123,14 +124,15 @@ cp /usr/share/portage/config/repos.conf /etc/portage/repos.conf/gentoo.conf
 emerge-webrsync
 emerge --sync
 eselect profile set "default/linux/amd64/17.1"
-echo 'COMMON_FLAGS="-O3 -march=sandybridge -mtune=sandybridge -mfpmath=both -pipe -funroll-loops -fgraphite-identity -floop-nest-optimize -fdevirtualize-at-ltrans -fipa-pta -fno-semantic-interposition -flto=12 -fuse-linker-plugin -malign-data=cacheline -Wl,--hash-style=gnu"
+echo 'COMMON_FLAGS="-O3 -march=sandybridge -mtune=sandybridge -pipe -fomit-frame-pointer -fno-math-errno -fno-trapping-math -funroll-loops -mfpmath=both -malign-data=cacheline -fgraphite-identity -floop-nest-optimize -fdevirtualize-at-ltrans -fipa-pta -fno-semantic-interposition -flto=8 -fuse-linker-plugin"
 CFLAGS="\${COMMON_FLAGS}"
 CXXFLAGS="\${COMMON_FLAGS}"
 FCFLAGS="\${COMMON_FLAGS}"
 FFLAGS="\${COMMON_FLAGS}"
-RUSTFLAGS="-C target-cpu=sandybridge"
+RUSTFLAGS="-C opt-level=3 -C target-cpu=sandybridge"
+LDFLAGS="\${COMMON_FLAGS} \${LDFLAGS} -Wl,-O1 -Wl,--as-needed -Wl,-fuse-ld=bfd"
 CPU_FLAGS_X86="aes mmx mmxext pclmul popcnt sse sse2 sse3 sse4_1 sse4_2 ssse3"
-MAKEOPTS="-j12"
+MAKEOPTS="-j8"
 USE="-bindist"
 #FEATURES="buildpkg noclean"
 FEATURES="buildpkg"
@@ -156,51 +158,28 @@ echo 'dev-libs/elfutils nolto.conf
 app-crypt/efitools nolto.conf
 dev-libs/libaio nolto.conf
 media-libs/alsa-lib nolto.conf
-media-libs/mesa nolto.conf
 media-libs/x264 nolto.conf
-dev-libs/weston nolto.conf
 sys-auth/elogind nolto.conf
 dev-lang/spidermonkey nolto.conf
 sys-devel/llvm nolto.conf
 sys-libs/compiler-rt-sanitizers nolto.conf
 x11-drivers/xf86-video-intel nolto.conf
-x11-drivers/xf86-video-amdgpu nolto.conf
-x11-drivers/xf86-video-ati nolto.conf
-x11-drivers/xf86-video-intel nolto.conf
 x11-base/xorg-server nolto.conf
 dev-libs/weston nolto.conf
 dev-util/umockdev O2nolto.conf
-dev-qt/qtcore nolto.conf
-app-office/libreoffice nolto.conf
-sys-auth/passwdqc O2nolto.conf
 www-client/firefox O3nolto.conf
-dev-util/pkgconf nolto.conf
-net-misc/curl nolto.conf
-sys-devel/gettext nolto.conf
-dev-libs/fribidi nolto.conf
-sys-auth/polkit nolto.conf
-net-dns/avahi nolto.conf
-x11-libs/pango nolto.conf
-gnome-base/librsvg nolto.conf
-app-pda/libplist O2nolto.conf
-media-libs/gavl nolto.conf
-media-libs/libbluray nolto.conf
-net-im/telepathy-mission-control nolto.conf
-net-libs/gupnp-igd nolto.conf
-app-accessibility/speech-dispatcher nolto.conf
-dev-python/pygobject nolto.conf
-dev-python/pygtk nolto.conf
-sys-libs/libomp O3nolto.conf
-app-arch/bzip2 O3nolto.conf' > /etc/portage/package.env
+app-arch/bzip2 O3nolto.conf
+kde-apps/libkgapi nolto.conf
+app-admin/keepassxc nolto.conf' > /etc/portage/package.env
 
-echo 'sys-devel/gcc graphite
+echo 'sys-devel/gcc graphite pgo
 sys-devel/llvm gold
 sys-apps/kmod lzma
 sys-kernel/linux-firmware initramfs redistributable unknown-license
 x11-libs/libdrm libkms
 media-libs/mesa d3d9 lm-sensors opencl vaapi vdpau vulkan vulkan-overlay xa xvmc
 media-libs/libsdl2 gles2
-www-client/firefox -system-av1 -system-icu -system-jpeg -system-libevent -system-libvpx -system-sqlite -system-harfbuzz -system-webp hwaccel pgo lto wayland
+www-client/firefox -system-av1 -system-icu -system-jpeg -system-libevent -system-libvpx -system-sqlite -system-harfbuzz -system-webp hwaccel pgo lto wayland clang
 dev-libs/boost python
 dev-lang/python sqlite
 sys-fs/squashfs-tools zstd
