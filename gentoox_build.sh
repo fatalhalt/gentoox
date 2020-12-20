@@ -162,11 +162,12 @@ media-libs/x264 nolto.conf
 sys-auth/elogind nolto.conf
 dev-lang/spidermonkey nolto.conf
 sys-devel/llvm nolto.conf
-sys-libs/compiler-rt-sanitizers nolto.conf
+sys-libs/compiler-rt-sanitizers O2nolto.conf
 x11-drivers/xf86-video-intel nolto.conf
 x11-base/xorg-server nolto.conf
 dev-libs/weston nolto.conf
 dev-util/umockdev O2nolto.conf
+media-libs/avidemux-core nolto.conf
 www-client/firefox O3nolto.conf
 app-arch/bzip2 O3nolto.conf
 kde-apps/libkgapi nolto.conf
@@ -194,8 +195,12 @@ dev-libs/libdbusmenu gtk3
 net-misc/curl http2
 dev-libs/apr-util ldap
 sys-apps/util-linux caps
-*/* PYTHON_TARGETS: python2_7 python3_8
-*/* PYTHON_SINGLE_TARGET: -* python3_8
+*/* PYTHON_TARGETS: python2_7 python3_9
+*/* PYTHON_SINGLE_TARGET: -* python3_9
+net-libs/gupnp python_single_target_python3_8
+sys-apps/fwupd python_single_target_python3_8
+media-gfx/blender python_single_target_python3_8
+net-fs/samba python_single_target_python3_8
 dev-libs/libnatspec python_single_target_python2_7
 dev-lang/yasm python_single_target_python2_7
 media-libs/libcaca python_single_target_python2_7
@@ -228,21 +233,22 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   wget --quiet 'https://git.archlinux.org/svntogit/packages.git/plain/trunk/config?h=packages/linux' -O .config
   git clone https://github.com/graysky2/kernel_gcc_patch.git
   wget --quiet https://gitlab.com/post-factum/pf-kernel/commit/6401ed9bdf5c3d13b959c938e5d38a3b03cfa062.diff -O O3-always-available.diff
-  #wget --quiet -m -np -c 'ck.kolivas.org/patches/5.0/5.9/5.9-ck1/patches/'
+  #wget --quiet -m -np -c 'ck.kolivas.org/patches/5.0/5.10/5.10-ck1/patches/'
   #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.7/aufs-patches/0001-aufs-20200622.patch
   #wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0001-add-sysctl-to-disallow-unprivileged-CLONE_NEWUSER-by.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/android-patches/0001-android-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/arch-patches-v9/0001-arch-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/btrfs-patches-v7/0001-btrfs-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/clearlinux-patches-v2/0001-clearlinux-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/fixes-miscellaneous-v9/0001-fixes-miscellaneous.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/android-patches/0001-android-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/arch-patches/0001-arch-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/btrfs-patches-v2/0001-btrfs-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/clearlinux-patches/0001-clearlinux-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/fixes-miscellaneous-v2/0001-fixes-miscellaneous.patch
   # https://aur.archlinux.org/cgit/aur.git/plain/futex-wait-multiple-5.2.1.patch?h=linux-fsync
   #wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0007-v5.6-fsync.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/futex-patches-v3/0001-futex-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/futex-trunk-patches/0001-futex-resync-from-gitlab.collabora.com.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/futex2-trunk-patches/0001-futex2-resync-from-gitlab.collabora.com.patch
   #wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0011-ZFS-fix.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/fsgsbase-patches-v3/0001-fsgsbase-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/ntfs3-patches-v2/0001-ntfs3-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/zstd-dev-patches-v4/0001-zstd-dev-patches.patch
+  #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/fsgsbase-patches-v3/0001-fsgsbase-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/ntfs3-patches/0001-ntfs3-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/zstd-dev-patches/0001-zstd-dev-patches.patch
 
   patch -p1 < kernel_gcc_patch/enable_additional_cpu_optimizations_for_gcc_v10.1+_kernel_v5.8+.patch
   patch -p1 < O3-always-available.diff
@@ -250,12 +256,13 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   patch -p0 < ../$KERNEL_CONFIG_DIFF
 
   # Aufs
-  cp -r ../aufs5-standalone/fs/aufs/ fs/
-  cp ../aufs5-standalone/include/uapi/linux/aufs_type.h include/uapi/linux/
-  patch -p1 < ../aufs5-standalone/aufs5-kbuild.patch
-  patch -p1 < ../aufs5-standalone/aufs5-base.patch
-  patch -p1 < ../aufs5-standalone/aufs5-mmap.patch
-  patch -p1 < ../aufs5-standalone/aufs5-standalone.patch
+  cp -r ../aufs5-standalone-5.10/fs/aufs/ fs/
+  cp ../aufs5-standalone-5.10/include/uapi/linux/aufs_type.h include/uapi/linux/
+  patch -p1 < ../aufs5-standalone-5.10/aufs5-kbuild.patch
+  patch -p1 < ../aufs5-standalone-5.10/aufs5-base.patch
+  patch -p1 < ../aufs5-standalone-5.10/aufs5-mmap.patch
+  patch -p1 < ../aufs5-standalone-5.10/aufs5-standalone.patch
+  patch -p1 < ../aufs5-standalone-5.10/aufs-5.10-changed-files/patches/5.10/k510.patch
   echo -e "CONFIG_AUFS_FS=y\nCONFIG_AUFS_BRANCH_MAX_127=y\nCONFIG_AUFS_BRANCH_MAX_511=n\nCONFIG_AUFS_BRANCH_MAX_1023=n\nCONFIG_AUFS_BRANCH_MAX_32767=n\nCONFIG_AUFS_HNOTIFY=y\nCONFIG_AUFS_EXPORT=n\nCONFIG_AUFS_XATTR=y\nCONFIG_AUFS_FHSM=y\nCONFIG_AUFS_RDU=n\nCONFIG_AUFS_DIRREN=n\nCONFIG_AUFS_SHWH=n\nCONFIG_AUFS_BR_RAMFS=y\nCONFIG_AUFS_BR_FUSE=n\nCONFIG_AUFS_BR_HFSPLUS=n\nCONFIG_AUFS_DEBUG=n" >> .config
   sed -i "s/CONFIG_ISO9660_FS=m/CONFIG_ISO9660_FS=y/" .config
 
@@ -273,10 +280,11 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   patch -p1 < 0001-clearlinux-patches.patch
   patch -p1 < 0001-fixes-miscellaneous.patch
   #patch -p1 < 0007-v5.6-fsync.patch
-  patch -p1 < 0001-futex-patches.patch
+  patch -p1 < 0001-futex-resync-from-gitlab.collabora.com.patch
+  patch -p1 < 0001-futex2-resync-from-gitlab.collabora.com.patch
   patch -p1 < ../0011-ZFS-fix.patch
   patch -p1 < ../zfs-ungpl-rcu_read_unlock-export.diff
-  patch -p1 < 0001-fsgsbase-patches.patch
+  #patch -p1 < 0001-fsgsbase-patches.patch
   patch -p1 < 0001-ntfs3-patches.patch
   patch -p1 < 0001-zstd-dev-patches.patch
   sed -i 's/CONFIG_DEFAULT_HOSTNAME="archlinux"/CONFIG_DEFAULT_HOSTNAME="gentoox"/' .config

@@ -14,10 +14,12 @@ GentooX comes with simple interactive *install.sh* script, supports BIOS and UEF
 * Steam installed out-of-the-box with necessary lib32 dependencies and fsync Linux kernel patched in
 * flatpak is included, easily install VSCode or Discord in sandboxed environment
 * ZFS support, kernel patched to export FPU functions
-* Linux 5.9.11 kernel built with 1000Hz -03 for Sandybridge arch. Patches include aufs, zstd, ClearLinux patches, Intel FSGSBASE patches, Valve's fsync, [sirlucjan's](https://gitlab.com/sirlucjan/kernel-patches/-/tree/master/): android/arch/btrfs/fixes-miscellaneous/ntfs, unprivileged CLONE_NEWUSER, and IOMMU missing ACS capabilities overrides. CFS remains as default scheduler.
-* KDE 5.20.3, KDE Applications 20.08.3, KDE Frameworks 5.76.0, Qt 5.15.2
+* Linux 5.10.1 kernel built with 1000Hz -03 for Sandybridge arch. Patches include aufs, zstd, ClearLinux patches, Intel FSGSBASE patches, Valve's fsync, [sirlucjan's](https://gitlab.com/sirlucjan/kernel-patches/-/tree/master/): android/arch/btrfs/fixes-miscellaneous/ntfs, unprivileged CLONE_NEWUSER, and IOMMU missing ACS capabilities overrides. CFS remains as default scheduler.
+* KDE 5.20.4, KDE Applications 20.12.0, KDE Frameworks 5.77.0, Qt 5.15.2
 
 ## Changelog
+* 2020.12.19 Release
+  * Linux 5.10.1, KDE 5.20.4, KDE Applications 20.12.0, KDE Frameworks 5.77.0, Firefox 84.0, Python 3.9.1 is now the default, updates as of 12/19.
 * 2020.11.30 Release
   * Linux 5.9.11, KDE 5.20.3, KDE Applications 20.08.3, KDE Frameworks 5.76.0, Qt 5.15.2, Firefox 83.0, updates as of 11/30.
 * 2020.10.13 Release
@@ -57,17 +59,17 @@ The ISO weighs around 4GB and following settings were used to build it:
 ## CFLAGS
 ```sh
 source make.conf.lto
-COMMON_FLAGS="-O3 -march=sandybridge -mtune=sandybridge -mfpmath=both -pipe -funroll-loops -fgraphite-identity -floop-nest-optimize -fdevirtualize-at-ltrans -fipa-pta -fno-semantic-interposition -flto=12 -fuse-linker-plugin -malign-data=cacheline -Wl,--hash-style=gnu"
+COMMON_FLAGS="-O3 -march=sandybridge -mtune=sandybridge -pipe -fomit-frame-pointer -fno-math-errno -fno-trapping-math -funroll-loops -mfpmath=both -malign-data=cacheline -fgraphite-identity -floop-nest-optimize -fdevirtualize-at-ltrans -fipa-pta -fno-semantic-interposition -flto=8 -fuse-linker-plugin"
 CFLAGS="${COMMON_FLAGS}"
 CXXFLAGS="${COMMON_FLAGS}"
 FCFLAGS="${COMMON_FLAGS}"
 FFLAGS="${COMMON_FLAGS}"
-RUSTFLAGS="-C target-cpu=sandybridge"
+RUSTFLAGS="-C opt-level=3 -C target-cpu=sandybridge"
 CPU_FLAGS_X86="aes mmx mmxext pclmul popcnt sse sse2 sse3 sse4_1 sse4_2 ssse3"
 ```
 ## USE flags
 ```sh
-USE="-bindist elogind -consolekit -systemd udev dbus X wayland gles vulkan plymouth pulseaudio ffmpeg ipv6 -webkit infinality"
+USE="-bindist elogind -consolekit -systemd udev dbus X wayland gles vulkan plymouth pulseaudio ffmpeg ipv6 -webkit infinality bluetooth"
 ```
 ## FAQ
 > (Q) **what are the user/password credentials for LiveCD?**
