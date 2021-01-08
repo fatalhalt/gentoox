@@ -144,7 +144,8 @@ EMERGE_DEFAULT_OPTS="--jobs=2"
 PORTDIR="/var/db/repos/gentoo"
 DISTDIR="/var/cache/distfiles"
 PKGDIR="/var/cache/binpkgs"
-LC_MESSAGES=C' > /etc/portage/make.conf
+LC_MESSAGES=C
+RUBY_TARGETS="ruby27 ruby30"' > /etc/portage/make.conf
 
 mkdir /etc/portage/env
 echo 'CFLAGS="\${CFLAGS} -fno-lto"
@@ -237,17 +238,17 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.7/aufs-patches/0001-aufs-20200622.patch
   #wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0001-add-sysctl-to-disallow-unprivileged-CLONE_NEWUSER-by.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/android-patches/0001-android-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/arch-patches/0001-arch-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/btrfs-patches-v2/0001-btrfs-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/arch-patches-v6/0001-arch-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/btrfs-patches-v5/0001-btrfs-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/clearlinux-patches/0001-clearlinux-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/fixes-miscellaneous-v2/0001-fixes-miscellaneous.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/fixes-miscellaneous-v6/0001-fixes-miscellaneous.patch
   # https://aur.archlinux.org/cgit/aur.git/plain/futex-wait-multiple-5.2.1.patch?h=linux-fsync
   #wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0007-v5.6-fsync.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/futex-trunk-patches/0001-futex-resync-from-gitlab.collabora.com.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/futex2-trunk-patches/0001-futex2-resync-from-gitlab.collabora.com.patch
   #wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0011-ZFS-fix.patch
   #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/fsgsbase-patches-v3/0001-fsgsbase-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/ntfs3-patches/0001-ntfs3-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/ntfs3-patches-v3/0001-ntfs3-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/zstd-dev-patches/0001-zstd-dev-patches.patch
 
   patch -p1 < kernel_gcc_patch/enable_additional_cpu_optimizations_for_gcc_v10.1+_kernel_v5.8+.patch
@@ -339,21 +340,8 @@ FEATURES="-userpriv" emerge dev-lang/yasm  # yasm fails to build otherwise
 #echo 'sys-kernel/genkernel-next plymouth
 #sys-boot/plymouth gdm' > /etc/portage/package.use/gentoox
 
-echo -e '\ndev-ruby/minitest ruby_targets_ruby27
-dev-ruby/net-telnet ruby_targets_ruby27
-dev-ruby/power_assert ruby_targets_ruby27
-dev-ruby/rake ruby_targets_ruby27
-dev-ruby/test-unit ruby_targets_ruby27
-dev-ruby/xmlrpc ruby_targets_ruby27
-dev-ruby/bundler ruby_targets_ruby27
-dev-ruby/did_you_mean ruby_targets_ruby27
-dev-ruby/json ruby_targets_ruby27
-dev-ruby/rdoc ruby_targets_ruby27
-virtual/rubygems ruby_targets_ruby27
-dev-ruby/rubygems ruby_targets_ruby27
-dev-ruby/kpeg ruby_targets_ruby27
-dev-ruby/racc ruby_targets_ruby27
-virtual/ruby-ssl ruby_targets_ruby27' >> /etc/portage/package.use/gentoox
+# ruby
+#echo -e '\n' >> /etc/portage/package.use/gentoox
 
 emerge -v --autounmask=y --autounmask-write=y --keep-going=y --deep --newuse xorg-server nvidia-firmware arandr elogind sudo vim weston wpa_supplicant ntp bind-tools telnet-bsd snapper \
 nfs-utils cifs-utils samba dhcpcd nss-mdns zsh zsh-completions powertop cpupower lm-sensors screenfetch gparted gdb atop dos2unix app-misc/screen app-text/tree openbsd-netcat #plymouth-openrc-plugin
@@ -467,7 +455,8 @@ x11-libs/libXvMC abi_x86_32
 x11-libs/libXxf86vm abi_x86_32
 media-libs/libglvnd abi_x86_32
 virtual/opencl abi_x86_32
-app-arch/zstd abi_x86_32' >> /etc/portage/package.use/gentoox
+app-arch/zstd abi_x86_32
+dev-util/wayland-scanner abi_x86_32' >> /etc/portage/package.use/gentoox
 emerge -v steam-meta
 touch /tmp/gentoox-steam-done
 HEREDOC
@@ -564,17 +553,19 @@ emerge -v ja-ipafonts source-han-sans fira-code fira-sans
 
 echo 'kernel.sysrq=1' >> /etc/sysctl.d/local.conf
 
-usermod -aG users,portage,lp,adm,audio,cdrom,disk,input,usb,video,cron $username
+usermod -aG users,portage,lp,adm,audio,cdrom,disk,input,usb,video,cron,tty,plugdev $username
 
 cp /etc/samba/smb.conf.default /etc/samba/smb.conf
 sed -i "s/   workgroup = MYGROUP/   workgroup = WORKGROUP/" /etc/samba/smb.conf
 rc-update add dbus default
-rc-update add dhcpcd default
+#rc-update add dhcpcd default
+rc-update add NetworkManager default
 rc-update add avahi-daemon default
 rc-update add bluetooth default
 rc-update add samba default
 rc-update add sshd default
 rc-update add virtualbox-guest-additions default
+rc-update add elogind boot
 
 
 cp /usr/src/install.sh /home/$username/
@@ -655,7 +646,7 @@ isobuilddate=$(wget -O - http://distfiles.gentoo.org/releases/amd64/autobuilds/c
 if [[ ! -f "current-install-amd64-minimal/install-amd64-minimal-$isobuilddate.iso" ]]; then
   wget http://distfiles.gentoo.org/releases/amd64/autobuilds/current-install-amd64-minimal/install-amd64-minimal-$isobuilddate.iso
 fi
-#emerge -u dev-libs/libisoburn sys-fs/squashfs-tools sys-boot/syslinux
+emerge -u dev-libs/libisoburn sys-fs/squashfs-tools sys-boot/syslinux
 xorriso -osirrox on -indev *-$isobuilddate.iso -extract / iso/
 mv image.squashfs iso/image.squashfs
 tar -xOf kernel-gentoox.tar.lzma --wildcards \*vmlinuz-\* > iso/boot/gentoo

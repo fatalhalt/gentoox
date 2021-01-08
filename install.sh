@@ -185,11 +185,18 @@ sed -i "s/-flto=8/-flto=\$HWTHREADS/" /etc/portage/make.conf
 #rc-update add zfs-mount boot
 rc-update delete virtualbox-guest-additions default
 rm -f /etc/xdg/autostart/vboxclient.desktop
+rm -f /usr/share/applications/avidemux-2.7.desktop
 
 sed -i "s/gentoox/$hostname/g" /etc/conf.d/hostname
 sed -i "s/gentoox/$hostname/g" /etc/hosts
 sed -i "s/haxx.dafuq/$domainname/g" /etc/hosts
 sed -i "s/haxx.dafuq/$domainname/g" /etc/conf.d/net
+
+echo '#!/bin/bash
+#echo 0f > /sys/kernel/debug/dri/0/pstate
+cpupower frequency-set -g performance' > /etc/local.d/my.start
+chmod +x /etc/local.d/my.start
+
 yes $rootpassword | passwd root
 if [[ $username != "gentoox" ]]; then
   usermod --login $username --move-home --home /home/$username gentoox
