@@ -13,9 +13,6 @@ fi
 # host dependencies
 #   base install: genkernel btrfs-progs portage-utils gentoolkit cpuid2cpuflags cryptsetup lvm2 mdadm dev-vcs/git
 #
-# problem packages
-#   qt-creator: pulls llvm9, masked
-#
 
 gitprefix="https://gitgud.io/cloveros/cloveros/raw/master"
 rootpassword=gentoox
@@ -65,6 +62,7 @@ if [[ ! -f 'image/etc/gentoo-release' ]]; then
   mkdir -p etc/portage/patches/app-crypt/efitools
   cp ../../efitools-1.9.2-fixup-UNKNOWN_GLYPH.patch etc/portage/patches/app-crypt/efitools/
   #cp ../../qt-creator-use-llvm9.patch usr/src/
+  cp ../../60-ioschedulers.rules etc/udev/rules.d/
 
   mkdir -p etc/portage/patches/www-client/firefox
   wget --quiet -P etc/portage/patches/www-client/firefox/ 'https://raw.githubusercontent.com/bmwiedemann/openSUSE/master/packages/m/MozillaFirefox/firefox-branded-icons.patch'
@@ -199,9 +197,7 @@ sys-apps/util-linux caps
 */* PYTHON_TARGETS: python2_7 python3_9
 */* PYTHON_SINGLE_TARGET: -* python3_9
 net-libs/gupnp python_single_target_python3_8
-sys-apps/fwupd python_single_target_python3_8
 media-gfx/blender python_single_target_python3_8
-net-fs/samba python_single_target_python3_8
 dev-libs/libnatspec python_single_target_python2_7
 dev-lang/yasm python_single_target_python2_7
 media-libs/libcaca python_single_target_python2_7
@@ -232,38 +228,37 @@ cd /usr/src/linux/
 
 if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   wget --quiet 'https://git.archlinux.org/svntogit/packages.git/plain/trunk/config?h=packages/linux' -O .config
-  git clone https://github.com/graysky2/kernel_gcc_patch.git
-  wget --quiet https://gitlab.com/post-factum/pf-kernel/commit/6401ed9bdf5c3d13b959c938e5d38a3b03cfa062.diff -O O3-always-available.diff
+  #git clone https://github.com/graysky2/kernel_gcc_patch.git
+  #wget --quiet https://gitlab.com/post-factum/pf-kernel/commit/6401ed9bdf5c3d13b959c938e5d38a3b03cfa062.diff -O O3-always-available.diff
   #wget --quiet -m -np -c 'ck.kolivas.org/patches/5.0/5.10/5.10-ck1/patches/'
-  #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.7/aufs-patches/0001-aufs-20200622.patch
-  #wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0001-add-sysctl-to-disallow-unprivileged-CLONE_NEWUSER-by.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/aufs-patches/0001-aufs-20210111.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/android-patches/0001-android-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/arch-patches-v6/0001-arch-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/btrfs-patches-v5/0001-btrfs-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/arch-patches-v10/0001-arch-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/btrfs-patches-v10/0001-btrfs-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/clearlinux-patches/0001-clearlinux-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/fixes-miscellaneous-v6/0001-fixes-miscellaneous.patch
-  # https://aur.archlinux.org/cgit/aur.git/plain/futex-wait-multiple-5.2.1.patch?h=linux-fsync
-  #wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0007-v5.6-fsync.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/cpu-patches-v2/0001-cpu-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/fixes-miscellaneous-v8/0001-fixes-miscellaneous.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/futex-trunk-patches/0001-futex-resync-from-gitlab.collabora.com.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/futex2-trunk-patches/0001-futex2-resync-from-gitlab.collabora.com.patch
-  #wget --quiet https://git.froggi.es/tkg/PKGBUILDS/raw/master/linux56-rc-tkg/linux56-tkg-patches/0011-ZFS-fix.patch
-  #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.9/fsgsbase-patches-v3/0001-fsgsbase-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/futex2-trunk-patches-v2/0001-futex2-resync-from-gitlab.collabora.com.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/ntfs3-patches-v3/0001-ntfs3-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/zstd-dev-patches/0001-zstd-dev-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/zstd-patches-v3/0001-init-add-support-for-zstd-compressed-modules.patch
 
-  patch -p1 < kernel_gcc_patch/enable_additional_cpu_optimizations_for_gcc_v10.1+_kernel_v5.8+.patch
-  patch -p1 < O3-always-available.diff
+  #patch -p1 < kernel_gcc_patch/enable_additional_cpu_optimizations_for_gcc_v10.1+_kernel_v5.8+.patch
+  #patch -p1 < O3-always-available.diff
   #for f in ck.kolivas.org/patches/5.0/5.8/5.8-ck1/patches/*.patch; do patch -p1 < "\$f"; done
+  patch -p1 < 0001-cpu-patches.patch
   patch -p0 < ../$KERNEL_CONFIG_DIFF
 
   # Aufs
-  cp -r ../aufs5-standalone-5.10/fs/aufs/ fs/
-  cp ../aufs5-standalone-5.10/include/uapi/linux/aufs_type.h include/uapi/linux/
-  patch -p1 < ../aufs5-standalone-5.10/aufs5-kbuild.patch
-  patch -p1 < ../aufs5-standalone-5.10/aufs5-base.patch
-  patch -p1 < ../aufs5-standalone-5.10/aufs5-mmap.patch
-  patch -p1 < ../aufs5-standalone-5.10/aufs5-standalone.patch
-  patch -p1 < ../aufs5-standalone-5.10/aufs-5.10-changed-files/patches/5.10/k510.patch
+  #cp -r ../aufs5-standalone-5.10/fs/aufs/ fs/
+  #cp ../aufs5-standalone-5.10/include/uapi/linux/aufs_type.h include/uapi/linux/
+  #patch -p1 < ../aufs5-standalone-5.10/aufs5-kbuild.patch
+  #patch -p1 < ../aufs5-standalone-5.10/aufs5-base.patch
+  #patch -p1 < ../aufs5-standalone-5.10/aufs5-mmap.patch
+  #patch -p1 < ../aufs5-standalone-5.10/aufs5-standalone.patch
+  #patch -p1 < ../aufs5-standalone-5.10/aufs-5.10-changed-files/patches/5.10/k510.patch
+  patch -p1 < 0001-aufs-20210111.patch
   echo -e "CONFIG_AUFS_FS=y\nCONFIG_AUFS_BRANCH_MAX_127=y\nCONFIG_AUFS_BRANCH_MAX_511=n\nCONFIG_AUFS_BRANCH_MAX_1023=n\nCONFIG_AUFS_BRANCH_MAX_32767=n\nCONFIG_AUFS_HNOTIFY=y\nCONFIG_AUFS_EXPORT=n\nCONFIG_AUFS_XATTR=y\nCONFIG_AUFS_FHSM=y\nCONFIG_AUFS_RDU=n\nCONFIG_AUFS_DIRREN=n\nCONFIG_AUFS_SHWH=n\nCONFIG_AUFS_BR_RAMFS=y\nCONFIG_AUFS_BR_FUSE=n\nCONFIG_AUFS_BR_HFSPLUS=n\nCONFIG_AUFS_DEBUG=n" >> .config
   sed -i "s/CONFIG_ISO9660_FS=m/CONFIG_ISO9660_FS=y/" .config
 
@@ -275,19 +270,17 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   scripts/config --enable CONFIG_ANDROID_BINDERFS
   scripts/config --set-str CONFIG_ANDROID_BINDER_DEVICES "binder,hwbinder,vndbinder"
 
-  #patch -p1 < 0001-add-sysctl-to-disallow-unprivileged-CLONE_NEWUSER-by.patch
   patch -p1 < 0001-arch-patches.patch
   patch -p1 < 0001-btrfs-patches.patch
   patch -p1 < 0001-clearlinux-patches.patch
   patch -p1 < 0001-fixes-miscellaneous.patch
-  #patch -p1 < 0007-v5.6-fsync.patch
   patch -p1 < 0001-futex-resync-from-gitlab.collabora.com.patch
   patch -p1 < 0001-futex2-resync-from-gitlab.collabora.com.patch
   patch -p1 < ../0011-ZFS-fix.patch
   patch -p1 < ../zfs-ungpl-rcu_read_unlock-export.diff
-  #patch -p1 < 0001-fsgsbase-patches.patch
   patch -p1 < 0001-ntfs3-patches.patch
   patch -p1 < 0001-zstd-dev-patches.patch
+  patch -p1 < 0001-init-add-support-for-zstd-compressed-modules.patch
   sed -i 's/CONFIG_DEFAULT_HOSTNAME="archlinux"/CONFIG_DEFAULT_HOSTNAME="gentoox"/' .config
   sed -i 's/CONFIG_LOCALVERSION=""/CONFIG_LOCALVERSION="-x86_64"/' .config
   sed -i 's/CONFIG_NET_IP_TUNNEL=y/CONFIG_NET_IP_TUNNEL=m/' .config
@@ -316,7 +309,7 @@ emerge -v grub:2 squashfs-tools linux-firmware os-prober zfs zfs-kmod
 hostid > /etc/hostid
 dd if=/dev/urandom of=/dev/stdout bs=1 count=4 > /etc/hostid
 
-genkernel --microcode --luks --lvm --mdadm --btrfs --zfs initramfs
+genkernel --kernel-config=/usr/src/linux/.config --compress-initramfs-type=zstd --microcode --luks --lvm --mdadm --btrfs --zfs initramfs
 XZ_OPT="--lzma1=preset=9e,dict=128MB,nice=273,depth=200,lc=4" tar --lzma -cf /usr/src/kernel-gentoox.tar.lzma /boot/*\${KERNELVERSION}* -C /lib/modules/ .
 
 sed -i "s/#GRUB_CMDLINE_LINUX_DEFAULT=\"\"/GRUB_CMDLINE_LINUX_DEFAULT=\"zswap.enabled=1 zswap.compressor=lz4 zswap.max_pool_percent=20 zswap.zpool=z3fold dobtrfs\"/" /etc/default/grub
@@ -334,7 +327,7 @@ else echo "kernel already compiled, skipping..."; fi
 if [[ ! -z $build_weston ]] && [[ ! -f 'tmp/gentoox-weston-done' ]]; then
 cat <<HEREDOC | chroot .
 source /etc/profile  && export PS1="(chroot) \$PS1"
-sed -i -r "s/^USE=\"([^\"]*)\"$/USE=\"\1 elogind -consolekit -systemd udev dbus X wayland gles vulkan plymouth pulseaudio ffmpeg ipv6 infinality bluetooth\"/g" /etc/portage/make.conf
+sed -i -r "s/^USE=\"([^\"]*)\"$/USE=\"\1 elogind -consolekit -systemd udev dbus X wayland gles vulkan plymouth pulseaudio ffmpeg ipv6 infinality bluetooth zstd\"/g" /etc/portage/make.conf
 FEATURES="-userpriv" emerge dev-lang/yasm  # yasm fails to build otherwise
 
 #echo 'sys-kernel/genkernel-next plymouth
@@ -627,13 +620,14 @@ cat <<HEREDOC | chroot .
   find /usr/src/linux/ -name "*.o" -exec rm -f {} \;
   find /usr/src/linux/ -name "*.ko" -exec rm -f {} \;
   rm -f /var/tmp/genkernel/*
-  rm -rf /var/cache/genkernel/*
+  #rm -rf /var/cache/genkernel/*
   rm -f /var/cache/eix/portage.eix
   rm -f /var/cache/edb/mtimedb
   rm -rf /var/db/repos/gentoo/*
   rm -rf /var/db/repos/gentoo/.*
   truncate -s 0 /var/log/*.log
   truncate -s 0 /var/log/portage/elog/summary.log
+  rm -f /var/log/genkernel.log
   history -c
   history -w
 HEREDOC
@@ -650,7 +644,7 @@ emerge -u dev-libs/libisoburn sys-fs/squashfs-tools sys-boot/syslinux
 xorriso -osirrox on -indev *-$isobuilddate.iso -extract / iso/
 mv image.squashfs iso/image.squashfs
 tar -xOf kernel-gentoox.tar.lzma --wildcards \*vmlinuz-\* > iso/boot/gentoo
-tar -xOf kernel-gentoox.tar.lzma --wildcards \*initramfs-\* | xz -d | gzip > iso/boot/gentoo.igz
+tar -xOf kernel-gentoox.tar.lzma --wildcards \*initramfs-\* | unzstd -d | gzip > iso/boot/gentoo.igz
 tar -xOf kernel-gentoox.tar.lzma --wildcards \*System.map-\* > iso/boot/System-gentoo.map
 sed -i "s@dokeymap@aufs@g" iso/isolinux/isolinux.cfg
 sed -i "s@dokeymap@aufs@g" iso/grub/grub.cfg
