@@ -163,22 +163,9 @@ CXXFLAGS="\${CFLAGS}"' > /etc/portage/env/O3nolto.conf
 echo 'sys-libs/glibc nolto.conf
 dev-libs/elfutils nolto.conf
 app-crypt/efitools nolto.conf
+sys-libs/efivar nolto.conf
 dev-libs/libaio nolto.conf
-media-libs/alsa-lib nolto.conf
-media-libs/x264 nolto.conf
-sys-auth/elogind nolto.conf
-dev-lang/spidermonkey nolto.conf
-sys-devel/llvm nolto.conf
-sys-libs/compiler-rt-sanitizers O2nolto.conf
-x11-drivers/xf86-video-intel nolto.conf
-x11-base/xorg-server nolto.conf
-dev-libs/weston nolto.conf
-dev-util/umockdev O2nolto.conf
-media-libs/avidemux-core nolto.conf
-www-client/firefox O3nolto.conf
-app-arch/bzip2 O3nolto.conf
-kde-apps/libkgapi nolto.conf
-app-admin/keepassxc nolto.conf' > /etc/portage/package.env
+app-arch/bzip2 O3nolto.conf' > /etc/portage/package.env
 
 echo 'sys-devel/gcc graphite lto pgo zstd
 dev-libs/elfutils zstd
@@ -354,19 +341,32 @@ if [[ ! -z $build_weston ]] && [[ ! -f 'tmp/gentoox-weston-done' ]]; then
 cat <<HEREDOC | chroot .
 source /etc/profile  && export PS1="(chroot) \$PS1"
 sed -i -r "s/^USE=\"([^\"]*)\"$/USE=\"\1 elogind -consolekit -systemd udev dbus X wayland gles vulkan plymouth pulseaudio ffmpeg ipv6 infinality bluetooth zstd\"/g" /etc/portage/make.conf
+
+# install lto-overlay
+emerge layman
+layman --sync-all
+yes | layman --add mv
+yes | layman --add lto-overlay
+echo 'sys-config/ltoize ~amd64
+app-portage/portage-bashrc-mv ~amd64
+app-shells/runtitle ~amd64' >> /etc/portage/package.accept_keywords
+mkdir -p /etc/portage/package.mask /etc/portage/package.unmask
+echo '*/*::mv' >> /etc/portage/package.mask/lowprio
+echo 'app-portage/portage-bashrc-mv::mv
+app-shells/runtitle::mv' >> /etc/portage/package.unmask/wanted
+emerge sys-config/ltoize
+sed -i '1s/^/source make.conf.lto\n/' /etc/portage/make.conf
+sed -i '1s/^/NTHREADS="8"\n/' /etc/portage/make.conf
+
 FEATURES="-userpriv" emerge dev-lang/yasm  # yasm fails to build otherwise
 
 #echo 'sys-kernel/genkernel-next plymouth
 #sys-boot/plymouth gdm' > /etc/portage/package.use/gentoox
 
-# ruby
-#echo -e '\n' >> /etc/portage/package.use/gentoox
-
 emerge -v --autounmask=y --autounmask-write=y --keep-going=y --deep --newuse xorg-server nvidia-firmware arandr elogind sudo vim weston wpa_supplicant ntp bind-tools telnet-bsd snapper \
 nfs-utils cifs-utils samba dhcpcd nss-mdns zsh zsh-completions powertop cpupower lm-sensors screenfetch gparted gdb strace atop dos2unix app-misc/screen app-text/tree openbsd-netcat #plymouth-openrc-plugin
 #emerge -avuDN --with-bdeps=y @world
 #emerge -v --depclean
-groupadd weston-launch
 touch /tmp/gentoox-weston-done
 HEREDOC
 exit 0
@@ -393,21 +393,6 @@ mkdir build && cd build
 cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DKDE_INSTALL_LIBDIR=lib -DBUILD_TESTING=OFF -DKDE_INSTALL_USE_QT_SYS_PATHS=ON
 make install
 cd /
-
-emerge layman
-layman --sync-all
-yes | layman --add mv
-yes | layman --add lto-overlay
-echo 'sys-config/ltoize ~amd64
-app-portage/portage-bashrc-mv ~amd64
-app-shells/runtitle ~amd64' >> /etc/portage/package.accept_keywords
-#mkdir -p /etc/portage/package.mask /etc/portage/package.unmask
-#echo '*/*::mv' >> /etc/portage/package.mask/lowprio
-#echo 'app-portage/portage-bashrc-mv::mv
-#app-shells/runtitle::mv' >> /etc/portage/package.unmask/wanted
-emerge sys-config/ltoize
-sed -i '1s/^/source make.conf.lto\n/' /etc/portage/make.conf
-sed -i '1s/^/NTHREADS="12"\n/' /etc/portage/make.conf
 
 echo -e '\nkde-plasma/plasma-meta discover networkmanager thunderbolt
 kde-apps/kio-extras samba
@@ -507,14 +492,10 @@ media-video/mpv archive bluray drm gbm samba vaapi vdpau
 dev-lang/php gd truetype pcntl zip curl sockets' >> /etc/portage/package.use/gentoox
 
 yes | layman -a bobwya -q
-mkdir -p /etc/portage/package.mask /etc/portage/package.unmask
-echo '*/*::bobwya
-*/*::mv' >> /etc/portage/package.mask/lowprio
+echo '*/*::bobwya' >> /etc/portage/package.mask/lowprio
 
 echo 'app-benchmarks/phoronix-test-suite::bobwya
-dev-php/fpdf::bobwya
-app-portage/portage-bashrc-mv::mv
-app-shells/runtitle::mv' >> /etc/portage/package.unmask/wanted
+dev-php/fpdf::bobwya' >> /etc/portage/package.unmask/wanted
 
 echo 'media-gfx/gimp nolto.conf
 media-libs/avidemux-core

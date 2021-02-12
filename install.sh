@@ -197,6 +197,14 @@ echo '#!/bin/bash
 cpupower frequency-set -g performance' > /etc/local.d/my.start
 chmod +x /etc/local.d/my.start
 
+touch /swapfile
+chattr +C /swapfile
+dd if=/dev/zero of=/swapfile count=512 bs=1MiB
+chmod 600 /swapfile
+mkswap -L MYSWAP /swapfile
+echo '/swapfile none swap sw 0 0' >> /etc/fstab
+echo 'vm.swappiness=10' >> /etc/sysctl.d/local.conf
+
 yes $rootpassword | passwd root
 if [[ $username != "gentoox" ]]; then
   usermod --login $username --move-home --home /home/$username gentoox
