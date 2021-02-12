@@ -20,7 +20,7 @@ username=gentoox
 userpassword=gentoox
 builddate="$(date +%Y%m%d).graphite"
 builddir="build-$(date +%Y%m%d)"
-stage3tarball="stage3-amd64-20200504.graphite.tar.xz"
+stage3tarball="stage3-amd64-20201208.graphite.tar.xz"
 KERNEL_CONFIG_DIFF="0001-kernel-config-cfs-r6.patch"
 
 binpkgs="$(pwd)/var/cache/binpkgs/"
@@ -31,6 +31,7 @@ distfiles="$(pwd)/var/cache/distfiles/"
 #build_steam=y
 #build_extra=y
 #configure_user=y
+#configure_weston=y
 #clover_rice="y"
 #build_iso=y
 
@@ -56,6 +57,7 @@ if [[ ! -f 'image/etc/gentoo-release' ]]; then
 
   cp ../../$KERNEL_CONFIG_DIFF usr/src
   cp ../../0011-ZFS-fix.patch usr/src
+  cp ../../portage-change-rsync-to-git-repos.diff usr/src
   cp ../../zfs-ungpl-rcu_read_unlock-export.diff usr/src
   mkdir -p etc/portage/patches
   cp -r ../../patches/* etc/portage/patches/
@@ -68,7 +70,7 @@ if [[ ! -f 'image/etc/gentoo-release' ]]; then
   wget --quiet -P etc/portage/patches/www-client/firefox/ 'https://raw.githubusercontent.com/bmwiedemann/openSUSE/master/packages/m/MozillaFirefox/firefox-branded-icons.patch'
   wget --quiet -P etc/portage/patches/www-client/firefox/ 'https://raw.githubusercontent.com/bmwiedemann/openSUSE/master/packages/m/MozillaFirefox/firefox-kde.patch'
   wget --quiet -P etc/portage/patches/www-client/firefox/ 'https://raw.githubusercontent.com/bmwiedemann/openSUSE/master/packages/m/MozillaFirefox/mozilla-kde.patch'
-  wget --quiet -P etc/portage/patches/www-client/firefox/ 'http://bazaar.launchpad.net/~mozillateam/firefox/firefox-trunk.head/download/head:/unitymenubar.patch-20130215095938-1n6mqqau8tdfqwhg-1/unity-menubar.patch'
+  wget --quiet -P etc/portage/patches/www-client/firefox/ 'http://bazaar.launchpad.net/~mozillateam/firefox/firefox-trunk.head/download/ricotz%40ubuntu.com-20201209065217-a6q3xcr4yl33mdqp/unitymenubar.patch-20130215095938-1n6mqqau8tdfqwhg-1/unity-menubar.patch'
 
   mkdir -p etc/portage/package.mask
   mkdir -p etc/portage/package.unmask
@@ -109,6 +111,11 @@ if [[ $# -ge 1 ]]; then
   case $1 in
     "chroot")
       chroot . /bin/bash -i
+      #env-update
+      #chmod 777 /tmp
+      umount -l var/cache/binpkgs
+      umount -l var/cache/distfiles
+      umount -l {dev,proc,sys}
       exit 0
       ;;
   esac
@@ -128,7 +135,7 @@ CXXFLAGS="\${COMMON_FLAGS}"
 FCFLAGS="\${COMMON_FLAGS}"
 FFLAGS="\${COMMON_FLAGS}"
 RUSTFLAGS="-C opt-level=3 -C target-cpu=sandybridge"
-LDFLAGS="\${COMMON_FLAGS} \${LDFLAGS} -Wl,-O1 -Wl,--as-needed -Wl,-fuse-ld=bfd"
+#LDFLAGS="\${COMMON_FLAGS} \${LDFLAGS} -Wl,-O1 -Wl,--as-needed -Wl,-fuse-ld=bfd"
 CPU_FLAGS_X86="aes mmx mmxext pclmul popcnt sse sse2 sse3 sse4_1 sse4_2 ssse3"
 MAKEOPTS="-j8"
 USE="-bindist"
@@ -137,7 +144,7 @@ FEATURES="buildpkg"
 ACCEPT_KEYWORDS="~amd64"
 ACCEPT_LICENSE="*"
 PORTAGE_NICENESS=19
-GENTOO_MIRRORS="http://gentoo.ussg.indiana.edu/"
+GENTOO_MIRRORS="https://gentoo.osuosl.org/"
 EMERGE_DEFAULT_OPTS="--jobs=2"
 PORTDIR="/var/db/repos/gentoo"
 DISTDIR="/var/cache/distfiles"
@@ -153,7 +160,8 @@ CXXFLAGS="\${CFLAGS}"' > /etc/portage/env/O2nolto.conf
 echo 'CFLAGS="-O3 -march=sandybridge -mtune=sandybridge -pipe"
 CXXFLAGS="\${CFLAGS}"' > /etc/portage/env/O3nolto.conf
 
-echo 'dev-libs/elfutils nolto.conf
+echo 'sys-libs/glibc nolto.conf
+dev-libs/elfutils nolto.conf
 app-crypt/efitools nolto.conf
 dev-libs/libaio nolto.conf
 media-libs/alsa-lib nolto.conf
@@ -172,7 +180,9 @@ app-arch/bzip2 O3nolto.conf
 kde-apps/libkgapi nolto.conf
 app-admin/keepassxc nolto.conf' > /etc/portage/package.env
 
-echo 'sys-devel/gcc graphite pgo
+echo 'sys-devel/gcc graphite lto pgo zstd
+dev-libs/elfutils zstd
+sys-libs/glibc custom-cflags
 sys-devel/llvm gold
 sys-apps/kmod lzma
 sys-kernel/linux-firmware initramfs redistributable unknown-license
@@ -180,7 +190,7 @@ x11-libs/libdrm libkms
 media-libs/mesa d3d9 lm-sensors opencl vaapi vdpau vulkan vulkan-overlay xa xvmc
 media-libs/libsdl2 gles2
 www-client/firefox -system-av1 -system-icu -system-jpeg -system-libevent -system-libvpx -system-sqlite -system-harfbuzz -system-webp hwaccel pgo lto wayland clang
-dev-libs/boost python
+dev-libs/boost python zstd
 dev-lang/python sqlite
 sys-fs/squashfs-tools zstd
 sys-boot/grub:2 mount libzfs
@@ -206,9 +216,25 @@ gnome-base/libglade python_single_target_python2_7' > /etc/portage/package.use/g
 rm -rf /etc/portage/package.accept_keywords/
 echo -n > /etc/portage/package.accept_keywords
 
-emerge --autounmask=y --autounmask-write=y -vDN @world
-emerge -v gentoo-sources genkernel portage-utils gentoolkit cpuid2cpuflags cryptsetup lvm2 mdadm dev-vcs/git btrfs-progs app-arch/lz4 ntfs3g dosfstools exfat-utils f2fs-tools gptfdisk efitools shim syslog-ng logrotate
+#unmask gcc/glibc to prompt installation of masked 9999 packages
+echo 'sys-devel/gcc' >> /etc/portage/package.unmask/gcc
+echo 'sys-devel/gcc **' >> /etc/portage/package.accept_keywords
+#echo 'sys-libs/glibc' >> /etc/portage/package.unmask/glibc
+#echo 'sys-libs/glibc **' >> /etc/portage/package.accept_keywords
+
+emerge -v1 gcc  # install latest gcc now that it has been unmasked
+emerge -v gentoo-sources  # presence of /usr/src/linux is required below
+emerge --autounmask=y --autounmask-write=y -veDN --with-bdeps=y --exclude gcc @world  # rebuild entire system with new gcc
+
+emerge -v genkernel portage-utils gentoolkit cpuid2cpuflags cryptsetup lvm2 mdadm dev-vcs/git btrfs-progs app-arch/lz4 ntfs3g dosfstools exfat-utils f2fs-tools gptfdisk efitools shim syslog-ng logrotate
 emerge --noreplace app-editors/nano
+
+# set portage to use git repos
+patch -p1 < /usr/src/portage-change-rsync-to-git-repos.diff
+rm -rf /var/db/repos/gentoo/*
+rm -rf /var/db/repos/gentoo/.*
+emerge --sync
+
 touch /tmp/gentoox-base-done
 HEREDOC
 #rsync -av --delete var/cache/{binpkgs,distfiles} ../var/cache/
@@ -233,14 +259,14 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   #wget --quiet -m -np -c 'ck.kolivas.org/patches/5.0/5.10/5.10-ck1/patches/'
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/aufs-patches/0001-aufs-20210111.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/android-patches/0001-android-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/arch-patches-v10/0001-arch-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/btrfs-patches-v10/0001-btrfs-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/arch-patches-v14/0001-arch-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/btrfs-patches-v12/0001-btrfs-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/clearlinux-patches/0001-clearlinux-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/cpu-patches-v2/0001-cpu-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/fixes-miscellaneous-v8/0001-fixes-miscellaneous.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/futex-trunk-patches/0001-futex-resync-from-gitlab.collabora.com.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/futex2-trunk-patches-v2/0001-futex2-resync-from-gitlab.collabora.com.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/ntfs3-patches-v3/0001-ntfs3-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/fixes-miscellaneous-v11/0001-fixes-miscellaneous.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/futex-trunk-patches-v2/0001-futex-resync-from-gitlab.collabora.com.patch
+  #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/futex2-trunk-patches-v3/0001-futex2-resync-from-gitlab.collabora.com.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/ntfs3-patches-v6/0001-ntfs3-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/zstd-dev-patches/0001-zstd-dev-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/zstd-patches-v3/0001-init-add-support-for-zstd-compressed-modules.patch
 
@@ -275,7 +301,7 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   patch -p1 < 0001-clearlinux-patches.patch
   patch -p1 < 0001-fixes-miscellaneous.patch
   patch -p1 < 0001-futex-resync-from-gitlab.collabora.com.patch
-  patch -p1 < 0001-futex2-resync-from-gitlab.collabora.com.patch
+  #patch -p1 < 0001-futex2-resync-from-gitlab.collabora.com.patch
   patch -p1 < ../0011-ZFS-fix.patch
   patch -p1 < ../zfs-ungpl-rcu_read_unlock-export.diff
   patch -p1 < 0001-ntfs3-patches.patch
@@ -337,7 +363,7 @@ FEATURES="-userpriv" emerge dev-lang/yasm  # yasm fails to build otherwise
 #echo -e '\n' >> /etc/portage/package.use/gentoox
 
 emerge -v --autounmask=y --autounmask-write=y --keep-going=y --deep --newuse xorg-server nvidia-firmware arandr elogind sudo vim weston wpa_supplicant ntp bind-tools telnet-bsd snapper \
-nfs-utils cifs-utils samba dhcpcd nss-mdns zsh zsh-completions powertop cpupower lm-sensors screenfetch gparted gdb atop dos2unix app-misc/screen app-text/tree openbsd-netcat #plymouth-openrc-plugin
+nfs-utils cifs-utils samba dhcpcd nss-mdns zsh zsh-completions powertop cpupower lm-sensors screenfetch gparted gdb strace atop dos2unix app-misc/screen app-text/tree openbsd-netcat #plymouth-openrc-plugin
 #emerge -avuDN --with-bdeps=y @world
 #emerge -v --depclean
 groupadd weston-launch
@@ -348,10 +374,25 @@ fi
 
 
 if [[ ! -z $build_kde ]] && [[ ! -f 'tmp/gentoox-kde-done' ]]; then
+cp ../../postinstall.sh usr/src/
+mkdir usr/src/theme
+cp ../../1518039301698.png usr/src/theme/
+cp '../../GentooX Breeze Dark Transparent.tar.gz' usr/src/theme/
+
 cat <<HEREDOC | chroot .
 source /etc/profile  && export PS1="(chroot) \$PS1"
 eselect profile set "default/linux/amd64/17.1/desktop/plasma"
 sed -i -r "s/^USE=\"([^\"]*)\"$/USE=\"\1 -webkit\"/g" /etc/portage/make.conf
+
+# theme related
+(cd /usr/share/icons; git clone https://github.com/keeferrourke/la-capitaine-icon-theme.git)
+cd /usr/src/
+git clone https://github.com/ishovkun/SierraBreeze.git
+cd SierraBreeze/
+mkdir build && cd build
+cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DKDE_INSTALL_LIBDIR=lib -DBUILD_TESTING=OFF -DKDE_INSTALL_USE_QT_SYS_PATHS=ON
+make install
+cd /
 
 emerge layman
 layman --sync-all
@@ -378,7 +419,7 @@ net-irc/telepathy-idle python_single_target_python2_7' >> /etc/portage/package.u
 
 # enable flatpak backend in discover, patch qt-creator to use clang9 effectively dropping clang8
 sed -i "s/DBUILD_FlatpakBackend=OFF/DBUILD_FlatpakBackend=ON/" /var/db/repos/gentoo/kde-plasma/discover/discover-5.20.3-r1.ebuild
-ebuild /var/db/repos/gentoo/kde-plasma/discover/discover-5.20.0.ebuild manifest
+ebuild /var/db/repos/gentoo/kde-plasma/discover/discover-5.20.5.ebuild manifest
 #patch -p1 /var/db/repos/gentoo/dev-qt/qt-creator/qt-creator-4.10.1.ebuild /usr/src/qt-creator-use-llvm9.patch
 #ebuild /var/db/repos/gentoo/dev-qt/qt-creator/qt-creator-4.10.1.ebuild manifest
 
@@ -488,10 +529,7 @@ fi
 
 if [[ ! -z $configure_user ]] && [[ ! -f 'tmp/gentoox-user-configured' ]]; then
 cp ../../install.sh usr/src/
-cp ../../postinstall.sh usr/src/
-mkdir usr/src/theme
-cp ../../1518039301698.png usr/src/theme/
-cp '../../GentooX Breeze Dark Transparent.tar.gz' usr/src/theme/
+
 cat <<HEREDOC | chroot .
 source /etc/profile  && export PS1="(chroot) \$PS1"
 sed -i "s/localhost/gentoox/g" /etc/conf.d/hostname
@@ -501,16 +539,6 @@ echo 'dns_domain_lo="haxx.dafuq"
 nis_domain_lo="haxx.dafuq"' > /etc/conf.d/net
 echo 'nameserver 1.1.1.1
 nameserver 2606:4700:4700::1111' > /etc/resolv.conf
-
-# theme related
-(cd /usr/share/icons; git clone https://github.com/keeferrourke/la-capitaine-icon-theme.git)
-cd /usr/src/
-git clone https://github.com/ishovkun/SierraBreeze.git
-cd SierraBreeze/
-mkdir build && cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DKDE_INSTALL_LIBDIR=lib -DBUILD_TESTING=OFF -DKDE_INSTALL_USE_QT_SYS_PATHS=ON
-make install
-cd /
 
 #echo "root:\$rootpassword" | chpasswd
 yes $rootpassword | passwd root
@@ -551,6 +579,7 @@ usermod -aG users,portage,lp,adm,audio,cdrom,disk,input,usb,video,cron,tty,plugd
 cp /etc/samba/smb.conf.default /etc/samba/smb.conf
 sed -i "s/   workgroup = MYGROUP/   workgroup = WORKGROUP/" /etc/samba/smb.conf
 rc-update add dbus default
+rc-update add syslog-ng default
 #rc-update add dhcpcd default
 rc-update add NetworkManager default
 rc-update add avahi-daemon default
@@ -560,14 +589,24 @@ rc-update add sshd default
 rc-update add virtualbox-guest-additions default
 rc-update add elogind boot
 
-
-cp /usr/src/install.sh /home/$username/
-cp /usr/src/postinstall.sh /home/$username/
+ln -s /usr/src/install.sh /home/$username/
+ln -s /usr/src/postinstall.sh /home/$username/
 cd /home/$username/
-echo '~/postinstall.sh &' >> .xinitrc
+echo '~/postinstall.sh &' > .xinitrc
 echo 'exec dbus-launch --exit-with-session startplasma-x11' >> .xinitrc
 chown -R $username.$username /home/$username/
-su - gentoox
+
+if [[ ! -z $configure_weston ]]; then
+  su - gentoox
+  echo '#!/bin/bash
+export GDK_BACKEND=wayland
+export CLUTTER_BACKEND=wayland
+export COGL_RENDERER=egl_wayland
+export SDL_VIDEODRIVER=wayland
+export QT_QPA_PLATFORM=wayland-egl
+exec weston-launch' > weston-launch.sh
+  chmod +x weston-launch.sh
+fi
 
 touch /tmp/gentoox-user-configured
 HEREDOC
@@ -611,6 +650,9 @@ fi
 
 if [[ ! -z $build_iso ]]; then
 cat <<HEREDOC | chroot .
+  # don't forget
+  #emerge -v --depclean
+  #etc-update
   eclean-dist --deep
   eclean-pkg --deep
   #rm -f /tmp/*
