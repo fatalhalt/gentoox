@@ -206,8 +206,8 @@ echo -n > /etc/portage/package.accept_keywords
 #unmask gcc/glibc to prompt installation of masked 9999 packages
 echo 'sys-devel/gcc' >> /etc/portage/package.unmask/gcc
 echo 'sys-devel/gcc **' >> /etc/portage/package.accept_keywords
-#echo 'sys-libs/glibc' >> /etc/portage/package.unmask/glibc
-#echo 'sys-libs/glibc **' >> /etc/portage/package.accept_keywords
+echo 'sys-libs/glibc' >> /etc/portage/package.unmask/glibc
+echo 'sys-libs/glibc **' >> /etc/portage/package.accept_keywords
 
 emerge -v1 gcc  # install latest gcc now that it has been unmasked
 emerge -v gentoo-sources  # presence of /usr/src/linux is required below
@@ -247,13 +247,16 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/aufs-patches/0001-aufs-20210111.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/android-patches/0001-android-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/arch-patches-v14/0001-arch-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/btrfs-patches-v12/0001-btrfs-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/btrfs-patches-v13/0001-btrfs-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/clearlinux-patches/0001-clearlinux-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/cpu-patches-v2/0001-cpu-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/fixes-miscellaneous-v11/0001-fixes-miscellaneous.patch
+  #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/fixes-miscellaneous-v11/0001-fixes-miscellaneous.patch
+  # the kswap patches from above's repo were causing gcc to spin a core at 100% usage at ./configure phase of many packages such as lynx or samba.  discard them.
+  git clone --depth 1 --filter=blob:none --sparse https://gitlab.com/sirlucjan/kernel-patches.git sirlucjan; cd sirlucjan
+  git sparse-checkout init --cone; git sparse-checkout set 5.10/fixes-miscellaneous-v11-sep; rm -f 5.10/fixes-miscellaneous-v11-sep/*-mm-*; cd ..
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/futex-trunk-patches-v2/0001-futex-resync-from-gitlab.collabora.com.patch
   #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/futex2-trunk-patches-v3/0001-futex2-resync-from-gitlab.collabora.com.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/ntfs3-patches-v6/0001-ntfs3-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/ntfs3-patches-v7/0001-ntfs3-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/zstd-dev-patches/0001-zstd-dev-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/zstd-patches-v3/0001-init-add-support-for-zstd-compressed-modules.patch
 
@@ -286,7 +289,7 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   patch -p1 < 0001-arch-patches.patch
   patch -p1 < 0001-btrfs-patches.patch
   patch -p1 < 0001-clearlinux-patches.patch
-  patch -p1 < 0001-fixes-miscellaneous.patch
+  for f in sirlucjan/5.10/fixes-miscellaneous-v11-sep/*.patch; do patch -p1 < "\$f"; done
   patch -p1 < 0001-futex-resync-from-gitlab.collabora.com.patch
   #patch -p1 < 0001-futex2-resync-from-gitlab.collabora.com.patch
   patch -p1 < ../0011-ZFS-fix.patch
