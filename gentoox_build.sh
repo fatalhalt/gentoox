@@ -66,10 +66,9 @@ if [[ ! -f 'image/etc/gentoo-release' ]]; then
   cp ../../60-ioschedulers.rules etc/udev/rules.d/
 
   mkdir -p etc/portage/patches/www-client/firefox
-  wget --quiet -P etc/portage/patches/www-client/firefox/ 'https://raw.githubusercontent.com/bmwiedemann/openSUSE/master/packages/m/MozillaFirefox/firefox-branded-icons.patch'
   wget --quiet -P etc/portage/patches/www-client/firefox/ 'https://raw.githubusercontent.com/bmwiedemann/openSUSE/master/packages/m/MozillaFirefox/firefox-kde.patch'
   wget --quiet -P etc/portage/patches/www-client/firefox/ 'https://raw.githubusercontent.com/bmwiedemann/openSUSE/master/packages/m/MozillaFirefox/mozilla-kde.patch'
-  wget --quiet -P etc/portage/patches/www-client/firefox/ 'http://bazaar.launchpad.net/~mozillateam/firefox/firefox-trunk.head/download/ricotz%40ubuntu.com-20201209065217-a6q3xcr4yl33mdqp/unitymenubar.patch-20130215095938-1n6mqqau8tdfqwhg-1/unity-menubar.patch'
+  #wget --quiet -P etc/portage/patches/www-client/firefox/ 'http://bazaar.launchpad.net/~mozillateam/firefox/firefox-trunk.head/download/ricotz%40ubuntu.com-20201209065217-a6q3xcr4yl33mdqp/unitymenubar.patch-20130215095938-1n6mqqau8tdfqwhg-1/unity-menubar.patch'
 
   mkdir -p etc/portage/package.mask
   mkdir -p etc/portage/package.unmask
