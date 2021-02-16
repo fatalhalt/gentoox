@@ -21,7 +21,7 @@ userpassword=gentoox
 builddate="$(date +%Y%m%d).graphite"
 builddir="build-$(date +%Y%m%d)"
 stage3tarball="stage3-amd64-20201208.graphite.tar.xz"
-KERNEL_CONFIG_DIFF="0001-kernel-config-cfs-r6.patch"
+KERNEL_CONFIG_DIFF="0001-kernel-config-cfs-r7.patch"
 
 binpkgs="$(pwd)/var/cache/binpkgs/"
 distfiles="$(pwd)/var/cache/distfiles/"
@@ -63,7 +63,6 @@ if [[ ! -f 'image/etc/gentoo-release' ]]; then
   cp -r ../../patches/* etc/portage/patches/
   mkdir -p etc/portage/patches/app-crypt/efitools
   cp ../../efitools-1.9.2-fixup-UNKNOWN_GLYPH.patch etc/portage/patches/app-crypt/efitools/
-  #cp ../../qt-creator-use-llvm9.patch usr/src/
   cp ../../60-ioschedulers.rules etc/udev/rules.d/
 
   mkdir -p etc/portage/patches/www-client/firefox
@@ -241,39 +240,26 @@ cd /usr/src/linux/
 
 if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   wget --quiet 'https://git.archlinux.org/svntogit/packages.git/plain/trunk/config?h=packages/linux' -O .config
-  #git clone https://github.com/graysky2/kernel_gcc_patch.git
-  #wget --quiet https://gitlab.com/post-factum/pf-kernel/commit/6401ed9bdf5c3d13b959c938e5d38a3b03cfa062.diff -O O3-always-available.diff
-  #wget --quiet -m -np -c 'ck.kolivas.org/patches/5.0/5.10/5.10-ck1/patches/'
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/aufs-patches/0001-aufs-20210111.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/android-patches/0001-android-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/arch-patches-v14/0001-arch-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/btrfs-patches-v13/0001-btrfs-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/clearlinux-patches/0001-clearlinux-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/cpu-patches-v2/0001-cpu-patches.patch
-  #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/fixes-miscellaneous-v11/0001-fixes-miscellaneous.patch
-  # the kswap patches from above's repo were causing gcc to spin a core at 100% usage at ./configure phase of many packages such as lynx or samba.  discard them.
-  git clone --depth 1 --filter=blob:none --sparse https://gitlab.com/sirlucjan/kernel-patches.git sirlucjan; cd sirlucjan
-  git sparse-checkout init --cone; git sparse-checkout set 5.10/fixes-miscellaneous-v11-sep; rm -f 5.10/fixes-miscellaneous-v11-sep/*-mm-*; cd ..
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/futex-trunk-patches-v2/0001-futex-resync-from-gitlab.collabora.com.patch
-  #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/futex2-trunk-patches-v3/0001-futex2-resync-from-gitlab.collabora.com.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/ntfs3-patches-v7/0001-ntfs3-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/zstd-dev-patches/0001-zstd-dev-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.10/zstd-patches-v3/0001-init-add-support-for-zstd-compressed-modules.patch
+  #wget --quiet -m -np -c 'ck.kolivas.org/patches/5.0/5.11/5.11-ck1/patches/'
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/aufs-patches/0001-aufs-20210111.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/android-patches/0001-android-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/arch-patches-v2/0001-arch-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/btrfs-patches/0001-btrfs-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/clearlinux-patches/0001-clearlinux-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/cpu-patches/0001-cpu-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/fixes-miscellaneous/0001-fixes-miscellaneous.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/mm-patches-v2/0001-mm-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/futex-dev-patches/0001-futex-dev-patches.patch
+  #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/futex2-dev-trunk-patches/0001-futex2-resync-from-gitlab.collabora.com.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/ntfs3-patches/0001-ntfs3-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/zstd-dev-patches/0001-zstd-dev-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/zstd-patches/0001-init-add-support-for-zstd-compressed-modules.patch
 
-  #patch -p1 < kernel_gcc_patch/enable_additional_cpu_optimizations_for_gcc_v10.1+_kernel_v5.8+.patch
-  #patch -p1 < O3-always-available.diff
-  #for f in ck.kolivas.org/patches/5.0/5.8/5.8-ck1/patches/*.patch; do patch -p1 < "\$f"; done
+  #for f in ck.kolivas.org/patches/5.0/5.11/5.11-ck1/patches/*.patch; do patch -p1 < "\$f"; done
   patch -p1 < 0001-cpu-patches.patch
   patch -p0 < ../$KERNEL_CONFIG_DIFF
 
   # Aufs
-  #cp -r ../aufs5-standalone-5.10/fs/aufs/ fs/
-  #cp ../aufs5-standalone-5.10/include/uapi/linux/aufs_type.h include/uapi/linux/
-  #patch -p1 < ../aufs5-standalone-5.10/aufs5-kbuild.patch
-  #patch -p1 < ../aufs5-standalone-5.10/aufs5-base.patch
-  #patch -p1 < ../aufs5-standalone-5.10/aufs5-mmap.patch
-  #patch -p1 < ../aufs5-standalone-5.10/aufs5-standalone.patch
-  #patch -p1 < ../aufs5-standalone-5.10/aufs-5.10-changed-files/patches/5.10/k510.patch
   patch -p1 < 0001-aufs-20210111.patch
   echo -e "CONFIG_AUFS_FS=y\nCONFIG_AUFS_BRANCH_MAX_127=y\nCONFIG_AUFS_BRANCH_MAX_511=n\nCONFIG_AUFS_BRANCH_MAX_1023=n\nCONFIG_AUFS_BRANCH_MAX_32767=n\nCONFIG_AUFS_HNOTIFY=y\nCONFIG_AUFS_EXPORT=n\nCONFIG_AUFS_XATTR=y\nCONFIG_AUFS_FHSM=y\nCONFIG_AUFS_RDU=n\nCONFIG_AUFS_DIRREN=n\nCONFIG_AUFS_SHWH=n\nCONFIG_AUFS_BR_RAMFS=y\nCONFIG_AUFS_BR_FUSE=n\nCONFIG_AUFS_BR_HFSPLUS=n\nCONFIG_AUFS_DEBUG=n" >> .config
   sed -i "s/CONFIG_ISO9660_FS=m/CONFIG_ISO9660_FS=y/" .config
@@ -289,8 +275,9 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   patch -p1 < 0001-arch-patches.patch
   patch -p1 < 0001-btrfs-patches.patch
   patch -p1 < 0001-clearlinux-patches.patch
-  for f in sirlucjan/5.10/fixes-miscellaneous-v11-sep/*.patch; do patch -p1 < "\$f"; done
-  patch -p1 < 0001-futex-resync-from-gitlab.collabora.com.patch
+  patch -p1 < 0001-fixes-miscellaneous.patch
+  patch -p1 < 0001-mm-patches.patch
+  patch -p1 < 00001-futex-dev-patches.patch
   #patch -p1 < 0001-futex2-resync-from-gitlab.collabora.com.patch
   patch -p1 < ../0011-ZFS-fix.patch
   patch -p1 < ../zfs-ungpl-rcu_read_unlock-export.diff
