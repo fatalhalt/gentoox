@@ -68,7 +68,7 @@ if [[ ! -f 'image/etc/gentoo-release' ]]; then
   mkdir -p etc/portage/patches/www-client/firefox
   wget --quiet -P etc/portage/patches/www-client/firefox/ 'https://raw.githubusercontent.com/bmwiedemann/openSUSE/master/packages/m/MozillaFirefox/firefox-kde.patch'
   wget --quiet -P etc/portage/patches/www-client/firefox/ 'https://raw.githubusercontent.com/bmwiedemann/openSUSE/master/packages/m/MozillaFirefox/mozilla-kde.patch'
-  #wget --quiet -P etc/portage/patches/www-client/firefox/ 'http://bazaar.launchpad.net/~mozillateam/firefox/firefox-trunk.head/download/ricotz%40ubuntu.com-20201209065217-a6q3xcr4yl33mdqp/unitymenubar.patch-20130215095938-1n6mqqau8tdfqwhg-1/unity-menubar.patch'
+  wget --quiet -P etc/portage/patches/www-client/firefox/ 'https://bazaar.launchpad.net/~mozillateam/firefox/firefox-trunk.head/download/ricotz%40ubuntu.com-20210119184254-9ag3yy5sw3i4autd/unitymenubar.patch-20130215095938-1n6mqqau8tdfqwhg-1/unity-menubar.patch'
 
   mkdir -p etc/portage/package.mask
   mkdir -p etc/portage/package.unmask
@@ -191,7 +191,6 @@ dev-libs/apr-util ldap
 sys-apps/util-linux caps
 */* PYTHON_TARGETS: python2_7 python3_9
 */* PYTHON_SINGLE_TARGET: -* python3_9
-net-libs/gupnp python_single_target_python3_8
 media-gfx/blender python_single_target_python3_8
 dev-libs/libnatspec python_single_target_python2_7
 dev-lang/yasm python_single_target_python2_7
@@ -240,14 +239,13 @@ cd /usr/src/linux/
 if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   wget --quiet 'https://git.archlinux.org/svntogit/packages.git/plain/trunk/config?h=packages/linux' -O .config
   #wget --quiet -m -np -c 'ck.kolivas.org/patches/5.0/5.11/5.11-ck1/patches/'
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/aufs-patches/0001-aufs-20210215.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/android-patches-v2/0001-android-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/arch-patches-v4/0001-arch-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/btrfs-patches-v2/0001-btrfs-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/arch-patches-v5/0001-arch-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/btrfs-patches-v3/0001-btrfs-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/clearlinux-patches/0001-clearlinux-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/cpu-patches/0001-cpu-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/fixes-miscellaneous-v2/0001-fixes-miscellaneous.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/mm-patches-v2/0001-mm-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/fixes-miscellaneous-v4/0001-fixes-miscellaneous.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/mm-patches-v3/0001-mm-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/futex-dev-patches/0001-futex-dev-patches.patch
   #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/futex2-dev-trunk-patches-v4/0001-futex2-resync-from-gitlab.collabora.com.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/ntfs3-patches/0001-ntfs3-patches.patch
@@ -260,7 +258,13 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   patch -p0 < ../$KERNEL_CONFIG_DIFF
 
   # Aufs
-  patch -p1 < 0001-aufs-20210215.patch
+  git clone --single-branch --branch aufs5.x-rcN https://github.com/sfjro/aufs5-standalone.git ../
+  cp -r aufs5-standalone/fs/aufs/ fs/
+  cp aufs5-standalone/include/uapi/linux/aufs_type.h include/uapi/linux/
+  patch -p1 < aufs5-standalone/aufs5-kbuild.patch
+  patch -p1 < aufs5-standalone/aufs5-base.patch
+  patch -p1 < aufs5-standalone/aufs5-mmap.patch
+  patch -p1 < aufs5-standalone/aufs5-standalone.patch
   echo -e "CONFIG_AUFS_FS=y\nCONFIG_AUFS_BRANCH_MAX_127=y\nCONFIG_AUFS_BRANCH_MAX_511=n\nCONFIG_AUFS_BRANCH_MAX_1023=n\nCONFIG_AUFS_BRANCH_MAX_32767=n\nCONFIG_AUFS_HNOTIFY=y\nCONFIG_AUFS_EXPORT=n\nCONFIG_AUFS_XATTR=y\nCONFIG_AUFS_FHSM=y\nCONFIG_AUFS_RDU=n\nCONFIG_AUFS_DIRREN=n\nCONFIG_AUFS_SHWH=n\nCONFIG_AUFS_BR_RAMFS=y\nCONFIG_AUFS_BR_FUSE=n\nCONFIG_AUFS_BR_HFSPLUS=n\nCONFIG_AUFS_DEBUG=n" >> .config
   sed -i "s/CONFIG_ISO9660_FS=m/CONFIG_ISO9660_FS=y/" .config
 
@@ -277,7 +281,7 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   patch -p1 < 0001-clearlinux-patches.patch
   patch -p1 < 0001-fixes-miscellaneous.patch
   patch -p1 < 0001-mm-patches.patch
-  patch -p1 < 00001-futex-dev-patches.patch
+  patch -p1 < 0001-futex-dev-patches.patch
   #patch -p1 < 0001-futex2-resync-from-gitlab.collabora.com.patch
   patch -p1 < ../0011-ZFS-fix.patch
   patch -p1 < ../zfs-ungpl-rcu_read_unlock-export.diff
@@ -314,7 +318,7 @@ hostid > /etc/hostid
 dd if=/dev/urandom of=/dev/stdout bs=1 count=4 > /etc/hostid
 
 genkernel --kernel-config=/usr/src/linux/.config --compress-initramfs-type=zstd --microcode --luks --lvm --mdadm --btrfs --zfs initramfs
-XZ_OPT="--lzma1=preset=9e,dict=128MB,nice=273,depth=200,lc=4" tar --lzma -cf /usr/src/kernel-gentoox.tar.lzma /boot/*\${KERNELVERSION}* -C /lib/modules/ .
+tar --zstd -cf /usr/src/kernel-gentoox.tar.zst /boot/*\${KERNELVERSION}* -C /lib/modules/ .
 
 sed -i "s/#GRUB_CMDLINE_LINUX_DEFAULT=\"\"/GRUB_CMDLINE_LINUX_DEFAULT=\"zswap.enabled=1 zswap.compressor=lz4 zswap.max_pool_percent=20 zswap.zpool=z3fold dobtrfs\"/" /etc/default/grub
 sed -i "s/#GRUB_GFXMODE=640x480/GRUB_GFXMODE=auto/" /etc/default/grub
@@ -658,9 +662,9 @@ fi
 emerge -u dev-libs/libisoburn sys-fs/squashfs-tools sys-boot/syslinux
 xorriso -osirrox on -indev *-$isobuilddate.iso -extract / iso/
 mv image.squashfs iso/image.squashfs
-tar -xOf kernel-gentoox.tar.lzma --wildcards \*vmlinuz-\* > iso/boot/gentoo
-tar -xOf kernel-gentoox.tar.lzma --wildcards \*initramfs-\* | unzstd -d | gzip > iso/boot/gentoo.igz
-tar -xOf kernel-gentoox.tar.lzma --wildcards \*System.map-\* > iso/boot/System-gentoo.map
+tar -xOf kernel-gentoox.tar.zst --wildcards \*vmlinuz-\* > iso/boot/gentoo
+tar -xOf kernel-gentoox.tar.zst --wildcards \*initramfs-\* | unzstd -d | gzip > iso/boot/gentoo.igz
+tar -xOf kernel-gentoox.tar.zst --wildcards \*System.map-\* > iso/boot/System-gentoo.map
 sed -i "s@dokeymap@aufs@g" iso/isolinux/isolinux.cfg
 sed -i "s@dokeymap@aufs@g" iso/grub/grub.cfg
 xorriso -as mkisofs -r -J \
@@ -671,6 +675,6 @@ xorriso -as mkisofs -r -J \
 	-no-emul-boot -boot-load-size 4 -boot-info-table \
     -eltorito-alt-boot -e gentoo.efimg -no-emul-boot -isohybrid-gpt-basdat \
     -V "GENTOOX" -o GentooX-x86_64-$builddate.iso iso/
-#rm -Rf image/ iso/ kernel-gentoox.tar.lzma
+#rm -Rf image/ iso/ kernel-gentoox.tar.zst
 fi
 
