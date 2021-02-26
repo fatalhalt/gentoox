@@ -258,7 +258,7 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   patch -p0 < ../$KERNEL_CONFIG_DIFF
 
   # Aufs
-  git clone --single-branch --branch aufs5.x-rcN https://github.com/sfjro/aufs5-standalone.git ../
+  git clone --single-branch --branch aufs5.x-rcN https://github.com/sfjro/aufs5-standalone.git
   cp -r aufs5-standalone/fs/aufs/ fs/
   cp aufs5-standalone/include/uapi/linux/aufs_type.h include/uapi/linux/
   patch -p1 < aufs5-standalone/aufs5-kbuild.patch
@@ -291,6 +291,9 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   patch -p1 < 0001-zswap-patches.patch
   sed -i 's/CONFIG_DEFAULT_HOSTNAME="archlinux"/CONFIG_DEFAULT_HOSTNAME="gentoox"/' .config
   sed -i 's/CONFIG_LOCALVERSION=""/CONFIG_LOCALVERSION="-x86_64"/' .config
+  sed -i 's/CONFIG_SQUASHFS=m/CONFIG_SQUASHFS=y/' .config
+  sed -i 's/CONFIG_BLK_DEV_LOOP=m/CONFIG_BLK_DEV_LOOP=y/' .config
+  sed -i 's/CONFIG_BLK_DEV_CRYPTOLOOP=m/CONFIG_BLK_DEV_CRYPTOLOOP=y/' .config
   sed -i 's/CONFIG_NET_IP_TUNNEL=y/CONFIG_NET_IP_TUNNEL=m/' .config
   sed -i 's/CONFIG_NET_UDP_TUNNEL=y/CONFIG_NET_UDP_TUNNEL=m/' .config
   sed -i 's/EXTRAVERSION = -gentoo-r1/EXTRAVERSION = -gentoo/' Makefile
@@ -665,8 +668,8 @@ mv image.squashfs iso/image.squashfs
 tar -xOf kernel-gentoox.tar.zst --wildcards \*vmlinuz-\* > iso/boot/gentoo
 tar -xOf kernel-gentoox.tar.zst --wildcards \*initramfs-\* | unzstd -d | gzip > iso/boot/gentoo.igz
 tar -xOf kernel-gentoox.tar.zst --wildcards \*System.map-\* > iso/boot/System-gentoo.map
-sed -i "s@dokeymap@aufs@g" iso/isolinux/isolinux.cfg
-sed -i "s@dokeymap@aufs@g" iso/grub/grub.cfg
+sed -i "s@dokeymap@aufs scandelay=3@g" iso/isolinux/isolinux.cfg
+sed -i "s@dokeymap@aufs scandelay=3@g" iso/grub/grub.cfg
 xorriso -as mkisofs -r -J \
 	-joliet-long -l -cache-inodes \
 	-isohybrid-mbr /usr/share/syslinux/isohdpfx.bin \
