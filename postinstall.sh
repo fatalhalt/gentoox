@@ -430,6 +430,13 @@ cp /usr/share/applications/mpv.desktop ~/.local/share/applications/mpv-kio.deskt
 sed -i -r "s/^Name=(.*)$/Name=mpv Media Player \(KIO cat from smb\)/g" ~/.local/share/applications/mpv-kio.desktop
 sed -i -r "s/^Exec=(.*)$/Exec=mpv-kio.sh/g" ~/.local/share/applications/mpv-kio.desktop
 
+# change akonadi to use sqlite backend instead of mysql
+sed -i 's/^Driver=QMYSQL$/Driver=QSQLITE3/' ~/.config/akonadi/akonadiserverrc
+akonadictl restart
+
+# disable baloo, it almost always crashes and is crapware just like akonadi
+balooctl disable
+
 
 # after script runs delete it
 sed -i "s/~\/postinstall.sh &//" ~/.xinitrc

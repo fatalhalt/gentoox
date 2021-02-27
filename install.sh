@@ -31,7 +31,7 @@ setup_btrfs () {
 	DEVICE=$1
 
 	mkfs.btrfs -f -L GENTOO $DEVICE
-	mkdir /mnt/install
+	mkdir -p /mnt/install
 	mount -o compress=lzo $DEVICE /mnt/install
 
 	btrfs subvolume create /mnt/install/@
@@ -147,6 +147,7 @@ else
   # user done the partitioning
   setup_btrfs $partition
   if [[ ! -z $UEFI_MODE ]]; then
+    mkdir -p /mnt/install/boot/efi
     read -erp "Enter formatted EF00 ESP partition for EFI: " -i "/dev/sda1" efi_partition
     mount $efi_partition /mnt/install/boot/efi
   fi
