@@ -240,18 +240,19 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   wget --quiet 'https://git.archlinux.org/svntogit/packages.git/plain/trunk/config?h=packages/linux' -O .config
   #wget --quiet -m -np -c 'ck.kolivas.org/patches/5.0/5.11/5.11-ck1/patches/'
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/android-patches-v2/0001-android-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/arch-patches-v5/0001-arch-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/btrfs-patches-v3/0001-btrfs-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/arch-patches-v6/0001-arch-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/btrfs-patches-v4/0001-btrfs-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/clearlinux-patches/0001-clearlinux-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/cpu-patches/0001-cpu-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/fixes-miscellaneous-v4/0001-fixes-miscellaneous.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/fixes-miscellaneous-v6/0001-fixes-miscellaneous.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/mm-patches-v3/0001-mm-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/futex-dev-patches/0001-futex-dev-patches.patch
   #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/futex2-dev-trunk-patches-v4/0001-futex2-resync-from-gitlab.collabora.com.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/ntfs3-patches/0001-ntfs3-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/ntfs3-patches-v2/0001-ntfs3-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/zstd-dev-patches/0001-zstd-dev-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/zstd-patches/0001-init-add-support-for-zstd-compressed-modules.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/zswap-patches-v2/0001-zswap-patches.patch
+  wget --quiet https://raw.githubusercontent.com/hamadmarri/cacule-cpu-scheduler/master/patches/CacULE/v5.11/cacule-5.11.patch
 
   #for f in ck.kolivas.org/patches/5.0/5.11/5.11-ck1/patches/*.patch; do patch -p1 < "\$f"; done
   patch -p1 < 0001-cpu-patches.patch
@@ -289,6 +290,7 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   patch -p1 < 0001-zstd-dev-patches.patch
   patch -p1 < 0001-init-add-support-for-zstd-compressed-modules.patch
   patch -p1 < 0001-zswap-patches.patch
+  patch -p1 < cacule-5.11.patch
   sed -i 's/CONFIG_DEFAULT_HOSTNAME="archlinux"/CONFIG_DEFAULT_HOSTNAME="gentoox"/' .config
   sed -i 's/CONFIG_LOCALVERSION=""/CONFIG_LOCALVERSION="-x86_64"/' .config
   sed -i 's/CONFIG_SQUASHFS=m/CONFIG_SQUASHFS=y/' .config
