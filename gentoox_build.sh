@@ -392,7 +392,8 @@ cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DKDE_INSTALL_LI
 make install
 cd /
 
-echo -e '\nkde-apps/akonadi -mysql sqlite
+echo -e '\nkde-plasma/kde-cli-tools kdesu
+kde-apps/akonadi -mysql sqlite
 kde-plasma/plasma-meta discover networkmanager thunderbolt
 kde-apps/kio-extras samba
 media-video/vlc archive bluray dav1d libass libcaca lirc live opus samba speex skins theora vaapi v4l vdpau x265
@@ -410,7 +411,7 @@ ebuild /var/db/repos/gentoo/kde-plasma/discover/discover-5.20.5.ebuild manifest
 # mask qt-creator, it pulls llvm9 and we don't want that
 echo 'dev-qt/qt-creator' >> /etc/portage/package.mask/gentoox
 emerge -v --jobs=2 --keep-going=y --autounmask=y --autounmask-write=y --deep --newuse kde-plasma/plasma-meta kde-apps/kde-apps-meta kde-apps/kmail kde-apps/knotes \
-latte-dock plasma-sdk libdbusmenu gvfs calamares
+latte-dock plasma-sdk libdbusmenu gvfs calamares kuroo
 #emerge --noreplace dev-qt/qt-creator
 #echo 'dev-qt/qt-creator' >> /etc/portage/package.mask/gentoox
 
