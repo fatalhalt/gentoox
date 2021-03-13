@@ -394,7 +394,8 @@ cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DKDE_INSTALL_LI
 make install
 cd /
 
-echo -e '\nkde-plasma/kde-cli-tools kdesu
+echo -e '\nkde-apps/kdecore-meta -webengine
+kde-plasma/kde-cli-tools kdesu
 kde-apps/akonadi -mysql sqlite
 kde-plasma/plasma-meta discover networkmanager thunderbolt
 kde-apps/kio-extras samba
@@ -491,7 +492,8 @@ source /etc/profile  && export PS1="(chroot) \$PS1"
 
 echo -e '\nmedia-gfx/gimp heif jpeg2k openexr python vector-icons webp wmf xpm python_single_target_python2_7
 media-video/mpv archive bluray drm gbm samba vaapi vdpau
-dev-lang/php gd truetype pcntl zip curl sockets' >> /etc/portage/package.use/gentoox
+dev-lang/php gd truetype pcntl zip curl sockets
+app-emulation/virtualbox-guest-additions -X' >> /etc/portage/package.use/gentoox
 
 yes | layman -a bobwya -q
 echo '*/*::bobwya' >> /etc/portage/package.mask/lowprio
