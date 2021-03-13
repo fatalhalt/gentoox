@@ -1,6 +1,6 @@
 # GentooX
 
-an -O3, Graphite, and LTO optimized x86_64 LiveCD Gentoo distribution with installer.
+an -O3, Graphite, and LTO optimized x86_64 LiveCD Gentoo Linux distribution with installer.
 
 GentooX comes with simple interactive *install.sh* script, supports BIOS and UEFI x86_64 systems, at minimum requires ~~AVX~~ capable CPUs released since 2011 such as Intel Sandybridge or AMD Bulldozer, among KDE, it includes Steam, flatpak, and phoronix-suite out-of-the-box.
 
@@ -14,10 +14,15 @@ GentooX comes with simple interactive *install.sh* script, supports BIOS and UEF
 * Steam installed out-of-the-box with necessary lib32 dependencies and fsync Linux kernel patched in
 * flatpak is included, easily install VSCode or Discord in sandboxed environment
 * ZFS support, kernel patched to export FPU functions
-* Linux 5.10.5 kernel built with 1000Hz -03 for Sandybridge arch. Patches include aufs, zstd, ClearLinux patches, Intel FSGSBASE patches, Valve's fsync, [sirlucjan's](https://gitlab.com/sirlucjan/kernel-patches/-/tree/master/): android/arch/btrfs/fixes-miscellaneous/ntfs, unprivileged CLONE_NEWUSER, and IOMMU missing ACS capabilities overrides. CFS remains as default scheduler.
-* KDE 5.20.5, KDE Applications 20.12.1, KDE Frameworks 5.77.0, Qt 5.15.2
+* Linux 5.11.3 kernel built with 1000Hz -03 for Sandybridge arch. Patches include aufs, zstd, ClearLinux patches, Intel FSGSBASE patches, Valve's fsync, [sirlucjan's](https://gitlab.com/sirlucjan/kernel-patches/-/tree/master/): android/arch/btrfs/fixes-miscellaneous/ntfs, unprivileged CLONE_NEWUSER, and IOMMU missing ACS capabilities overrides.
+* KDE 5.21.1, KDE Applications 20.12.2, KDE Frameworks 5.79.0, Qt 5.15.2
+* CacULE CPU scheduler
 
 ## Changelog
+* 2021.03.04 Release
+  * Linux 5.11.3, CacULE CPU scheduler is now the default!
+* 2021.02.27 Release
+  * Linux 5.11.2, and so on, updates as of 02/27/2021
 * 2021.01.08 Release
   * Linux 5.10.5, KDE 5.20.5, KDE Applications 20.12.1, updates as of 01/08/2021, Ruby 3.0 is now default, CPU scaling governor is now set to performance by default, networkmanager is now enabled by default.
 * 2020.12.19 Release
