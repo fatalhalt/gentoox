@@ -30,6 +30,7 @@ distfiles="$(pwd)/var/cache/distfiles/"
 #build_kde=y
 #build_steam=y
 #build_extra=y
+#build_wine=y
 #configure_user=y
 #configure_weston=y
 #clover_rice="y"
@@ -163,7 +164,8 @@ dev-libs/elfutils nolto.conf
 app-crypt/efitools nolto.conf
 sys-libs/efivar nolto.conf
 dev-libs/libaio nolto.conf
-app-arch/bzip2 O3nolto.conf' > /etc/portage/package.env
+app-arch/bzip2 O3nolto.conf
+media-libs/opencv O3nolto.conf' > /etc/portage/package.env
 
 echo 'sys-devel/gcc graphite lto pgo zstd
 dev-libs/elfutils zstd
@@ -241,14 +243,14 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   #wget --quiet -m -np -c 'ck.kolivas.org/patches/5.0/5.11/5.11-ck1/patches/'
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/android-patches-v2/0001-android-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/arch-patches-v6/0001-arch-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/btrfs-patches-v4/0001-btrfs-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/btrfs-patches-v5/0001-btrfs-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/clearlinux-patches/0001-clearlinux-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/cpu-patches/0001-cpu-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/fixes-miscellaneous-v6/0001-fixes-miscellaneous.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/fixes-miscellaneous-v7/0001-fixes-miscellaneous.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/mm-patches-v3/0001-mm-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/futex-dev-patches/0001-futex-dev-patches.patch
   #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/futex2-dev-trunk-patches-v4/0001-futex2-resync-from-gitlab.collabora.com.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/ntfs3-patches-v2/0001-ntfs3-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/ntfs3-patches-v3/0001-ntfs3-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/zstd-dev-patches/0001-zstd-dev-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/zstd-patches/0001-init-add-support-for-zstd-compressed-modules.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/zswap-patches-v2/0001-zswap-patches.patch
@@ -364,7 +366,7 @@ FEATURES="-userpriv" emerge dev-lang/yasm  # yasm fails to build otherwise
 #sys-boot/plymouth gdm' > /etc/portage/package.use/gentoox
 
 emerge -v --autounmask=y --autounmask-write=y --keep-going=y --deep --newuse xorg-server nvidia-firmware arandr elogind sudo vim weston wpa_supplicant ntp bind-tools telnet-bsd snapper \
-nfs-utils cifs-utils samba dhcpcd nss-mdns zsh zsh-completions powertop cpupower lm-sensors screenfetch gparted gdb strace atop dos2unix app-misc/screen app-text/tree openbsd-netcat #plymouth-openrc-plugin
+nfs-utils cifs-utils samba dhcpcd nss-mdns zsh zsh-completions powertop cpupower lm-sensors screenfetch gparted gdb strace atop dos2unix app-misc/screen app-text/tree openbsd-netcat laptop-mode-tools hdparm #plymouth-openrc-plugin
 #emerge -avuDN --with-bdeps=y @world
 #emerge -v --depclean
 touch /tmp/gentoox-weston-done
@@ -406,7 +408,7 @@ gnome-base/gvfs afp archive bluray fuse gphoto2 ios mtp nfs samba zeroconf
 net-irc/telepathy-idle python_single_target_python2_7' >> /etc/portage/package.use/gentoox
 
 # enable flatpak backend in discover, patch qt-creator to use clang9 effectively dropping clang8
-sed -i "s/DBUILD_FlatpakBackend=OFF/DBUILD_FlatpakBackend=ON/" /var/db/repos/gentoo/kde-plasma/discover/discover-5.20.3-r1.ebuild
+echo 'kde-plasma/discover flatpak' >> /etc/portage/package.use/gentoox
 ebuild /var/db/repos/gentoo/kde-plasma/discover/discover-5.20.5.ebuild manifest
 #patch -p1 /var/db/repos/gentoo/dev-qt/qt-creator/qt-creator-4.10.1.ebuild /usr/src/qt-creator-use-llvm9.patch
 #ebuild /var/db/repos/gentoo/dev-qt/qt-creator/qt-creator-4.10.1.ebuild manifest
@@ -507,6 +509,149 @@ media-libs/avidemux-plugins' >> /etc/portage/package.env
 
 emerge -v gimp avidemux blender tuxkart keepassxc libreoffice firefox adobe-flash mpv audacious-plugins audacious net-irc/hexchat smartmontools libisoburn phoronix-test-suite virtualbox-guest-additions pfl bash-completion dev-python/pip virtualenv jq
 touch /tmp/gentoox-extra-done
+HEREDOC
+exit 0
+fi
+
+
+if [[ ! -z $build_wine ]] && [[ ! -f 'tmp/gentoox-wine-done' ]]; then
+cat <<HEREDOC | chroot .
+source /etc/profile  && export PS1="(chroot) \$PS1"
+
+echo -e '\n# wine
+x11-libs/libXcursor abi_x86_32
+x11-libs/libXi abi_x86_32
+media-libs/alsa-lib abi_x86_32
+net-print/cups abi_x86_32
+media-libs/fontconfig abi_x86_32
+media-libs/lcms abi_x86_32
+media-sound/mpg123 abi_x86_32
+sys-devel/gettext abi_x86_32
+media-libs/libpng abi_x86_32
+media-sound/pulseaudio abi_x86_32
+media-libs/libsdl2 abi_x86_32 haptic
+net-libs/gnutls abi_x86_32
+media-libs/freetype abi_x86_32
+sys-apps/dbus abi_x86_32
+sys-libs/libunwind abi_x86_32
+media-libs/vulkan-loader abi_x86_32
+x11-libs/libXcomposite abi_x86_32
+dev-libs/libxslt abi_x86_32
+app-emulation/wine-gecko abi_x86_32
+dev-libs/libgcrypt abi_x86_32
+dev-libs/libgpg-error abi_x86_32
+dev-libs/libtasn1 abi_x86_32
+dev-libs/libunistring abi_x86_32
+dev-libs/nettle abi_x86_32
+dev-libs/gmp abi_x86_32
+net-dns/libidn2 abi_x86_32
+x11-libs/libxkbcommon abi_x86_32
+media-libs/libsndfile abi_x86_32
+x11-libs/libSM abi_x86_32
+x11-libs/libICE abi_x86_32
+x11-libs/libXtst abi_x86_32
+sys-libs/libcap abi_x86_32
+dev-libs/glib abi_x86_32
+sys-apps/tcp-wrappers abi_x86_32
+net-libs/libasyncns abi_x86_32
+media-plugins/alsa-plugins abi_x86_32
+media-video/ffmpeg abi_x86_32
+media-libs/libbluray abi_x86_32
+dev-libs/libcdio-paranoia abi_x86_32
+media-libs/dav1d abi_x86_32
+media-sound/lame abi_x86_32
+media-libs/libtheora abi_x86_32
+media-libs/libogg abi_x86_32
+media-libs/libwebp abi_x86_32
+media-libs/x264 abi_x86_32
+media-libs/x265 abi_x86_32
+media-libs/xvid abi_x86_32
+media-libs/game-music-emu abi_x86_32
+media-libs/libaom abi_x86_32
+media-libs/libass abi_x86_32
+media-libs/libcaca abi_x86_32
+media-video/rtmpdump abi_x86_32
+media-libs/soxr abi_x86_32
+media-libs/libmodplug abi_x86_32
+media-libs/opus abi_x86_32
+media-libs/rubberband abi_x86_32
+net-fs/samba abi_x86_32
+media-libs/speex abi_x86_32
+gnome-base/librsvg abi_x86_32
+media-libs/libvorbis abi_x86_32
+media-libs/libvpx abi_x86_32
+dev-libs/openssl abi_x86_32
+x11-libs/cairo abi_x86_32
+x11-libs/gdk-pixbuf abi_x86_32
+media-libs/harfbuzz abi_x86_32
+x11-libs/pango abi_x86_32
+dev-libs/fribidi abi_x86_32
+x11-libs/libXft abi_x86_32
+media-gfx/graphite2 abi_x86_32
+media-libs/tiff abi_x86_32
+dev-libs/lzo abi_x86_32
+sys-libs/binutils-libs abi_x86_32
+x11-libs/pixman abi_x86_32
+app-arch/libarchive abi_x86_32
+dev-libs/libbsd abi_x86_32
+dev-libs/popt abi_x86_32
+net-libs/libnsl abi_x86_32
+sys-libs/e2fsprogs-libs abi_x86_32
+sys-libs/ldb abi_x86_32
+sys-libs/liburing abi_x86_32
+sys-libs/talloc abi_x86_32
+sys-libs/tdb abi_x86_32
+sys-libs/tevent abi_x86_32
+dev-python/subunit abi_x86_32
+app-crypt/mit-krb5 abi_x86_32
+dev-util/cmocka abi_x86_32
+net-libs/libtirpc abi_x86_32
+sys-apps/keyutils abi_x86_32
+dev-libs/check abi_x86_32
+dev-util/cppunit abi_x86_32
+dev-db/lmdb abi_x86_32
+sys-apps/attr abi_x86_32
+app-arch/xz-utils abi_x86_32
+media-libs/libsamplerate abi_x86_32
+sci-libs/fftw abi_x86_32
+media-libs/freeglut abi_x86_32
+x11-libs/libXt abi_x86_32
+dev-libs/libcdio abi_x86_32
+dev-libs/libpcre abi_x86_32
+sys-apps/util-linux abi_x86_32
+sys-libs/pam abi_x86_32
+sys-libs/db abi_x86_32
+media-libs/flac abi_x86_32
+virtual/libintl abi_x86_32
+virtual/jpeg abi_x86_32
+media-libs/libjpeg-turbo abi_x86_32
+virtual/libiconv abi_x86_32
+virtual/libcrypt abi_x86_32
+virtual/glu abi_x86_32
+media-libs/glu abi_x86_32
+virtual/acl abi_x86_32
+sys-apps/acl abi_x86_32
+dev-libs/libverto abi_x86_32
+dev-libs/libev abi_x86_32
+virtual/rust abi_x86_32
+dev-lang/rust abi_x86_32
+virtual/libudev abi_x86_32
+sys-fs/eudev abi_x86_32
+virtual/libusb abi_x86_32
+dev-libs/libusb abi_x86_32
+app-emulation/vkd3d abi_x86_32
+x11-libs/xcb-util abi_x86_32
+x11-libs/xcb-util-keysyms abi_x86_32
+x11-libs/xcb-util-wm abi_x86_32
+x11-libs/xcb-util-cursor abi_x86_32
+x11-libs/xcb-util-image abi_x86_32
+x11-libs/xcb-util-renderutil abi_x86_32
+dev-libs/libusb-compat abi_x86_32
+
+app-emulation/wine-vanilla custom-cflags vkd3d' >> /etc/portage/package.use/gentoox
+
+emerge -v wine
+touch /tmp/gentoox-wine-done
 HEREDOC
 exit 0
 fi
@@ -675,7 +820,7 @@ tar -xOf kernel-gentoox.tar.zst --wildcards \*initramfs-\* | unzstd -d | gzip > 
 tar -xOf kernel-gentoox.tar.zst --wildcards \*System.map-\* > iso/boot/System-gentoo.map
 sed -i "s@dokeymap@aufs scandelay=3@g" iso/isolinux/isolinux.cfg
 sed -i "s@dokeymap@aufs scandelay=3@g" iso/grub/grub.cfg
-xorriso -as mkisofs -r -J \
+xorriso -as mkisofs -iso-level 3 -r -J \
 	-joliet-long -l -cache-inodes \
 	-isohybrid-mbr /usr/share/syslinux/isohdpfx.bin \
 	-partition_offset 16 -A "GENTOOX" \

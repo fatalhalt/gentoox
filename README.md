@@ -13,12 +13,15 @@ GentooX comes with simple interactive *install.sh* script, supports BIOS and UEF
 * phoronix-suite available out-of-the-box for benchmarking purposes
 * Steam installed out-of-the-box with necessary lib32 dependencies and fsync Linux kernel patched in
 * flatpak is included, easily install VSCode or Discord in sandboxed environment
+* Wine with vkd3d support included out-of-the-box
 * ZFS support, kernel patched to export FPU functions
 * Linux 5.11.3 kernel built with 1000Hz -03 for Sandybridge arch. Patches include aufs, zstd, ClearLinux patches, Intel FSGSBASE patches, Valve's fsync, [sirlucjan's](https://gitlab.com/sirlucjan/kernel-patches/-/tree/master/): android/arch/btrfs/fixes-miscellaneous/ntfs, unprivileged CLONE_NEWUSER, and IOMMU missing ACS capabilities overrides.
-* KDE 5.21.1, KDE Applications 20.12.2, KDE Frameworks 5.79.0, Qt 5.15.2
+* KDE 5.21.3, KDE Applications 20.12.3, KDE Frameworks 5.80.0, Qt 5.15.2
 * CacULE CPU scheduler
 
 ## Changelog
+* 2021.03.16 Release
+  * KDE 5.21.3, KDE Applications 20.12.3, KDE Frameworks 5.80.0, enable wine by default, include laptop-mode-tools, disable LTO for opencv (fixes kdenlive crashing at startup), updates as of 03/16/2021. Firefox still lacks global menu support due missing upstream patch for 86.x versions
 * 2021.03.04 Release
   * Linux 5.11.3, CacULE CPU scheduler is now the default!
 * 2021.02.27 Release
@@ -76,7 +79,7 @@ CPU_FLAGS_X86="aes mmx mmxext pclmul popcnt sse sse2 sse3 sse4_1 sse4_2 ssse3"
 ```
 ## USE flags
 ```sh
-USE="-bindist elogind -consolekit -systemd udev dbus X wayland gles vulkan plymouth pulseaudio ffmpeg ipv6 -webkit infinality bluetooth"
+USE="-bindist elogind -consolekit -systemd udev dbus X wayland gles vulkan plymouth pulseaudio ffmpeg ipv6 -webkit infinality bluetooth zstd"
 ```
 ## FAQ
 > (Q) **what are the user/password credentials for LiveCD?**

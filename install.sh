@@ -168,6 +168,7 @@ mount -t proc none /mnt/install/proc
 mount --rbind /dev /mnt/install/dev
 mount --rbind /sys /mnt/install/sys
 
+set +e
 cd /mnt/install/
 cat <<HEREDOC | chroot .
 source /etc/profile && export PS1="(chroot) \$PS1"
