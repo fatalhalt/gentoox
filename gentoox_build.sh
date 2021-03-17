@@ -159,6 +159,7 @@ app-crypt/efitools nolto.conf
 sys-libs/efivar nolto.conf
 dev-libs/libaio nolto.conf
 app-arch/bzip2 O3nolto.conf
+dev-libs/libbsd nolto.conf
 media-libs/opencv O3nolto.conf' > /etc/portage/package.env
 
 echo 'sys-devel/gcc graphite lto pgo zstd
@@ -204,7 +205,7 @@ echo 'sys-libs/glibc **' >> /etc/portage/package.accept_keywords
 
 #emerge -v1 gcc  # install latest gcc now that it has been unmasked
 #emerge --autounmask=y --autounmask-write=y -veDN --with-bdeps=y --exclude gcc @world  # rebuild entire system with new gcc
-emerge --autounmask=y --autounmask-write=y -vuDN --with-bdeps=y @world
+emerge --autounmask=y --autounmask-write=y -veDN --with-bdeps=y @world
 
 emerge -v gentoo-sources genkernel portage-utils gentoolkit cpuid2cpuflags cryptsetup lvm2 mdadm dev-vcs/git btrfs-progs app-arch/lz4 ntfs3g dosfstools exfat-utils f2fs-tools gptfdisk efitools shim syslog-ng logrotate
 emerge --noreplace app-editors/nano
