@@ -1,77 +1,11 @@
-
-[create a 1st time login script that will execute and the delete itself]
-
-- set wallpaper to ~/1518039301698.png
-dbus-send --session --dest=org.kde.plasmashell --type=method_call /PlasmaShell org.kde.PlasmaShell.evaluateScript 'string:
-var Desktops = desktops();                                                                                                                       
-for (i=0;i<Desktops.length;i++) {
-        d = Desktops[i];
-        d.wallpaperPlugin = "org.kde.image";
-        d.currentConfigGroup = Array("Wallpaper",
-                                    "org.kde.image",
-                                    "General");
-        d.writeConfig("Image", "file:///PATH/TO/IMAGE.png");
-}'
-
-- begin work on Calamares installer
-- configure Fonts
-- configure locale: us; pl; german; jp; kr; fr; it
-- cyrillic, Kanji&Katakana, kr fonts
-- tweak Firefox?
-- edit 'GentooX Breeze Dark Transparent.tar.gz' wallpaper path to /usr/src/theme/1518039301698.png
-- include app-emulation/virtualbox-guest-additions?
-
-- adjust weston USE flags
-- adjust mpv USE flags
-
-- gentoox_build.sh should consider doing these at the end of build:
-	emerge -avuDN --with-bdeps=y @world
-	revdep-rebuild -ip
-  another point to consider is building ~ąmd64 stage3 seed tarball from get go
-
-- read eselect news messages
-
-
-- preliminary install instructions
-  unsquash -f -i -d /mnt/install/ /mnt/cdrom/image.squashfs
-
-- after install
-  $ flatpak install com.visualstudio.code com.discordapp.Discord -y
-  *ask to change username (migrate home to new user etc)
-  *ask to change hostname
-  *ask whether to enable SDDM or stay with startx
-
-- openSuse KDE patches, ubuntu unity global menu patch
-https://build.opensuse.org/package/show/mozilla:Factory/MozillaFirefox
-https://github.com/bmwiedemann/openSUSE/tree/master/packages/m/MozillaFirefox
-http://bazaar.launchpad.net/~mozillateam/firefox/firefox-trunk.head/changes
-https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=firefox-kde-opensuse
-
-
-
-
-
-
-
-[May Release]
-ToDo:
-change headline: "mention that GentooX is bleeding edge, aka ~amd64"
-FAQ:
--add note that Secure Boot has to be disabled
--fix 'overly' spelling typo
--fix "follow see" typo in FAQ
--merge back FAQ from website (if any) back to README.md
--recommend automatic partitioning, clarify how GentooX takes over whole drive
-
--do not build AVX
--KWinFT?
--handle NVMe
--add Konsole transparency
--have Discover handle flatpak
--test drive installing nvidia blob
--what about llvm10?
-
-
+[GentooX vision]
 - original idea was for GentooX OS files to be read-only, and user apps would
   only be installed via flatpak, freebsd like system separation, GentooX would be updatable via binary delta files,
   thanks to CoW feature of BTRFS, you would be able to e.g. boot April or May release of GentooX
+
+- alternative idea was to utilize BTRFS CoW to perform upgrades (e.g. update Jan
+  2021 install to March 2021) from a March 2021 LiveCD by snapshotting current
+  install and extracting new image.squashfs to existing system and persisting
+  only users' /home directories, resulting is superfast upgrades and ability
+  to boot back previous snapshot of the system from GRUB (much like Solaris on
+  ZFS)

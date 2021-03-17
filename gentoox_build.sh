@@ -56,14 +56,12 @@ if [[ ! -f 'image/etc/gentoo-release' ]]; then
   tar xJpf stage3* --xattrs --numeric-owner
   rm -f stage3*
 
-  cp ../../$KERNEL_CONFIG_DIFF usr/src
-  cp ../../0011-ZFS-fix.patch usr/src
-  cp ../../portage-change-rsync-to-git-repos.diff usr/src
-  cp ../../zfs-ungpl-rcu_read_unlock-export.diff usr/src
+  cp ../../gentoox-patches/$KERNEL_CONFIG_DIFF usr/src
+  cp ../../gentoox-patches/0011-ZFS-fix.patch usr/src
+  cp ../../gentoox-patches/portage-change-rsync-to-git-repos.diff usr/src
+  cp ../../gentoox-patches/zfs-ungpl-rcu_read_unlock-export.diff usr/src
   mkdir -p etc/portage/patches
   cp -r ../../patches/* etc/portage/patches/
-  mkdir -p etc/portage/patches/app-crypt/efitools
-  cp ../../efitools-1.9.2-fixup-UNKNOWN_GLYPH.patch etc/portage/patches/app-crypt/efitools/
   cp ../../60-ioschedulers.rules etc/udev/rules.d/
 
   mkdir -p etc/portage/patches/www-client/firefox
@@ -75,8 +73,8 @@ if [[ ! -f 'image/etc/gentoo-release' ]]; then
   mkdir -p etc/portage/package.unmask
   cp ../../package.mask/* etc/portage/package.mask/
 
-  cp ../../arch-chroot usr/local/sbin/
-  cp ../../genfstab usr/local/sbin/
+  cp ../../archlinux-tools/arch-chroot usr/local/sbin/
+  cp ../../archlinux-tools/genfstab usr/local/sbin/
 
   cp ../../mpv-kio.sh usr/local/bin/
 
