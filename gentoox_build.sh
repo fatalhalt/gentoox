@@ -201,16 +201,16 @@ rm -rf /etc/portage/package.accept_keywords/
 echo -n > /etc/portage/package.accept_keywords
 
 #unmask gcc/glibc to prompt installation of masked 9999 packages
-echo 'sys-devel/gcc' >> /etc/portage/package.unmask/gcc
-echo 'sys-devel/gcc **' >> /etc/portage/package.accept_keywords
+#echo 'sys-devel/gcc' >> /etc/portage/package.unmask/gcc
+#echo 'sys-devel/gcc **' >> /etc/portage/package.accept_keywords
 echo 'sys-libs/glibc' >> /etc/portage/package.unmask/glibc
 echo 'sys-libs/glibc **' >> /etc/portage/package.accept_keywords
 
-emerge -v1 gcc  # install latest gcc now that it has been unmasked
-emerge -v gentoo-sources  # presence of /usr/src/linux is required below
-emerge --autounmask=y --autounmask-write=y -veDN --with-bdeps=y --exclude gcc @world  # rebuild entire system with new gcc
+#emerge -v1 gcc  # install latest gcc now that it has been unmasked
+#emerge --autounmask=y --autounmask-write=y -veDN --with-bdeps=y --exclude gcc @world  # rebuild entire system with new gcc
+emerge --autounmask=y --autounmask-write=y -vuDN --with-bdeps=y @world
 
-emerge -v genkernel portage-utils gentoolkit cpuid2cpuflags cryptsetup lvm2 mdadm dev-vcs/git btrfs-progs app-arch/lz4 ntfs3g dosfstools exfat-utils f2fs-tools gptfdisk efitools shim syslog-ng logrotate
+emerge -v gentoo-sources genkernel portage-utils gentoolkit cpuid2cpuflags cryptsetup lvm2 mdadm dev-vcs/git btrfs-progs app-arch/lz4 ntfs3g dosfstools exfat-utils f2fs-tools gptfdisk efitools shim syslog-ng logrotate
 emerge --noreplace app-editors/nano
 
 # set portage to use git repos
