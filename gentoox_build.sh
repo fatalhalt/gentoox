@@ -6,12 +6,8 @@ fi
 
 #
 # Notes
-# • start with clean /var/db/, if you have binpkgs or distfiles on a host you can mount --bind or rsync them to the chroot
-# • plymouth graphical splash via genkernel-next is commented out as it only supports systemd, GentooX is using OpenRC
-# • CONFIG_ISO9660_FS=y must be compiled-in and not 'm' otherwise livecd won't boot, squashfs cannot be bigger than 4GB, also empty 'livecd' file should exist on iso's /
-#
-# host dependencies
-#   base install: genkernel btrfs-progs portage-utils gentoolkit cpuid2cpuflags cryptsetup lvm2 mdadm dev-vcs/git
+# • review 'stage3tarball' variable before running the script, once the 'base' is built you may uncomment build_weston=y and run the script again
+# • if at any point something fails to compile you can Ctrl+C kill the script and manually chroot into the OS build with './gentoox_build.sh chroot'
 #
 
 gitprefix="https://gitgud.io/cloveros/cloveros/raw/master"
@@ -20,7 +16,7 @@ username=gentoox
 userpassword=gentoox
 builddate="$(date +%Y%m%d).graphite"
 builddir="build-$(date +%Y%m%d)"
-stage3tarball="stage3-amd64-20201208.graphite.tar.xz"
+stage3tarball="stage3-amd64-20210316.graphite.tar.xz"
 KERNEL_CONFIG_DIFF="0001-kernel-config-cfs-r7.patch"
 
 binpkgs="$(pwd)/var/cache/binpkgs/"
@@ -41,7 +37,7 @@ if [[ ! -d $builddir ]]; then mkdir -v $builddir; fi
 cd $builddir
 
 if [[ ! -f 'image/etc/gentoo-release' ]]; then
-  ntpd -qg
+  ntpd -qg > /dev/null
   mkdir image/
   cd image/
 
@@ -123,8 +119,8 @@ cat <<HEREDOC | chroot .
 source /etc/profile  && export PS1="(chroot) \$PS1"
 mkdir /etc/portage/repos.conf
 cp /usr/share/portage/config/repos.conf /etc/portage/repos.conf/gentoo.conf
-emerge-webrsync
-emerge --sync
+emerge-webrsync --quiet
+emerge --sync --quiet
 eselect profile set "default/linux/amd64/17.1"
 echo 'COMMON_FLAGS="-O3 -march=sandybridge -mtune=sandybridge -pipe -fomit-frame-pointer -fno-math-errno -fno-trapping-math -funroll-loops -mfpmath=both -malign-data=cacheline -fgraphite-identity -floop-nest-optimize -fdevirtualize-at-ltrans -fipa-pta -fno-semantic-interposition -flto=8 -fuse-linker-plugin"
 CFLAGS="\${COMMON_FLAGS}"
