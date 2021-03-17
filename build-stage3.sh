@@ -3,6 +3,11 @@
 emerge -u catalyst pixz
 version_stamp="$(date +%Y%m%d).graphite"
 
+if [[ ! -f .catalyst-accept-keywords ]]; then
+  echo -e '\nexport ACCEPT_KEYWORDS="~amd64"' >> /etc/catalyst/catalystrc
+  touch .catalyst-accept-keywords
+fi
+
 if [[ ! -f .catalyst-prep-done ]]; then
   builddate=$(wget --quiet -O - http://distfiles.gentoo.org/releases/amd64/autobuilds/current-stage3-amd64/ | sed -nr "s/.*href=\"stage3-amd64-([0-9].*).tar.xz\">.*/\1/p")
   if [[ ! -f "stage3-amd64-$builddate.tar.xz" ]]; then
