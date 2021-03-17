@@ -61,9 +61,9 @@ GentooX comes with simple interactive *install.sh* script, supports BIOS and UEF
 ## Download
 http://gentoox.cryptohash.nl/
 
-![kicker](https://raw.githubusercontent.com/fatalhalt/gentoox/master/kicker.jpg?raw=true)
+![kicker](https://raw.githubusercontent.com/fatalhalt/gentoox/master/screenshots/kicker.jpg?raw=true)
 
-![dolphin](https://raw.githubusercontent.com/fatalhalt/gentoox/master/dolphin.jpg?raw=true)
+![dolphin](https://raw.githubusercontent.com/fatalhalt/gentoox/master/screenshots/dolphin.jpg?raw=true)
 
 The ISO weighs around 4GB and following settings were used to build it:
 ## CFLAGS

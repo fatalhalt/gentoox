@@ -376,8 +376,8 @@ fi
 if [[ ! -z $build_kde ]] && [[ ! -f 'tmp/gentoox-kde-done' ]]; then
 cp ../../postinstall.sh usr/src/
 mkdir usr/src/theme
-cp ../../1518039301698.png usr/src/theme/
-cp '../../GentooX Breeze Dark Transparent.tar.gz' usr/src/theme/
+cp ../../theme/1518039301698.png usr/src/theme/
+cp '../../theme/GentooX Breeze Dark Transparent.tar.gz' usr/src/theme/
 
 cat <<HEREDOC | chroot .
 source /etc/profile  && export PS1="(chroot) \$PS1"
