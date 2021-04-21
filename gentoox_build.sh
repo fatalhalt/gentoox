@@ -237,11 +237,11 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   wget --quiet 'https://git.archlinux.org/svntogit/packages.git/plain/trunk/config?h=packages/linux' -O .config
   #wget --quiet -m -np -c 'ck.kolivas.org/patches/5.0/5.11/5.11-ck1/patches/'
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/android-patches-v2/0001-android-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/arch-patches-v6/0001-arch-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/btrfs-patches-v5/0001-btrfs-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/arch-patches-v7/0001-arch-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/btrfs-patches-v6/0001-btrfs-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/clearlinux-patches/0001-clearlinux-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/cpu-patches/0001-cpu-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/fixes-miscellaneous-v7/0001-fixes-miscellaneous.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/fixes-miscellaneous-v9/0001-fixes-miscellaneous.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/mm-patches-v3/0001-mm-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/futex-dev-patches/0001-futex-dev-patches.patch
   #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/futex2-dev-trunk-patches-v4/0001-futex2-resync-from-gitlab.collabora.com.patch
@@ -250,6 +250,10 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/zstd-patches/0001-init-add-support-for-zstd-compressed-modules.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/zswap-patches-v2/0001-zswap-patches.patch
   wget --quiet https://raw.githubusercontent.com/hamadmarri/cacule-cpu-scheduler/master/patches/CacULE/v5.11/cacule-5.11.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.11/xanmod-patches-v2/0001-xanmod-patches.patch
+
+  #wget --quiet https://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git/patch/?id=86ad60a65f29dd862a11c22bb4b5be28d6c5cef1 -O x86_aes-ni-xts_use_direct_calls_to_and_4-way_stride.patch
+  #wget --quiet https://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git/patch/?id=2481104fe98d5b016fdd95d649b1235f21e491ba -O x86_aes-ni-xts_rewrite_and_drop_indirections_via_glue_helper.patch
 
   #for f in ck.kolivas.org/patches/5.0/5.11/5.11-ck1/patches/*.patch; do patch -p1 < "\$f"; done
   patch -p1 < 0001-cpu-patches.patch
@@ -288,6 +292,28 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   patch -p1 < 0001-init-add-support-for-zstd-compressed-modules.patch
   patch -p1 < 0001-zswap-patches.patch
   patch -p1 < cacule-5.11.patch
+  patch -p1 < 0001-xanmod-patches.patch
+
+  #patch -p1 < x86_aes-ni-xts_use_direct_calls_to_and_4-way_stride.patch
+  #patch -p1 < x86_aes-ni-xts_rewrite_and_drop_indirections_via_glue_helper.patch
+
+  # Linux Random Number Generator patch.  http://www.chronox.de/lrng.html
+  git clone --depth 1 --filter=blob:none --sparse https://github.com/smuellerDD/lrng.git lrng-5.11; cd lrng-5.11
+  git sparse-checkout init --cone; git sparse-checkout set kernel_patches/v5.11; cd ..
+  for f in lrng-5.11/kernel_patches/v5.11/*.patch; do patch -p1 < "\$f"; done
+echo 'CONFIG_LRNG=y
+CONFIG_LRNG_CONTINUOUS_COMPRESSION_DISABLED=y
+CONFIG_LRNG_SWITCHABLE_CONTINUOUS_COMPRESSION=y
+CONFIG_LRNG_COLLECTION_SIZE_1024=y
+CONFIG_LRNG_COLLECTION_SIZE=1024
+CONFIG_LRNG_DRNG_SWITCH=y
+CONFIG_LRNG_KCAPI_HASH=y
+CONFIG_LRNG_DRBG=y
+CONFIG_LRNG_RCT_CUTOFF=31
+CONFIG_LRNG_APT_CUTOFF=325
+CONFIG_CRYPTO_DRBG_MENU=y
+CONFIG_CRYPTO_DRBG=y' >> .config
+
   sed -i 's/CONFIG_DEFAULT_HOSTNAME="archlinux"/CONFIG_DEFAULT_HOSTNAME="gentoox"/' .config
   sed -i 's/CONFIG_LOCALVERSION=""/CONFIG_LOCALVERSION="-x86_64"/' .config
   sed -i 's/CONFIG_SQUASHFS=m/CONFIG_SQUASHFS=y/' .config
@@ -361,7 +387,7 @@ FEATURES="-userpriv" emerge dev-lang/yasm  # yasm fails to build otherwise
 #sys-boot/plymouth gdm' > /etc/portage/package.use/gentoox
 
 emerge -v --autounmask=y --autounmask-write=y --keep-going=y --deep --newuse xorg-server nvidia-firmware arandr elogind sudo vim weston wpa_supplicant ntp bind-tools telnet-bsd snapper \
-nfs-utils cifs-utils samba dhcpcd nss-mdns zsh zsh-completions powertop cpupower lm-sensors screenfetch gparted gdb strace atop dos2unix app-misc/screen app-text/tree openbsd-netcat laptop-mode-tools hdparm #plymouth-openrc-plugin
+nfs-utils cifs-utils samba dhcpcd nss-mdns zsh zsh-completions powertop cpupower lm-sensors screenfetch gparted gdb strace atop dos2unix app-misc/screen app-text/tree openbsd-netcat laptop-mode-tools hdparm alsa-utils vulkan-tools mesa-progs #plymouth-openrc-plugin
 #emerge -avuDN --with-bdeps=y @world
 #emerge -v --depclean
 touch /tmp/gentoox-weston-done
@@ -502,7 +528,7 @@ echo 'media-gfx/gimp nolto.conf
 media-libs/avidemux-core
 media-libs/avidemux-plugins' >> /etc/portage/package.env
 
-emerge -v gimp avidemux blender tuxkart keepassxc libreoffice firefox adobe-flash mpv audacious-plugins audacious net-irc/hexchat smartmontools libisoburn phoronix-test-suite virtualbox-guest-additions pfl bash-completion dev-python/pip virtualenv jq
+emerge -v gimp avidemux blender tuxkart keepassxc libreoffice firefox adobe-flash mpv audacious-plugins audacious net-irc/hexchat smartmontools libisoburn phoronix-test-suite virtualbox-guest-additions pfl bash-completion dev-python/pip virtualenv jq youtube-dl
 touch /tmp/gentoox-extra-done
 HEREDOC
 exit 0
