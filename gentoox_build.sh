@@ -16,7 +16,7 @@ username=gentoox
 userpassword=gentoox
 builddate="$(date +%Y%m%d).graphite"
 builddir="build-$(date +%Y%m%d)"
-stage3tarball="stage3-amd64-20210316.graphite.tar.xz"
+stage3tarball="stage3-amd64-20210504.graphite.tar.xz"
 KERNEL_CONFIG_DIFF="0001-kernel-config-cfs-r7.patch"
 
 binpkgs="$(pwd)/var/cache/binpkgs/"
@@ -148,18 +148,21 @@ RUBY_TARGETS="ruby27 ruby30"' > /etc/portage/make.conf
 mkdir /etc/portage/env
 echo 'CFLAGS="\${CFLAGS} -fno-lto"
 CXXFLAGS="\${CFLAGS} -fno-lto"' > /etc/portage/env/nolto.conf
+echo 'CFLAGS="${CFLAGS} -Wno-error=missing-prototypes"
+CXXFLAGS="${CFLAGS} -Wno-error=missing-prototypes"' > /etc/portage/env/no-error-on-missing-prototype.conf
 echo 'CFLAGS="-O2 -march=sandybridge -mtune=sandybridge -pipe"
 CXXFLAGS="\${CFLAGS}"' > /etc/portage/env/O2nolto.conf
 echo 'CFLAGS="-O3 -march=sandybridge -mtune=sandybridge -pipe"
 CXXFLAGS="\${CFLAGS}"' > /etc/portage/env/O3nolto.conf
 
-echo 'sys-libs/glibc nolto.conf
+echo 'sys-libs/glibc O3nolto.conf
 dev-libs/elfutils nolto.conf
 app-crypt/efitools nolto.conf
 sys-libs/efivar nolto.conf
 dev-libs/libaio nolto.conf
 app-arch/bzip2 O3nolto.conf
 dev-libs/libbsd nolto.conf
+sys-apps/sandbox nolto.conf
 media-libs/opencv O3nolto.conf' > /etc/portage/package.env
 
 echo 'sys-devel/gcc graphite lto pgo zstd
@@ -200,12 +203,11 @@ echo -n > /etc/portage/package.accept_keywords
 #unmask gcc/glibc to prompt installation of masked 9999 packages
 #echo 'sys-devel/gcc' >> /etc/portage/package.unmask/gcc
 #echo 'sys-devel/gcc **' >> /etc/portage/package.accept_keywords
-echo 'sys-libs/glibc' >> /etc/portage/package.unmask/glibc
-echo 'sys-libs/glibc **' >> /etc/portage/package.accept_keywords
+#echo 'sys-libs/glibc' >> /etc/portage/package.unmask/glibc
+#echo 'sys-libs/glibc **' >> /etc/portage/package.accept_keywords
 
-#emerge -v1 gcc  # install latest gcc now that it has been unmasked
-#emerge --autounmask=y --autounmask-write=y -veDN --with-bdeps=y --exclude gcc @world  # rebuild entire system with new gcc
-emerge --autounmask=y --autounmask-write=y -veDN --with-bdeps=y @world
+emerge -vN1 gcc  # install latest gcc now that it has been unmasked, or if above lines are commented this will rebuild gcc with 'lto pgo zstd' flags
+emerge --autounmask=y --autounmask-write=y -vueDN --with-bdeps=y --exclude gcc @world  # rebuild entire system with fresh gcc
 
 emerge -v gentoo-sources genkernel portage-utils gentoolkit cpuid2cpuflags cryptsetup lvm2 mdadm dev-vcs/git btrfs-progs app-arch/lz4 ntfs3g dosfstools exfat-utils f2fs-tools gptfdisk efitools shim syslog-ng logrotate
 emerge --noreplace app-editors/nano
@@ -392,6 +394,7 @@ emerge -v --autounmask=y --autounmask-write=y --keep-going=y --deep --newuse xor
 nfs-utils cifs-utils samba dhcpcd nss-mdns zsh zsh-completions powertop cpupower lm-sensors screenfetch gparted gdb strace atop dos2unix app-misc/screen app-text/tree openbsd-netcat laptop-mode-tools hdparm alsa-utils vulkan-tools mesa-progs #plymouth-openrc-plugin
 #emerge -avuDN --with-bdeps=y @world
 #emerge -v --depclean
+groupadd weston-launch
 touch /tmp/gentoox-weston-done
 HEREDOC
 exit 0
@@ -432,14 +435,13 @@ net-irc/telepathy-idle python_single_target_python2_7' >> /etc/portage/package.u
 
 # enable flatpak backend in discover, patch qt-creator to use clang9 effectively dropping clang8
 echo 'kde-plasma/discover flatpak' >> /etc/portage/package.use/gentoox
-ebuild /var/db/repos/gentoo/kde-plasma/discover/discover-5.20.5.ebuild manifest
-#patch -p1 /var/db/repos/gentoo/dev-qt/qt-creator/qt-creator-4.10.1.ebuild /usr/src/qt-creator-use-llvm9.patch
-#ebuild /var/db/repos/gentoo/dev-qt/qt-creator/qt-creator-4.10.1.ebuild manifest
-
 # mask qt-creator, it pulls llvm9 and we don't want that
 echo 'dev-qt/qt-creator' >> /etc/portage/package.mask/gentoox
+# glibc 2.33 does not declare __xstat among others in the header anymore causing umockdev build to fail
+echo 'dev-util/umockdev no-error-on-missing-prototype.conf' >> /etc/portage/package.env
+
 emerge -v --jobs=2 --keep-going=y --autounmask=y --autounmask-write=y --deep --newuse kde-plasma/plasma-meta kde-apps/kde-apps-meta kde-apps/kmail kde-apps/knotes \
-latte-dock plasma-sdk libdbusmenu gvfs calamares kuroo
+latte-dock plasma-sdk libdbusmenu gvfs kuroo
 #emerge --noreplace dev-qt/qt-creator
 #echo 'dev-qt/qt-creator' >> /etc/portage/package.mask/gentoox
 
@@ -530,7 +532,7 @@ echo 'media-gfx/gimp nolto.conf
 media-libs/avidemux-core
 media-libs/avidemux-plugins' >> /etc/portage/package.env
 
-emerge -v gimp avidemux blender tuxkart keepassxc libreoffice firefox adobe-flash mpv audacious-plugins audacious net-irc/hexchat smartmontools libisoburn phoronix-test-suite virtualbox-guest-additions pfl bash-completion dev-python/pip virtualenv jq youtube-dl
+emerge -v gimp avidemux blender tuxkart keepassxc libreoffice firefox adobe-flash mpv audacious-plugins audacious net-irc/hexchat smartmontools libisoburn phoronix-test-suite virtualbox-guest-additions pfl bash-completion dev-python/pip virtualenv app-misc/jq youtube-dl
 touch /tmp/gentoox-extra-done
 HEREDOC
 exit 0
@@ -749,7 +751,7 @@ echo '~/postinstall.sh &' > .xinitrc
 echo 'exec dbus-launch --exit-with-session startplasma-x11' >> .xinitrc
 chown -R $username.$username /home/$username/
 
-if [[ ! -z $configure_weston ]]; then
+if [[ ! -z \$configure_weston ]]; then
   su - gentoox
   echo '#!/bin/bash
 export GDK_BACKEND=wayland
