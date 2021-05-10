@@ -45,7 +45,7 @@ setup_btrfs () {
 	btrfs subvolume create /mnt/install/@/opt
 	btrfs subvolume create /mnt/install/@/root
 	btrfs subvolume create /mnt/install/@/srv
-	btrfs subvolume create /mnt/install/@/tmp
+	#btrfs subvolume create /mnt/install/@/tmp
 	mkdir /mnt/install/@/usr/
 	btrfs subvolume create /mnt/install/@/usr/local
 	btrfs subvolume create /mnt/install/@/var
@@ -74,7 +74,7 @@ setup_btrfs () {
 	mkdir /mnt/install/opt
 	mkdir /mnt/install/root
 	mkdir /mnt/install/srv
-	mkdir /mnt/install/tmp
+	#mkdir /mnt/install/tmp
 	mkdir -p /mnt/install/usr/local
 	mkdir /mnt/install/var
 
@@ -85,7 +85,7 @@ setup_btrfs () {
 	mount $DEVICE /mnt/install/opt -o subvol=@/opt
 	mount $DEVICE /mnt/install/root -o subvol=@/root
 	mount $DEVICE /mnt/install/srv -o subvol=@/srv
-	mount $DEVICE /mnt/install/tmp -o subvol=@/tmp
+	#mount $DEVICE /mnt/install/tmp -o subvol=@/tmp
 	mount $DEVICE /mnt/install/usr/local -o subvol=@/usr/local
 	mount $DEVICE /mnt/install/var -o subvol=@/var
 }
@@ -194,9 +194,10 @@ sed -i "s/gentoox/$hostname/g" /etc/hosts
 sed -i "s/haxx.dafuq/$domainname/g" /etc/hosts
 sed -i "s/haxx.dafuq/$domainname/g" /etc/conf.d/net
 
-echo '#!/bin/bash
+echo '#!/bin/sh
 #echo 0f > /sys/kernel/debug/dri/0/pstate
-cpupower frequency-set -g performance' > /etc/local.d/my.start
+cpupower frequency-set -g performance
+exit 0' > /etc/local.d/my.start
 chmod +x /etc/local.d/my.start
 
 touch /swapfile

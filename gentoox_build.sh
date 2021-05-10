@@ -427,9 +427,16 @@ kde-plasma/kde-cli-tools kdesu
 kde-apps/akonadi -mysql sqlite
 kde-plasma/plasma-meta discover networkmanager thunderbolt
 kde-apps/kio-extras samba
+kde-frameworks/kimageformats avif heif
+kde-plasma/ksysguard lm-sensors networkmanager
+kde-plasma/kwin multimedia
+kde-plasma/plasma-desktop emoji
+kde-plasma/plasma-meta colord grub qrcode
+kde-plasma/plasma-vault networkmanager
 media-video/vlc archive bluray dav1d libass libcaca lirc live opus samba speex skins theora vaapi v4l vdpau x265
 media-video/ffmpeg bluray cdio dav1d rubberband libass ogg vpx rtmp aac wavpack opus gme v4l webp theora xcb cpudetection x265 libaom truetype libsoxr modplug samba vaapi vdpau libcaca libdrm librtmp opencl openssl speex
 dev-qt/qtmultimedia gstreamer
+media-libs/gd avif heif
 gnome-base/gvfs afp archive bluray fuse gphoto2 ios mtp nfs samba zeroconf
 net-irc/telepathy-idle python_single_target_python2_7' >> /etc/portage/package.use/gentoox
 
