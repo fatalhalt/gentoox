@@ -16,10 +16,12 @@ GentooX comes with simple interactive *install.sh* script, supports BIOS and UEF
 * Wine with vkd3d support included out-of-the-box
 * ZFS support, kernel patched to export FPU functions
 * Linux 5.12.1 kernel built with 1000Hz -03 for Sandybridge arch. Patches include aufs, zstd, ClearLinux patches, Intel FSGSBASE patches, Valve's fsync, [sirlucjan's](https://gitlab.com/sirlucjan/kernel-patches/-/tree/master/): android/arch/btrfs/fixes-miscellaneous/ntfs, unprivileged CLONE_NEWUSER, and IOMMU missing ACS capabilities overrides.
-* KDE 5.21.5, KDE Applications 21.04.0, KDE Frameworks 5.82.0, Qt 5.15.2
+* KDE 5.22.0, KDE Applications 21.04.2, KDE Frameworks 5.82.0, Qt 5.15.2
 * CacULE CPU scheduler
 
 ## Changelog
+* 2021.06.11 Release
+  * KDE 5.22.0, modified SierraBreeze close/maximize/minimize buttons to be shades of purple, patched plasma-workspace with "Accent Colors" (Merge Request 305) to among things be able to set system-wide purple colors, made ISO fit again onto 4.7GiB DVD, added system-wide 'avif heif webp' USE flags in /etc/make.conf
 * 2021.05.04 Release
   * Full ISO rebuild against GCC 11.1.0, Linux 5.12.1, Firefox 88.0.1 with global menu patch, LLVM 12.0.0, KDE 5.21.5, KDE Applications 21.04.0, KDE Frameworks 5.82.0, enabled emoji support in KDE, enabled AVIF and HEIF image support in KDE, enabled dash as default /bin/sh, disabled LTO for blender and dav1d
 * 2021.03.16 Release

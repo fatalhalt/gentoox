@@ -16,7 +16,8 @@ Note: You can run postinstall.sh at later time by executing /usr/src/postinstall
 Continue?"
 
 if [ "$?" = 1 ]; then
-  kdialog --sorry "exiting..."
+  #kdialog --sorry "exiting..."
+  sed -i "s/~\/postinstall.sh &//" ~/.xinitrc
   exit 1
 fi;
 
@@ -83,7 +84,7 @@ kwriteconfig5 --file ~/.config/kdeglobals --group General --key XftSubPixel --ty
 #kwriteconfig5 --file ~/.config/kdeglobals --group General --key smallestReadableFont --type string "Noto Sans,9,-1,5,50,0,0,0,0,0,Regular"
 #kwriteconfig5 --file ~/.config/kdeglobals --group General --key toolBarFont --type string "Noto Sans,9,-1,5,50,0,0,0,0,0,Regular"
 #kwriteconfig5 --file ~/.config/kdeglobals --group WM --key activeFont --type string "Noto Sans,9,-1,5,50,0,0,0,0,0,Regular"
-kwriteconfig5 --file ~/.config/kdeglobals --group General --key fixed --type string "Fira Code,9,-1,5,50,0,0,0,0,0"
+kwriteconfig5 --file ~/.config/kdeglobals --group General --key fixed --type string "Fira Code,10,-1,5,50,0,0,0,0,0"
 kwriteconfig5 --file ~/.config/kdeglobals --group General --key font --type string "Fira Sans,9,-1,5,57,0,0,0,0,0,Medium"
 kwriteconfig5 --file ~/.config/kdeglobals --group General --key menuFont --type string "Fira Sans,9,-1,5,57,0,0,0,0,0,Medium"
 kwriteconfig5 --file ~/.config/kdeglobals --group General --key smallestReadableFont --type string "Fira Sans,9,-1,5,50,0,0,0,0,0"
@@ -96,6 +97,60 @@ kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key FlipSwitchA
 kwriteconfig5 --file ~/.config/kglobalshortcutsrc --group kwin --key lipSwitchCurrent --type string "none,none,Toggle Flip Switch (Current desktop)"
 
 kwriteconfig5 --file ~/.config/kmixrc --group Global --key AutoStart --type bool false
+
+
+# purple color accents
+echo '[qt]
+GUIEffects=none
+KDE\contrast=4
+KWinPalette\activeBackground=#31363b
+KWinPalette\activeBlend=#fcfcfc
+KWinPalette\activeForeground=#fcfcfc
+KWinPalette\activeTitleBtnBg=#2a2e32
+KWinPalette\frame=#2a2e32
+KWinPalette\inactiveBackground=#2a2e32
+KWinPalette\inactiveBlend=#a1a9b1
+KWinPalette\inactiveForeground=#a1a9b1
+KWinPalette\inactiveFrame=#2a2e32
+KWinPalette\inactiveTitleBtnBg=#2a2e32
+Palette\active=#fcfcfc, #31363b, #40464c, #363b40, #191b1d, #25292c, #fcfcfc, #ffffff, #fcfcfc, #1b1e20, #2a2e32, #121415, #59406b, #fcfcfc, #b875dc, #9b59b6, #232629, #000000, #31363b, #fcfcfc, #fcfcfc
+Palette\disabled=#6e7173, #2f3338, #3e444a, #353a3f, #181a1c, #23272a, #656768, #ffffff, #727679, #1a1d1f, #282c30, #111314, #282c30, #6e7173, #4e3a5d, #443051, #212427, #000000, #31363b, #fcfcfc, #fcfcfc
+Palette\inactive=#fcfcfc, #31363b, #40464c, #363b40, #191b1d, #25292c, #fcfcfc, #ffffff, #fcfcfc, #1b1e20, #2a2e32, #121415, #40314d, #fcfcfc, #b875dc, #9b59b6, #232629, #000000, #31363b, #fcfcfc, #fcfcfc
+font="Fira Sans,9,-1,5,57,0,0,0,0,0,Medium"' > ~/.config/Trolltech.conf
+
+# purple color accents
+kwriteconfig5 --file ~/.config/kdeglobals --group General --key AccentColor --type string "184,117,220"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:Button --key DecorationFocus --type string "184,117,220"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:Button --key DecorationHover --type string "184,117,220"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:Button --key ForegroundActive --type string "184,117,220"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:Button --key ForegroundLink --type string "184,117,220"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:Complementary --key DecorationFocus --type string "184,117,220"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:Complementary --key DecorationHover --type string "184,117,220"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:Complementary --key ForegroundActive --type string "184,117,220"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:Complementary --key ForegroundLink --type string "184,117,220"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:Header --key DecorationFocus --type string "184,117,220"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:Header --key DecorationHover --type string "184,117,220"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:Header --key ForegroundActive --type string "184,117,220"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:Header --key ForegroundLink --type string "184,117,220"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:Selection --key BackgroundAlternate --type string "89,64,107"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:Selection --key BackgroundNormal --type string "89,64,107"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:Selection --key DecorationFocus --type string "184,117,220"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:Selection --key DecorationHover --type string "184,117,220"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:Selection --key ForegroundActive --type string "184,117,220"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:Selection --key ForegroundLink --type string "184,117,220"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:Tooltip --key DecorationFocus --type string "184,117,220"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:Tooltip --key DecorationHover --type string "184,117,220"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:Tooltip --key ForegroundActive --type string "184,117,220"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:Tooltip --key ForegroundLink --type string "184,117,220"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:View --key DecorationFocus --type string "184,117,220"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:View --key DecorationHover --type string "184,117,220"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:View --key ForegroundActive --type string "184,117,220"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:View --key ForegroundLink --type string "184,117,220"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:Window --key DecorationFocus --type string "184,117,220"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:Window --key DecorationHover --type string "184,117,220"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:Window --key ForegroundActive --type string "184,117,220"
+kwriteconfig5 --file ~/.config/kdeglobals --group Colors:Window --key ForegroundLink --type string "184,117,220"
+
 
 echo '[Common]
 ShadowStrength=89
