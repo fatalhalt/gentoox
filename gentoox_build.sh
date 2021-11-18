@@ -16,8 +16,8 @@ username=gentoox
 userpassword=gentoox
 builddate="$(date +%Y%m%d).graphite"
 builddir="build-$(date +%Y%m%d)"
-stage3tarball="stage3-amd64-20210504.graphite.tar.xz"
-KERNEL_CONFIG_DIFF="0001-kernel-config-cfs-r7.patch"
+stage3tarball="stage3-amd64-20211117.graphite.tar.xz"
+KERNEL_CONFIG_DIFF="0001-kernel-config-cfs-r8.patch"
 
 binpkgs="$(pwd)/var/cache/binpkgs/"
 distfiles="$(pwd)/var/cache/distfiles/"
@@ -233,32 +233,33 @@ KERNELVERSION=\$(qlist -Iv gentoo-sources | tr '-' ' ' | awk '{print \$4}')
 #echo -e '\nPLYMOUTH="yes"
 #PLYMOUTH_THEME="fade-in"' >> /etc/genkernel.conf
 #echo -e '\nrc_interactive="NO"' >> /etc/rc.conf
+eselect kernel set 1
 cd /usr/src/linux/
 
 if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
-  wget --quiet 'https://git.archlinux.org/svntogit/packages.git/plain/trunk/config?h=packages/linux' -O .config
+  wget --quiet 'https://raw.githubusercontent.com/archlinux/svntogit-packages/packages/linux/trunk/config' -O .config
   #wget --quiet -m -np -c 'ck.kolivas.org/patches/5.0/5.12/5.12-ck1/patches/'
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.12/android-patches/0001-android-export-symbold-and-enable-building-ashmem-an.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.12/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.12/btrfs-patches-v2/0001-btrfs-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.12/clearlinux-patches/0001-clearlinux-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.12/cpu-patches/0001-cpu-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.12/fixes-miscellaneous/0001-fixes-miscellaneous.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.12/mm-patches/0001-mm-5.12-protect-file-mappings-under-memory-pressure.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.12/initramfs-patches/0001-initramfs-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.12/futex-trunk-patches/0001-futex-resync-from-gitlab.collabora.com.patch
-  #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.12/futex2-dev-trunk-patches-v4/0001-futex2-resync-from-gitlab.collabora.com.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.12/ntfs3-patches/0001-ntfs3-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.12/zstd-patches/0001-zstd-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.12/zstd-dev-patches-v3/0001-zstd-dev-patches.patch
-  #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.12/zswap-patches-v2/0001-zswap-patches.patch
-  wget --quiet https://raw.githubusercontent.com/hamadmarri/cacule-cpu-scheduler/master/patches/CacULE/v5.12/cacule-5.12.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.12/xanmod-patches/0001-sched-autogroup-Add-kernel-parameter-and-config-opti.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/android-patches-v2/0001-android-export-symbold-and-enable-building-ashmem-an.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/btrfs-patches-v3/0001-btrfs-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/clearlinux-patches/0001-clearlinux-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/cpu-patches-v2/0001-cpu-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/fixes-miscellaneous-v5/0001-fixes-miscellaneous.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/mm-patches/0001-mm-protect-mappings-under-memory-pressure.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/futex-patches/0001-futex-resync-from-gitlab.collabora.com.patch
+  #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/futex2-patches/0001-futex2-resync-from-gitlab.collabora.com.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/zstd-patches/0001-zstd-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/zstd-dev-patches-v3/0001-zstd-dev-patches.patch
+  #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/cacule-patches/0001-cacule-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/xanmod-patches/0001-xanmod-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/lru-patches-le9-v3/0001-lru-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/bbr2-patches/0001-bbr2-5.15-introduce-BBRv2.patch
+  #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/bcachefs-patches/0001-bcachefs-5.15-introduce-bcachefs-patchset.patch
 
   #wget --quiet https://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git/patch/?id=86ad60a65f29dd862a11c22bb4b5be28d6c5cef1 -O x86_aes-ni-xts_use_direct_calls_to_and_4-way_stride.patch
   #wget --quiet https://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git/patch/?id=2481104fe98d5b016fdd95d649b1235f21e491ba -O x86_aes-ni-xts_rewrite_and_drop_indirections_via_glue_helper.patch
 
-  #for f in ck.kolivas.org/patches/5.0/5.11/5.11-ck1/patches/*.patch; do patch -p1 < "\$f"; done
+  #for f in ck.kolivas.org/patches/5.0/5.12/5.12-ck1/patches/*.patch; do patch -p1 < "\$f"; done
   patch -p1 < 0001-cpu-patches.patch
   patch -p0 < ../$KERNEL_CONFIG_DIFF
 
@@ -285,26 +286,26 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   patch -p1 < 0001-btrfs-patches.patch
   patch -p1 < 0001-clearlinux-patches.patch
   patch -p1 < 0001-fixes-miscellaneous.patch
-  patch -p1 < 0001-mm-5.12-protect-file-mappings-under-memory-pressure.patch
-  patch -p1 < 0001-initramfs-patches.patch
   patch -p1 < 0001-futex-resync-from-gitlab.collabora.com.patch
   #patch -p1 < 0001-futex2-resync-from-gitlab.collabora.com.patch
   patch -p1 < ../0011-ZFS-fix.patch
   patch -p1 < ../zfs-ungpl-rcu_read_unlock-export.diff
-  patch -p1 < 0001-ntfs3-patches.patch
   patch -p1 < 0001-zstd-dev-patches.patch
   patch -p1 < 0001-zstd-patches.patch
-  #patch -p1 < 0001-zswap-patches.patch
-  patch -p1 < cacule-5.12.patch
-  patch -p1 < 0001-sched-autogroup-Add-kernel-parameter-and-config-opti.patch
+  #patch -p1 < 0001-cacule-patches.patch
+  patch -p1 < 0001-xanmod-patches.patch
+  patch -p1 < 0001-lru-patches.patch
+  patch -p1 < 0001-mm-protect-mappings-under-memory-pressure.patch
+  patch -p1 < 0001-bbr2-5.15-introduce-BBRv2.patch
+  #patch -p1 < 0001-bcachefs-5.15-introduce-bcachefs-patchset.patch
 
   #patch -p1 < x86_aes-ni-xts_use_direct_calls_to_and_4-way_stride.patch
   #patch -p1 < x86_aes-ni-xts_rewrite_and_drop_indirections_via_glue_helper.patch
 
   # Linux Random Number Generator patch.  http://www.chronox.de/lrng.html
-  git clone --depth 1 --filter=blob:none --sparse https://github.com/smuellerDD/lrng.git lrng-5.12; cd lrng-5.12
-  git sparse-checkout init --cone; git sparse-checkout set kernel_patches/v5.12; cd ..
-  for f in lrng-5.12/kernel_patches/v5.12/*.patch; do patch -p1 < "\$f"; done
+  git clone --depth 1 --filter=blob:none --sparse https://github.com/smuellerDD/lrng.git lrng-5.15; cd lrng-5.15
+  git sparse-checkout init --cone; git sparse-checkout set kernel_patches/v5.15; cd ..
+  for f in lrng-5.15/kernel_patches/v5.15/*.patch; do patch -p1 < "\$f"; done
 echo 'CONFIG_LRNG=y
 CONFIG_LRNG_CONTINUOUS_COMPRESSION_DISABLED=y
 CONFIG_LRNG_SWITCHABLE_CONTINUOUS_COMPRESSION=y
@@ -315,6 +316,7 @@ CONFIG_LRNG_KCAPI_HASH=y
 CONFIG_LRNG_DRBG=y
 CONFIG_LRNG_RCT_CUTOFF=31
 CONFIG_LRNG_APT_CUTOFF=325
+CONFIG_LRNG_JENT=y
 CONFIG_CRYPTO_DRBG_MENU=y
 CONFIG_CRYPTO_DRBG=y' >> .config
 
@@ -327,6 +329,8 @@ CONFIG_CRYPTO_DRBG=y' >> .config
   sed -i 's/CONFIG_NET_UDP_TUNNEL=y/CONFIG_NET_UDP_TUNNEL=m/' .config
   sed -i 's/EXTRAVERSION = -gentoo-r1/EXTRAVERSION = -gentoo/' Makefile
   make oldconfig
+  find . -name  "*.orig" -exec rm -f {} \;
+  find . -name  "*.rej" -exec rm -f {} \;
   touch /tmp/gentoox-kernelpatches-applied
 fi
 
