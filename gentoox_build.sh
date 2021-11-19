@@ -175,6 +175,7 @@ x11-libs/libdrm libkms
 media-libs/mesa d3d9 lm-sensors opencl vaapi vdpau vulkan vulkan-overlay xa xvmc
 media-libs/libsdl2 gles2
 www-client/firefox -system-av1 -system-icu -system-jpeg -system-libevent -system-libvpx -system-sqlite -system-harfbuzz -system-webp hwaccel pgo lto wayland clang
+mail-client/thunderbird hwaccel lto
 dev-libs/boost python zstd
 dev-lang/python sqlite
 sys-fs/squashfs-tools zstd
@@ -189,9 +190,15 @@ dev-libs/libdbusmenu gtk3
 net-misc/curl http2
 dev-libs/apr-util ldap
 sys-apps/util-linux caps
-*/* PYTHON_TARGETS: python2_7 python3_9
-*/* PYTHON_SINGLE_TARGET: -* python3_9
-media-gfx/blender python_single_target_python3_8
+*/* PYTHON_TARGETS: python2_7 python3_10
+*/* PYTHON_SINGLE_TARGET: -* python3_10
+sys-libs/libblockdev python_single_target_python3_9
+app-misc/lirc python_single_target_python3_9
+app-admin/system-config-printer python_single_target_python3_9
+net-irc/telepathy-idle python_single_target_python3_9
+dev-games/freecell-solver python_single_target_python3_9
+media-gfx/fontforge python_single_target_python3_9
+media-gfx/blender python_single_target_python3_9
 dev-libs/libnatspec python_single_target_python2_7
 dev-lang/yasm python_single_target_python2_7
 media-libs/libcaca python_single_target_python2_7
@@ -431,6 +438,7 @@ media-video/vlc archive bluray dav1d libass libcaca lirc live opus samba speex s
 media-video/ffmpeg bluray cdio dav1d rubberband libass ogg vpx rtmp aac wavpack opus gme v4l webp theora xcb cpudetection x265 libaom truetype libsoxr modplug samba vaapi vdpau libcaca libdrm librtmp opencl openssl speex jpeg2k
 dev-qt/qtmultimedia gstreamer
 media-libs/gd avif heif
+media-libs/libvpx postproc
 gnome-base/gvfs afp archive bluray fuse gphoto2 ios mtp nfs samba zeroconf
 net-irc/telepathy-idle python_single_target_python2_7' >> /etc/portage/package.use/gentoox
 
@@ -529,7 +537,16 @@ source /etc/profile  && export PS1="(chroot) \$PS1"
 
 echo -e '\nmedia-gfx/gimp heif jpeg2k openexr python vector-icons webp wmf xpm python_single_target_python2_7
 media-video/mpv archive bluray drm gbm samba vaapi vdpau
+media-gfx/imagemagick djvu hdri opencl openexr perl
+media-libs/opencv gphoto2 gstreamer opencl openexr
+media-libs/embree raymask
+media-libs/opensubdiv opencl
+media-gfx/blender collada jemalloc openal opencl
 dev-lang/php gd truetype pcntl zip curl sockets
+dev-java/openjdk-jre-bin gentoo-vm
+dev-java/oracle-jdk-bin gentoo-vm
+dev-java/openjdk-bin gentoo-vm
+dev-java/openjdk gentoo-vm
 app-emulation/virtualbox-guest-additions -X' >> /etc/portage/package.use/gentoox
 
 yes | layman -a bobwya -q
@@ -538,11 +555,9 @@ echo '*/*::bobwya' >> /etc/portage/package.mask/lowprio
 echo 'app-benchmarks/phoronix-test-suite::bobwya
 dev-php/fpdf::bobwya' >> /etc/portage/package.unmask/wanted
 
-echo 'media-gfx/gimp nolto.conf
-media-libs/avidemux-core
-media-libs/avidemux-plugins' >> /etc/portage/package.env
+echo 'media-gfx/gimp nolto.conf' >> /etc/portage/package.env
 
-emerge -v gimp avidemux blender tuxkart keepassxc libreoffice firefox adobe-flash mpv audacious-plugins audacious net-irc/hexchat smartmontools libisoburn phoronix-test-suite virtualbox-guest-additions pfl bash-completion dev-python/pip virtualenv app-misc/jq youtube-dl
+emerge -v gimp avidemux blender tuxkart keepassxc libreoffice firefox thunderbird mpv audacious-plugins audacious net-irc/hexchat smartmontools libisoburn phoronix-test-suite virtualbox-guest-additions pfl bash-completion dev-python/pip virtualenv app-misc/jq youtube-dl
 touch /tmp/gentoox-extra-done
 HEREDOC
 exit 0
