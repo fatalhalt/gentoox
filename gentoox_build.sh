@@ -710,6 +710,7 @@ nis_domain_lo="haxx.dafuq"' > /etc/conf.d/net
 echo 'nameserver 1.1.1.1
 nameserver 2606:4700:4700::1111' > /etc/resolv.conf
 
+sed -i "s/enforce=everyone/enforce=none/" /etc/security/passwdqc.conf
 #echo "root:\$rootpassword" | chpasswd
 yes $rootpassword | passwd root
 useradd $username
@@ -737,9 +738,8 @@ sed -i "s/# %wheel ALL=(ALL) NOPASSWD: ALL/%wheel ALL=(ALL) NOPASSWD: ALL/" /etc
 #sed -Ei "s@c([2-6]):2345:respawn:/sbin/agetty 38400 tty@#\0@" /etc/inittab
 sed -i "s@c1:12345:respawn:/sbin/agetty 38400 tty1 linux@c1:12345:respawn:/sbin/agetty --noclear 38400 tty1 linux@" /etc/inittab
 echo -e "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=wheel\nupdate_config=1" > /etc/wpa_supplicant/wpa_supplicant.conf
-eselect fontconfig enable 52-infinality.conf
-eselect infinality set infinality
-eselect lcdfilter set infinality
+eselect fontconfig enable 10-sub-pixel-rgb.conf
+eselect fontconfig enable 11-lcdfilter-default.conf
 emerge -v ja-ipafonts source-han-sans fira-code fira-sans
 
 echo 'kernel.sysrq=1' >> /etc/sysctl.d/local.conf
@@ -759,6 +759,7 @@ rc-update add sshd default
 rc-update add virtualbox-guest-additions default
 rc-update add elogind boot
 
+ln -s /usr/src/install.sh /root/
 ln -s /usr/src/install.sh /home/$username/
 ln -s /usr/src/postinstall.sh /home/$username/
 cd /home/$username/
