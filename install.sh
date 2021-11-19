@@ -5,10 +5,10 @@ if [ $(id -u) != "0" ]; then
 fi
 
 set -e
-echo -e 'Welcome to the GentooX setup, the installation script mainly consists of:
+echo -e 'Welcome to the GentooX setup, the installation mainly consists of:
 \t- providing this script with a target partition where system will be installed
 \t- extracting precompiled squashfs system image into the specified partition
-\t- setting up GRUB, BIOS or UEFI mode will be used depending how system was booted
+\t- setting up GRUB. BIOS or UEFI mode will be used depending how system was booted
 \tGentooX uses openSUSE-style BTRFS root partition & subvolumes for snapshotting with snapper
 \tGentooX requires minimum of 16GB of space, and use of BTRFS is hardcoded
 
@@ -17,7 +17,7 @@ Manual installation can be done via:
   unsquashfs -f -i -d /mnt/install/ /mnt/cdrom/image.squashfs
   /usr/local/sbin/genfstab -U >> /mnt/install/etc/fstab
   /usr/local/sbin/arch-chroot /mnt/install/
-  grub-install --target=x86_64-efi for UEFI mode or grub-install --target=i386-pc (BIOS only)
+  grub-install --target=x86_64-efi for UEFI mode, or grub-install --target=i386-pc (BIOS only)
   grub-mkconfig -o /boot/grub/grub.cfg'
 
 
@@ -94,7 +94,7 @@ setup_btrfs () {
 echo -e "\nDetected drives:\n$(lsblk | grep disk)"
 while :; do
 	echo
-	read -erp "Automatic partitioning (a) or manual partitioning (will launch gparted)? [a/m] " -n 1 partitioning_mode
+	read -erp "Automatic partitioning (a), or manual partitioning ((m), will launch gparted)? [a/m] " -n 1 partitioning_mode
 	if [[ $partitioning_mode = "a" ]]; then
         if [[ ! -z $UEFI_MODE ]]; then echo "EFI boot detected"; fi
 		read -erp "Enter drive to be formatted for GentooX installation: " -i "/dev/sda" drive

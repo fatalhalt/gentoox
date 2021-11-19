@@ -416,16 +416,6 @@ source /etc/profile  && export PS1="(chroot) \$PS1"
 eselect profile set "default/linux/amd64/17.1/desktop/plasma"
 sed -i -r "s/^USE=\"([^\"]*)\"$/USE=\"\1 -webkit\"/g" /etc/portage/make.conf
 
-# theme related
-(cd /usr/share/icons; git clone https://github.com/keeferrourke/la-capitaine-icon-theme.git)
-cd /usr/src/
-git clone https://github.com/ishovkun/SierraBreeze.git
-cd SierraBreeze/
-mkdir build && cd build
-cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DKDE_INSTALL_LIBDIR=lib -DBUILD_TESTING=OFF -DKDE_INSTALL_USE_QT_SYS_PATHS=ON
-make install
-cd /
-
 echo -e '\nkde-apps/kdecore-meta -webengine
 kde-plasma/kde-cli-tools kdesu
 kde-apps/akonadi -mysql sqlite
@@ -438,7 +428,7 @@ kde-plasma/plasma-desktop emoji
 kde-plasma/plasma-meta colord grub qrcode
 kde-plasma/plasma-vault networkmanager
 media-video/vlc archive bluray dav1d libass libcaca lirc live opus samba speex skins theora vaapi v4l vdpau x265
-media-video/ffmpeg bluray cdio dav1d rubberband libass ogg vpx rtmp aac wavpack opus gme v4l webp theora xcb cpudetection x265 libaom truetype libsoxr modplug samba vaapi vdpau libcaca libdrm librtmp opencl openssl speex
+media-video/ffmpeg bluray cdio dav1d rubberband libass ogg vpx rtmp aac wavpack opus gme v4l webp theora xcb cpudetection x265 libaom truetype libsoxr modplug samba vaapi vdpau libcaca libdrm librtmp opencl openssl speex jpeg2k
 dev-qt/qtmultimedia gstreamer
 media-libs/gd avif heif
 gnome-base/gvfs afp archive bluray fuse gphoto2 ios mtp nfs samba zeroconf
@@ -458,6 +448,15 @@ latte-dock plasma-sdk libdbusmenu gvfs kuroo
 
 #yes | layman -o https://raw.githubusercontent.com/fosero/flatpak-overlay/master/repositories.xml -f -a flatpak-overlay -q
 emerge -v sys-apps/flatpak
+
+# theme related
+(cd /usr/share/icons; git clone https://github.com/keeferrourke/la-capitaine-icon-theme.git)
+cd /usr/src/
+git clone https://github.com/ishovkun/SierraBreeze.git
+cd SierraBreeze/
+mkdir build && cd build
+cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DKDE_INSTALL_LIBDIR=lib -DBUILD_TESTING=OFF -DKDE_INSTALL_USE_QT_SYS_PATHS=ON
+make install
 
 touch /tmp/gentoox-kde-done
 HEREDOC
@@ -683,6 +682,11 @@ x11-libs/xcb-util-cursor abi_x86_32
 x11-libs/xcb-util-image abi_x86_32
 x11-libs/xcb-util-renderutil abi_x86_32
 dev-libs/libusb-compat abi_x86_32
+media-libs/speexdsp abi_x86_32
+media-libs/openjpeg abi_x86_32
+app-crypt/libmd abi_x86_32
+dev-libs/libudfread abi_x86_32
+sys-libs/libxcrypt abi_x86_32
 
 app-emulation/wine-vanilla custom-cflags vkd3d' >> /etc/portage/package.use/gentoox
 
