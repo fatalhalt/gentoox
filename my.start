@@ -1,0 +1,5 @@
+#!/bin/sh
+#echo 0f > /sys/kernel/debug/dri/0/pstate
+cpupower frequency-set -g performance
+setcap CAP_SYS_NICE=+ep `which kwin_wayland`
+exit 0

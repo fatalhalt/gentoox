@@ -59,6 +59,7 @@ if [[ ! -f 'image/etc/gentoo-release' ]]; then
   mkdir -p etc/portage/patches
   cp -r ../../patches/* etc/portage/patches/
   cp ../../60-ioschedulers.rules etc/udev/rules.d/
+  cp ../../my.start etc/local.d/
 
   mkdir -p etc/portage/patches/www-client/firefox
   wget --quiet -P etc/portage/patches/www-client/firefox/ 'https://raw.githubusercontent.com/bmwiedemann/openSUSE/master/packages/m/MozillaFirefox/firefox-kde.patch'
@@ -378,7 +379,7 @@ else echo "kernel already compiled, skipping..."; fi
 if [[ ! -z $build_weston ]] && [[ ! -f 'tmp/gentoox-weston-done' ]]; then
 cat <<HEREDOC | chroot .
 source /etc/profile  && export PS1="(chroot) \$PS1"
-sed -i -r "s/^USE=\"([^\"]*)\"$/USE=\"\1 elogind -consolekit -systemd udev dbus X wayland gles vulkan plymouth pulseaudio ffmpeg ipv6 infinality bluetooth zstd\"/g" /etc/portage/make.conf
+sed -i -r "s/^USE=\"([^\"]*)\"$/USE=\"\1 elogind -consolekit -systemd udev dbus X wayland gles vulkan plymouth pulseaudio ffmpeg ipv6 bluetooth zstd avif heif jpeg2k webp\"/g" /etc/portage/make.conf
 
 # install lto-overlay
 emerge layman
@@ -541,7 +542,7 @@ media-gfx/imagemagick djvu hdri opencl openexr perl
 media-libs/opencv gphoto2 gstreamer opencl openexr
 media-libs/embree raymask
 media-libs/opensubdiv opencl
-media-gfx/blender collada jemalloc openal opencl
+media-gfx/blender collada jemalloc openal opencl jpeg2k
 dev-lang/php gd truetype pcntl zip curl sockets
 dev-java/openjdk-jre-bin gentoo-vm
 dev-java/oracle-jdk-bin gentoo-vm
@@ -557,7 +558,8 @@ dev-php/fpdf::bobwya' >> /etc/portage/package.unmask/wanted
 
 echo 'media-gfx/gimp nolto.conf' >> /etc/portage/package.env
 
-emerge -v gimp avidemux blender tuxkart keepassxc libreoffice firefox thunderbird mpv audacious-plugins audacious net-irc/hexchat smartmontools libisoburn phoronix-test-suite virtualbox-guest-additions pfl bash-completion dev-python/pip virtualenv app-misc/jq youtube-dl
+emerge -v gimp avidemux blender tuxkart keepassxc libreoffice firefox thunderbird mpv audacious-plugins audacious net-irc/hexchat smartmontools libisoburn phoronix-test-suite virtualbox-guest-additions pfl bash-completion dev-python/pip virtualenv app-misc/jq youtube-dl app-shells/dash
+
 touch /tmp/gentoox-extra-done
 HEREDOC
 exit 0
@@ -757,7 +759,8 @@ eselect fontconfig enable 10-sub-pixel-rgb.conf
 eselect fontconfig enable 11-lcdfilter-default.conf
 emerge -v ja-ipafonts source-han-sans fira-code fira-sans
 
-echo 'kernel.sysrq=1' >> /etc/sysctl.d/local.conf
+echo 'kernel.sysrq=1
+vm.swappiness=10' >> /etc/sysctl.d/local.conf
 
 usermod -aG users,portage,lp,adm,audio,cdrom,disk,input,usb,video,cron,tty,plugdev $username
 
@@ -793,6 +796,10 @@ export QT_QPA_PLATFORM=wayland-egl
 exec weston-launch' > weston-launch.sh
   chmod +x weston-launch.sh
 fi
+
+cd /bin
+ln -sf dash sh
+usermod -s /bin/dash root
 
 touch /tmp/gentoox-user-configured
 HEREDOC
