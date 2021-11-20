@@ -1,0 +1,11 @@
+--- a/src/module.cpp	2021-07-15 18:04:31.000000000 -0500
++++ b/src/module.cpp	2021-11-20 00:45:28.168852687 -0600
+@@ -1314,7 +1314,7 @@
+     llvm::CodeGenFileType fileType = (outputType == Object) ? llvm::CGFT_ObjectFile : llvm::CGFT_AssemblyFile;
+     bool binary = (fileType == llvm::CGFT_ObjectFile);
+ 
+-    llvm::sys::fs::OpenFlags flags = binary ? llvm::sys::fs::F_None : llvm::sys::fs::F_Text;
++    llvm::sys::fs::OpenFlags flags = binary ? llvm::sys::fs::OF_None : llvm::sys::fs::OF_Text;
+ 
+     std::error_code error;
+ 

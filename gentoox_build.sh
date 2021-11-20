@@ -246,21 +246,22 @@ cd /usr/src/linux/
 
 if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   wget --quiet 'https://raw.githubusercontent.com/archlinux/svntogit-packages/packages/linux/trunk/config' -O .config
+  cp .config .config.org
   #wget --quiet -m -np -c 'ck.kolivas.org/patches/5.0/5.12/5.12-ck1/patches/'
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/android-patches-v2/0001-android-export-symbold-and-enable-building-ashmem-an.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/arch-patches/0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/btrfs-patches-v3/0001-btrfs-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/arch-patches-v3/0001-arch-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/btrfs-patches-v5/0001-btrfs-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/clearlinux-patches/0001-clearlinux-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/cpu-patches-v2/0001-cpu-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/fixes-miscellaneous-v5/0001-fixes-miscellaneous.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/fixes-miscellaneous-v6/0001-fixes-miscellaneous.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/mm-patches/0001-mm-protect-mappings-under-memory-pressure.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/futex-patches/0001-futex-resync-from-gitlab.collabora.com.patch
   #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/futex2-patches/0001-futex2-resync-from-gitlab.collabora.com.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/zstd-patches/0001-zstd-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/zstd-dev-patches-v3/0001-zstd-dev-patches.patch
-  #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/cacule-patches/0001-cacule-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/zstd-dev-patches-v5/0001-zstd-dev-patches.patch
+  wget --quiet https://raw.githubusercontent.com/ptr1337/kernel-patches/master/CacULE/v5.15/cacule-5.15-full.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/xanmod-patches/0001-xanmod-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/lru-patches-le9-v3/0001-lru-patches.patch
+  #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/lru-patches-le9-v3/0001-lru-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/bbr2-patches/0001-bbr2-5.15-introduce-BBRv2.patch
   #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/bcachefs-patches/0001-bcachefs-5.15-introduce-bcachefs-patchset.patch
 
@@ -278,7 +279,7 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   patch -p1 < aufs5-standalone/aufs5-kbuild.patch
   patch -p1 < aufs5-standalone/aufs5-base.patch
   patch -p1 < aufs5-standalone/aufs5-mmap.patch
-  patch -p1 < aufs5-standalone/aufs5-standalone.patch
+  #patch -p1 < aufs5-standalone/aufs5-standalone.patch
   echo -e "CONFIG_AUFS_FS=y\nCONFIG_AUFS_BRANCH_MAX_127=y\nCONFIG_AUFS_BRANCH_MAX_511=n\nCONFIG_AUFS_BRANCH_MAX_1023=n\nCONFIG_AUFS_BRANCH_MAX_32767=n\nCONFIG_AUFS_HNOTIFY=y\nCONFIG_AUFS_EXPORT=n\nCONFIG_AUFS_XATTR=y\nCONFIG_AUFS_FHSM=y\nCONFIG_AUFS_RDU=n\nCONFIG_AUFS_DIRREN=n\nCONFIG_AUFS_SHWH=n\nCONFIG_AUFS_BR_RAMFS=y\nCONFIG_AUFS_BR_FUSE=n\nCONFIG_AUFS_BR_HFSPLUS=n\nCONFIG_AUFS_DEBUG=n" >> .config
   sed -i "s/CONFIG_ISO9660_FS=m/CONFIG_ISO9660_FS=y/" .config
 
@@ -290,7 +291,7 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   scripts/config --enable CONFIG_ANDROID_BINDERFS
   scripts/config --set-str CONFIG_ANDROID_BINDER_DEVICES "binder,hwbinder,vndbinder"
 
-  patch -p1 < 0001-ZEN-Add-sysctl-and-CONFIG-to-disallow-unprivileged-C.patch
+  patch -p1 < 0001-arch-patches.patch
   patch -p1 < 0001-btrfs-patches.patch
   patch -p1 < 0001-clearlinux-patches.patch
   patch -p1 < 0001-fixes-miscellaneous.patch
@@ -300,9 +301,9 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   patch -p1 < ../zfs-ungpl-rcu_read_unlock-export.diff
   patch -p1 < 0001-zstd-dev-patches.patch
   patch -p1 < 0001-zstd-patches.patch
-  #patch -p1 < 0001-cacule-patches.patch
+  patch -p1 < cacule-5.15-full.patch
   patch -p1 < 0001-xanmod-patches.patch
-  patch -p1 < 0001-lru-patches.patch
+  #patch -p1 < 0001-lru-patches.patch
   patch -p1 < 0001-mm-protect-mappings-under-memory-pressure.patch
   patch -p1 < 0001-bbr2-5.15-introduce-BBRv2.patch
   #patch -p1 < 0001-bcachefs-5.15-introduce-bcachefs-patchset.patch
@@ -437,6 +438,7 @@ kde-plasma/plasma-meta colord grub qrcode
 kde-plasma/plasma-vault networkmanager
 media-video/vlc archive bluray dav1d libass libcaca lirc live opus samba speex skins theora vaapi v4l vdpau x265
 media-video/ffmpeg bluray cdio dav1d rubberband libass ogg vpx rtmp aac wavpack opus gme v4l webp theora xcb cpudetection x265 libaom truetype libsoxr modplug samba vaapi vdpau libcaca libdrm librtmp opencl openssl speex jpeg2k
+media-libs/libheif x265
 dev-qt/qtmultimedia gstreamer
 media-libs/gd avif heif
 media-libs/libvpx postproc
@@ -799,7 +801,6 @@ fi
 
 cd /bin
 ln -sf dash sh
-usermod -s /bin/dash root
 
 touch /tmp/gentoox-user-configured
 HEREDOC
