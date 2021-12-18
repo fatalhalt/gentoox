@@ -193,12 +193,8 @@ dev-libs/apr-util ldap
 sys-apps/util-linux caps
 */* PYTHON_TARGETS: python2_7 python3_10
 */* PYTHON_SINGLE_TARGET: -* python3_10
-sys-libs/libblockdev python_single_target_python3_9
 app-misc/lirc python_single_target_python3_9
-app-admin/system-config-printer python_single_target_python3_9
 net-irc/telepathy-idle python_single_target_python3_9
-dev-games/freecell-solver python_single_target_python3_9
-media-gfx/fontforge python_single_target_python3_9
 media-gfx/blender python_single_target_python3_9
 dev-libs/libnatspec python_single_target_python2_7
 dev-lang/yasm python_single_target_python2_7
@@ -249,21 +245,22 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   cp .config .config.org
   #wget --quiet -m -np -c 'ck.kolivas.org/patches/5.0/5.12/5.12-ck1/patches/'
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/android-patches-v2/0001-android-export-symbold-and-enable-building-ashmem-an.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/arch-patches-v3/0001-arch-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/btrfs-patches-v5/0001-btrfs-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/clearlinux-patches/0001-clearlinux-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/arch-patches-v9/0001-arch-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/btrfs-patches-v7/0001-btrfs-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/clearlinux-patches-v2/0001-clearlinux-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/cpu-patches-v2/0001-cpu-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/fixes-miscellaneous-v6/0001-fixes-miscellaneous.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/fixes-miscellaneous-v9/0001-fixes-miscellaneous.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/mm-patches/0001-mm-protect-mappings-under-memory-pressure.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/futex-patches/0001-futex-resync-from-gitlab.collabora.com.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/futex-patches-v2/0001-futex-resync-from-gitlab.collabora.com.patch
   #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/futex2-patches/0001-futex2-resync-from-gitlab.collabora.com.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/zstd-patches/0001-zstd-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/zstd-dev-patches-v5/0001-zstd-dev-patches.patch
   wget --quiet https://raw.githubusercontent.com/ptr1337/kernel-patches/master/CacULE/v5.15/cacule-5.15-full.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/xanmod-patches/0001-xanmod-patches.patch
-  #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/lru-patches-le9-v3/0001-lru-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/xanmod-patches-v5/0001-xanmod-patches.patch
+  #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/lru-patches-le9-v4/0001-lru-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/bbr2-patches/0001-bbr2-5.15-introduce-BBRv2.patch
   #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/bcachefs-patches/0001-bcachefs-5.15-introduce-bcachefs-patchset.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/ntfs3-patches-v2/0001-ntfs3-patches.patch
 
   #wget --quiet https://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git/patch/?id=86ad60a65f29dd862a11c22bb4b5be28d6c5cef1 -O x86_aes-ni-xts_use_direct_calls_to_and_4-way_stride.patch
   #wget --quiet https://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git/patch/?id=2481104fe98d5b016fdd95d649b1235f21e491ba -O x86_aes-ni-xts_rewrite_and_drop_indirections_via_glue_helper.patch
@@ -307,6 +304,7 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   patch -p1 < 0001-mm-protect-mappings-under-memory-pressure.patch
   patch -p1 < 0001-bbr2-5.15-introduce-BBRv2.patch
   #patch -p1 < 0001-bcachefs-5.15-introduce-bcachefs-patchset.patch
+  patch -p1 < 0001-ntfs3-patches.patch
 
   #patch -p1 < x86_aes-ni-xts_use_direct_calls_to_and_4-way_stride.patch
   #patch -p1 < x86_aes-ni-xts_rewrite_and_drop_indirections_via_glue_helper.patch
@@ -404,7 +402,7 @@ FEATURES="-userpriv" emerge dev-lang/yasm  # yasm fails to build otherwise
 #sys-boot/plymouth gdm' > /etc/portage/package.use/gentoox
 
 emerge -v --autounmask=y --autounmask-write=y --keep-going=y --deep --newuse xorg-server nvidia-firmware arandr elogind sudo vim weston wpa_supplicant ntp bind-tools telnet-bsd snapper \
-nfs-utils cifs-utils samba dhcpcd nss-mdns zsh zsh-completions powertop cpupower lm-sensors screenfetch gparted gdb strace atop dos2unix app-misc/screen app-text/tree openbsd-netcat laptop-mode-tools hdparm alsa-utils vulkan-tools mesa-progs #plymouth-openrc-plugin
+nfs-utils cifs-utils samba dhcpcd nss-mdns zsh zsh-completions powertop cpupower lm-sensors screenfetch gparted gdb strace atop dos2unix app-misc/screen app-text/tree openbsd-netcat laptop-mode-tools hdparm alsa-utils vulkan-tools mesa-progs tcpdump #plymouth-openrc-plugin
 #emerge -avuDN --with-bdeps=y @world
 #emerge -v --depclean
 groupadd weston-launch
@@ -453,7 +451,7 @@ echo 'dev-qt/qt-creator' >> /etc/portage/package.mask/gentoox
 echo 'dev-util/umockdev no-error-on-missing-prototype.conf' >> /etc/portage/package.env
 
 emerge -v --jobs=2 --keep-going=y --autounmask=y --autounmask-write=y --deep --newuse kde-plasma/plasma-meta kde-apps/kde-apps-meta kde-apps/kmail kde-apps/knotes \
-latte-dock plasma-sdk libdbusmenu gvfs kuroo
+latte-dock plasma-sdk libdbusmenu gvfs kio-fuse kuroo
 #emerge --noreplace dev-qt/qt-creator
 #echo 'dev-qt/qt-creator' >> /etc/portage/package.mask/gentoox
 
@@ -690,7 +688,7 @@ dev-libs/libev abi_x86_32
 virtual/rust abi_x86_32
 dev-lang/rust abi_x86_32
 virtual/libudev abi_x86_32
-sys-fs/eudev abi_x86_32
+sys-fs/udev abi_x86_32
 virtual/libusb abi_x86_32
 dev-libs/libusb abi_x86_32
 app-emulation/vkd3d abi_x86_32
@@ -864,6 +862,8 @@ cat <<HEREDOC | chroot .
   truncate -s 0 /var/log/*.log
   truncate -s 0 /var/log/portage/elog/summary.log
   rm -f /var/log/genkernel.log
+  rm -rf /run/*
+  #rm -f /usr/share/applications/avidemux-2.7.desktop
   history -c
   history -w
 HEREDOC

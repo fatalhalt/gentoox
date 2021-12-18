@@ -15,52 +15,9 @@ GentooX comes with simple interactive *install.sh* script, supports BIOS and UEF
 * flatpak is included, easily install VSCode or Discord in sandboxed environment
 * Wine with vkd3d support included out-of-the-box
 * ZFS support, kernel patched to export FPU functions
-* Linux 5.12.1 kernel built with 1000Hz -03 for Sandybridge arch. Patches include aufs, zstd, ClearLinux patches, Intel FSGSBASE patches, Valve's fsync, [sirlucjan's](https://gitlab.com/sirlucjan/kernel-patches/-/tree/master/): android/arch/btrfs/fixes-miscellaneous/ntfs, unprivileged CLONE_NEWUSER, and IOMMU missing ACS capabilities overrides.
-* KDE 5.22.0, KDE Applications 21.04.2, KDE Frameworks 5.82.0, Qt 5.15.2
+* Linux 5.15.10 kernel built with 1000Hz -03 for Sandybridge arch. Patches include aufs, zstd, ClearLinux patches, Intel FSGSBASE patches, Valve's fsync, [sirlucjan's](https://gitlab.com/sirlucjan/kernel-patches/-/tree/master/): android/arch/btrfs/fixes-miscellaneous/ntfs, unprivileged CLONE_NEWUSER, and IOMMU missing ACS capabilities overrides.
+* KDE 5.23.4, KDE Applications 21.12.0, KDE Frameworks 5.89.0, Qt 5.15.2
 * CacULE CPU scheduler
-
-## Changelog
-* 2021.06.11 Release
-  * KDE 5.22.0, modified SierraBreeze close/maximize/minimize buttons to be shades of purple, patched plasma-workspace with "Accent Colors" (Merge Request 305) to among things be able to set system-wide purple colors, made ISO fit again onto 4.7GiB DVD, added system-wide 'avif heif webp' USE flags in /etc/make.conf
-* 2021.05.04 Release
-  * Full ISO rebuild against GCC 11.1.0, Linux 5.12.1, Firefox 88.0.1 with global menu patch, LLVM 12.0.0, KDE 5.21.5, KDE Applications 21.04.0, KDE Frameworks 5.82.0, enabled emoji support in KDE, enabled AVIF and HEIF image support in KDE, enabled dash as default /bin/sh, disabled LTO for blender and dav1d
-* 2021.03.16 Release
-  * KDE 5.21.3, KDE Applications 20.12.3, KDE Frameworks 5.80.0, enable wine by default, include laptop-mode-tools, disable LTO for opencv (fixes kdenlive crashing at startup), updates as of 03/16/2021. Firefox still lacks global menu support due missing upstream patch for 86.x versions
-* 2021.03.04 Release
-  * Linux 5.11.3, CacULE CPU scheduler is now the default!
-* 2021.02.27 Release
-  * Linux 5.11.2, and so on, updates as of 02/27/2021
-* 2021.01.08 Release
-  * Linux 5.10.5, KDE 5.20.5, KDE Applications 20.12.1, updates as of 01/08/2021, Ruby 3.0 is now default, CPU scaling governor is now set to performance by default, networkmanager is now enabled by default.
-* 2020.12.19 Release
-  * Linux 5.10.1, KDE 5.20.4, KDE Applications 20.12.0, KDE Frameworks 5.77.0, Firefox 84.0, Python 3.9.1 is now the default, updates as of 12/19.
-* 2020.11.30 Release
-  * Linux 5.9.11, KDE 5.20.3, KDE Applications 20.08.3, KDE Frameworks 5.76.0, Qt 5.15.2, Firefox 83.0, updates as of 11/30.
-* 2020.10.13 Release
-  * Linux 5.9.0, KDE 5.20.0, KDE Applications 20.08.2, KDE Frameworks 5.75.0, Firefox 81.0.2, updates as of 10/13.
-* 2020.09.17 Release
-  * Linux 5.8.10, KDE 5.19.5, KDE Applications 20.08.1, KDE Frameworks 5.74.0, Qt 5.15.1, Firefox 80.0.1, updates as of 9/17.
-* 2020.08.19 Release
-  * everything recompiled against GCC 10.2.0
-  * Linux 5.8.2, KDE Applications 20.08, KDE Frameworks 5.73.0, Firefox 79.0, updates as of 8/19.
-  * known issues: [kde global menu padding problem](https://www.reddit.com/r/kde/comments/i8tvq7/global_menu_padding_broken/)
-* 2020.07.29 Release
-  * Linux 5.7.11, KDE 5.19.4, KDE Applications 20.04.3, KDE Frameworks 5.72.0, Qt 5.15.0, Firefox 78.0.2, updates as of 7/29.
-* 2020.06.10 Release
-  * Linux 5.7.1, KDE 5.19.0, Qt 5.15.0, Firefox 77.0.1, updates as of 6/10. Compiled with GCC9.3. LLVM10 remains masked.
-  * added KDE systemtray to the panel (in postinstall.sh script)
-* 2020.05.11 Release
-  * drop system-wide AVX CPU compile flag, it is a [net loss](https://old.reddit.com/r/Gentoo/comments/ga1tah/gentoox_202004_new_distro/foxisn2/), 2020.05.01 is the last AVX build
-  * KDE 5.18.5, KDE Frameworks 5.70.0, Linux 5.6.11
-  * make Python 3.7 default
-  * Fix checking for UEFI_MODE during GRUB setup, thanks [lotharsm](https://github.com/fatalhalt/gentoox/commit/1da62330b78d462b885e16d038b8439bd2144fae)
-  * all packages updated as of 5/11
-  * as always, LiveCD credentials are **gentoox/gentoox** for user and password, automatic partitioning recommended, test and get familiar with install.sh in virtualbox, do not forget to run **emerge --sync** after the install
-* 2020.05.01 Release
-  * add support for NVMe drives to install.sh installation script
-  * enable flatpak support in KDE Discover
-  * update all packages to May 1 2020
-* 2020.04.25 Release -- initial release
 
 ## Download
 http://gentoox.cryptohash.nl/
@@ -83,7 +40,7 @@ CPU_FLAGS_X86="aes mmx mmxext pclmul popcnt sse sse2 sse3 sse4_1 sse4_2 ssse3"
 ```
 ## USE flags
 ```sh
-USE="-bindist elogind -consolekit -systemd udev dbus X wayland gles vulkan plymouth pulseaudio ffmpeg ipv6 -webkit infinality bluetooth zstd"
+USE="-bindist elogind -consolekit -systemd udev dbus X wayland gles vulkan plymouth pulseaudio ffmpeg ipv6 bluetooth zstd avif heif jpeg2k webp -webkit"
 ```
 ## FAQ
 > (Q) **what are the user/password credentials for LiveCD?**
@@ -131,9 +88,5 @@ Gentoo project, https://www.gentoo.org/, note: Gentoo Foundation, Inc. is the ow
 CloverOS, https://cloveros.ga/, GentooX has been heavily inspired by CloverOS, if you want fvwm based optimized Gentoo distribution, look no further!
 
 ## Known issues
-* a "hwclock: settimeofday() failed: Invalid argument" message may be seen during bootup: run
-```sh
-rc-update delete hwclock boot
-```
-* 'sudo su' by default grants root without asking for password, to be decided, can be disabled by editing sudoers
+
  
