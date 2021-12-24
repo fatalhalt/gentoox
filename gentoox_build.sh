@@ -178,7 +178,7 @@ media-libs/libsdl2 gles2
 www-client/firefox -system-av1 -system-icu -system-jpeg -system-libevent -system-libvpx -system-sqlite -system-harfbuzz -system-webp hwaccel pgo lto wayland clang
 mail-client/thunderbird hwaccel lto
 dev-libs/boost python zstd
-dev-lang/python sqlite
+dev-lang/python sqlite pgo tk
 sys-fs/squashfs-tools zstd
 sys-boot/grub:2 mount libzfs
 x11-libs/libxcb xkb
@@ -194,7 +194,6 @@ sys-apps/util-linux caps
 */* PYTHON_TARGETS: python2_7 python3_10
 */* PYTHON_SINGLE_TARGET: -* python3_10
 app-misc/lirc python_single_target_python3_9
-net-irc/telepathy-idle python_single_target_python3_9
 media-gfx/blender python_single_target_python3_9
 dev-libs/libnatspec python_single_target_python2_7
 dev-lang/yasm python_single_target_python2_7
@@ -245,12 +244,12 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   cp .config .config.org
   #wget --quiet -m -np -c 'ck.kolivas.org/patches/5.0/5.12/5.12-ck1/patches/'
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/android-patches-v2/0001-android-export-symbold-and-enable-building-ashmem-an.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/arch-patches-v9/0001-arch-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/btrfs-patches-v7/0001-btrfs-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/arch-patches-v10/0001-arch-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/btrfs-patches-v9/0001-btrfs-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/clearlinux-patches-v2/0001-clearlinux-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/cpu-patches-v2/0001-cpu-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/fixes-miscellaneous-v9/0001-fixes-miscellaneous.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/mm-patches/0001-mm-protect-mappings-under-memory-pressure.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/mm-patches-v2/0001-mm-protect-mappings-under-memory-pressure.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/futex-patches-v2/0001-futex-resync-from-gitlab.collabora.com.patch
   #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/futex2-patches/0001-futex2-resync-from-gitlab.collabora.com.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/zstd-patches/0001-zstd-patches.patch
@@ -261,6 +260,12 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/bbr2-patches/0001-bbr2-5.15-introduce-BBRv2.patch
   #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/bcachefs-patches/0001-bcachefs-5.15-introduce-bcachefs-patchset.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/ntfs3-patches-v2/0001-ntfs3-patches.patch
+
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/amd64-patches-v2/0001-amd64-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/intel-patches/0001-intel-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/hwmon-patches-v8/0001-hwmon-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/lqx-patches-v4/0001-lqx-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/v4l2loopback-patches-v2/0001-v4l2loopback-patches.patch
 
   #wget --quiet https://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git/patch/?id=86ad60a65f29dd862a11c22bb4b5be28d6c5cef1 -O x86_aes-ni-xts_use_direct_calls_to_and_4-way_stride.patch
   #wget --quiet https://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git/patch/?id=2481104fe98d5b016fdd95d649b1235f21e491ba -O x86_aes-ni-xts_rewrite_and_drop_indirections_via_glue_helper.patch
@@ -305,6 +310,12 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   patch -p1 < 0001-bbr2-5.15-introduce-BBRv2.patch
   #patch -p1 < 0001-bcachefs-5.15-introduce-bcachefs-patchset.patch
   patch -p1 < 0001-ntfs3-patches.patch
+
+  patch -p1 < 0001-amd64-patches.patch
+  patch -p1 < 0001-intel-patches.patch
+  patch -p1 < 0001-hwmon-patches.patch
+  patch -p1 < 0001-lqx-patches.patch
+  patch -p1 < 0001-v4l2loopback-patches.patch
 
   #patch -p1 < x86_aes-ni-xts_use_direct_calls_to_and_4-way_stride.patch
   #patch -p1 < x86_aes-ni-xts_rewrite_and_drop_indirections_via_glue_helper.patch
