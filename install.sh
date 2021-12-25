@@ -217,15 +217,15 @@ yes $userpassword | passwd $username
 
 if [[ ! -z "$UEFI_MODE" ]]; then
   if [[ \$(mokutil --sb-state) == "SecureBoot enabled" ]]; then
-    esp=\$(lsblk -no pkname \$(findmnt --noheadings -o source /boot/efi))
-    esp_with_partum=\$(basename \$(findmnt --noheadings -o source /boot/efi))
-    esp_partnum=\$(echo \${esp_with_partum#\$esp} | tr -d 'p')
+    espdev=\$(lsblk -p -no pkname \$(findmnt --noheadings -o source /boot/efi))
+    esppar=\$(findmnt --noheadings -o source /boot/efi)
+    esp_partnum=\$(echo \${esppar#\$espdev} | tr -d 'p')
     grub-install --target=x86_64-efi --efi-directory=/boot/efi --modules="tpm" --no-nvram
     sbsign --key /usr/src/uefi/MOK.priv --cert /usr/src/uefi/MOK.pem /boot/efi/EFI/gentoo/grubx64.efi --output grubx64.efi.signed
     mv grubx64.efi.signed /boot/efi/EFI/gentoo/grubx64.efi
     cp /usr/share/shim/* /boot/efi/EFI/gentoo/
     mv /boot/efi/EFI/gentoo/BOOTX64.EFI /boot/efi/EFI/gentoo/shimx64.efi
-    efibootmgr -c -d \$esp -p \$esp_partnum -L "GentooX" -l "\EFI\gentoo\shimx64.efi"
+    efibootmgr -c -d \$espdev -p \$esp_partnum -L "GentooX" -l "\EFI\gentoo\shimx64.efi"
   else
     grub-install --target=x86_64-efi
   fi
