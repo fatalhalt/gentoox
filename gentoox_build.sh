@@ -374,6 +374,17 @@ dd if=/dev/urandom of=/dev/stdout bs=1 count=4 > /etc/hostid
 genkernel --kernel-config=/usr/src/linux/.config --compress-initramfs-type=zstd --microcode --luks --lvm --mdadm --btrfs --zfs initramfs
 tar --zstd -cf /usr/src/kernel-gentoox.tar.zst /boot/*\${KERNELVERSION}* -C /lib/modules/ .
 
+kver=\$(uname -r)
+cd /usr/src/uefi/
+sbsign --key MOK.priv --cert MOK.pem /boot/vmlinuz-\$kver --output vmlinuz-\$kver.signed
+mv vmlinuz-\$kver.signed /boot/vmlinuz-\$kver
+cp -r /lib/modules/\$kver/{kernel,extra,misc}/ .
+./mod-sign.sh MOK.priv MOK.der ./kernel/
+./mod-sign.sh MOK.priv MOK.der ./extra/
+./mod-sign.sh MOK.priv MOK.der ./misc/
+cp -r ./kernel/ ./extra/ ./misc/ /lib/modules/\$kver/
+rm -rf kernel extra misc
+
 sed -i "s/#GRUB_CMDLINE_LINUX_DEFAULT=\"\"/GRUB_CMDLINE_LINUX_DEFAULT=\"zswap.enabled=1 zswap.compressor=lz4 zswap.max_pool_percent=20 zswap.zpool=z3fold dobtrfs\"/" /etc/default/grub
 sed -i "s/#GRUB_GFXMODE=640x480/GRUB_GFXMODE=auto/" /etc/default/grub
 sed -i "s/#GRUB_GFXPAYLOAD_LINUX=/GRUB_GFXPAYLOAD_LINUX=keep/" /etc/default/grub
@@ -413,7 +424,7 @@ FEATURES="-userpriv" emerge dev-lang/yasm  # yasm fails to build otherwise
 #sys-boot/plymouth gdm' > /etc/portage/package.use/gentoox
 
 emerge -v --autounmask=y --autounmask-write=y --keep-going=y --deep --newuse xorg-server nvidia-firmware arandr elogind sudo vim weston wpa_supplicant ntp bind-tools telnet-bsd snapper \
-nfs-utils cifs-utils samba dhcpcd nss-mdns zsh zsh-completions powertop cpupower lm-sensors screenfetch gparted gdb strace atop dos2unix app-misc/screen app-text/tree openbsd-netcat laptop-mode-tools hdparm alsa-utils vulkan-tools mesa-progs tcpdump #plymouth-openrc-plugin
+nfs-utils cifs-utils samba dhcpcd nss-mdns zsh zsh-completions powertop cpupower lm-sensors screenfetch gparted gdb strace atop dos2unix app-misc/screen app-text/tree openbsd-netcat laptop-mode-tools hdparm alsa-utils vulkan-tools mesa-progs tcpdump shim mokutil #plymouth-openrc-plugin
 #emerge -avuDN --with-bdeps=y @world
 #emerge -v --depclean
 groupadd weston-launch
@@ -895,6 +906,17 @@ tar -xOf kernel-gentoox.tar.zst --wildcards \*initramfs-\* | unzstd -d | gzip > 
 tar -xOf kernel-gentoox.tar.zst --wildcards \*System.map-\* > iso/boot/System-gentoo.map
 sed -i "s@dokeymap@aufs scandelay=3@g" iso/isolinux/isolinux.cfg
 sed -i "s@dokeymap@aufs scandelay=3@g" iso/grub/grub.cfg
+cd iso
+cp cp boot/EFI/BOOT/grubx64.efi .
+sbsign --key EFI/MOK.priv --cert EFI/MOK.pem grubx64.efi
+mv grubx64.efi.signed grubx64.efi
+cp grubx64.efi boot/EFI/BOOT/grubx64.efi
+cp grubx64.efi EFI/BOOT/grubx64.efi
+mkdir tmp && mount -o rw gentoo.efimg ./tmp
+cp grubx64.efi /mnt/EFI/BOOT/grubx64.efi
+umount ./tmp
+rm -f grubx64.efi && rm -rf ./tmp
+cd ..
 xorriso -as mkisofs -iso-level 3 -r -J \
 	-joliet-long -l -cache-inodes \
 	-isohybrid-mbr /usr/share/syslinux/isohdpfx.bin \
