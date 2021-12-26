@@ -151,12 +151,14 @@ echo 'CFLAGS="\${CFLAGS} -fno-lto"
 CXXFLAGS="\${CFLAGS} -fno-lto"' > /etc/portage/env/nolto.conf
 echo 'CFLAGS="${CFLAGS} -Wno-error=missing-prototypes"
 CXXFLAGS="${CFLAGS} -Wno-error=missing-prototypes"' > /etc/portage/env/no-error-on-missing-prototype.conf
+echo 'CFLAGS="-O3 -march=sandybridge -mtune=sandybridge -fno-tree-slp-vectorize -pipe"
+CXXFLAGS="${CFLAGS}"' > /etc/portage/env/O3nolto-noslp.conf
 echo 'CFLAGS="-O2 -march=sandybridge -mtune=sandybridge -pipe"
 CXXFLAGS="\${CFLAGS}"' > /etc/portage/env/O2nolto.conf
 echo 'CFLAGS="-O3 -march=sandybridge -mtune=sandybridge -pipe"
 CXXFLAGS="\${CFLAGS}"' > /etc/portage/env/O3nolto.conf
 
-echo 'sys-libs/glibc O3nolto.conf
+echo 'sys-libs/glibc O3nolto-noslp.conf
 dev-libs/elfutils nolto.conf
 app-crypt/efitools nolto.conf
 sys-libs/efivar nolto.conf
