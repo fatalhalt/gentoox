@@ -18,7 +18,9 @@ Manual installation can be done via:
   /usr/local/sbin/genfstab -U >> /mnt/install/etc/fstab
   /usr/local/sbin/arch-chroot /mnt/install/
   grub-install --target=x86_64-efi for UEFI mode, or grub-install --target=i386-pc (BIOS only)
-  grub-mkconfig -o /boot/grub/grub.cfg'
+  grub-mkconfig -o /boot/grub/grub.cfg
+
+\033[1mThis script will perform automatic guided installation. Automatic partitioning is recommended.\n\033[0m'
 
 
 declare -A PART_SCHEME
@@ -91,32 +93,38 @@ setup_btrfs () {
 }
 
 
-echo -e "\nDetected drives:\n$(lsblk | grep disk)"
+echo -e "\nDetected drives:\n$(lsblk | grep -e NAME -e disk -e part)"
+if [[ ! -z $UEFI_MODE ]]; then echo -e "\nEFI boot detected"; fi
+
 while :; do
 	echo
-	read -erp "Automatic partitioning (a), or manual partitioning ((m), will launch gparted)? [a/m] " -n 1 partitioning_mode
+	read -erp "Automatic partitioning (a), or manual partitioning ((m), will launch parted)? [a/m] " -n 1 partitioning_mode
+	esppart="None"
 	if [[ $partitioning_mode = "a" ]]; then
-        if [[ ! -z $UEFI_MODE ]]; then echo "EFI boot detected"; fi
-		read -erp "Enter drive to be formatted for GentooX installation: " -i "/dev/sda" drive
+	drive_guess=$(lsblk | grep -q nvme && echo "/dev/nvme0n1" || echo "/dev/sda")
+	echo -e "\033[1mAll data on drive selected below will be destroyed. You will be asked for confirmation.\033[0m"
+
+	read -erp "Enter drive to be partitioned for GentooX installation: " -i $drive_guess drive
         if [[ ! -z $UEFI_MODE ]]; then
-          if [[ $drive =~ "nvme" ]]; then partition="${drive}p2"; else partition="${drive}2"; fi # UEFI mode
+          if [[ $drive =~ "nvme" ]]; then esppart="${drive}p1"; partition="${drive}p2"; else esppart="${drive}1"; partition="${drive}2"; fi # UEFI mode
         else
           if [[ $drive =~ "nvme" ]]; then partition="${drive}p1"; else partition="${drive}1"; fi # BIOS mode
         fi
 	elif [[ $partitioning_mode = "m" ]]; then
-        if [[ ! -z $UEFI_MODE ]]; then echo "EFI boot detected, please also create EF00 ESP EFI partition..."; fi
-		gparted &> /dev/null &
-		read -erp "Enter formatted partition for GentooX installation: " -i "/dev/sda1" partition
+	esppart="User will be asked"
+        if [[ ! -z $UEFI_MODE ]]; then echo -e "EFI boot detected, create an EF00 ESP EFI partition if one doesn't exist, this script will ask for it...\n"; fi
+		parted
+		read -erp "Enter formatted root (/) partition for GentooX installation (e.g. /dev/nvme0n1p2): " -i "/dev/sda1" partition
 	else
 		echo "Invalid option"
 		continue
 	fi
 
 	read -erp "Partitioning: ${PART_SCHEME[$partitioning_mode]}
-    NOTE: in BIOS mode only 1 partition is used for whole OS including /boot,
-          in UEFI 2 partitions are used, 1st is ESP EFI and 2nd is for GentooX
-          (e.g. you'll see /dev/sda1 below, or /dev/sda2 or /dev/nvme0n1p2 when in UEFI mode)
-    Partition: $partition  (for GentooX)
+    NOTE: in BIOS mode, only 1 partition is used for the whole OS including /boot,
+          in UEFI 2 partitions are used, /boot/efi for ESP EFI and 2nd for root (/)
+    EFI partition:  $esppart
+    Root partition: $partition  (for GentooX)
     Is this correct? [y/n] " -n 1 yn
 	if [[ $yn == "y" ]]; then
 		break
@@ -125,6 +133,7 @@ done
 
 
 if [[ $partitioning_mode = "a" ]]; then
+  dd if=/dev/zero of=$drive bs=1M count=1
   if [[ ! -z $UEFI_MODE ]]; then
 	echo -e "o\nY\nn\n\n\n+256M\nEF00\nn\n2\n\n\n\nw\nY\n" | gdisk $drive
     if [[ $drive =~ "nvme" ]]; then
@@ -148,7 +157,8 @@ else
   setup_btrfs $partition
   if [[ ! -z $UEFI_MODE ]]; then
     mkdir -p /mnt/install/boot/efi
-    read -erp "Enter formatted EF00 ESP partition for EFI: " -i "/dev/sda1" efi_partition
+    esppar_guess=$(lsblk | grep -q nvme && echo "/dev/nvme0n1p1" || echo "/dev/sda1")
+    read -erp "Enter formatted EF00 ESP partition for EFI: " -i $esppar_guess efi_partition
     mount $efi_partition /mnt/install/boot/efi
   fi
 fi
