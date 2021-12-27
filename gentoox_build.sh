@@ -264,6 +264,7 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/ntfs3-patches-v2/0001-ntfs3-patches.patch
 
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/amd64-patches-v2/0001-amd64-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/cpufreq-patches-v6/0001-cpufreq-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/intel-patches/0001-intel-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/hwmon-patches-v8/0001-hwmon-patches.patch
   wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/lqx-patches-v4/0001-lqx-patches.patch
@@ -314,6 +315,7 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   patch -p1 < 0001-ntfs3-patches.patch
 
   patch -p1 < 0001-amd64-patches.patch
+  patch -p1 < 0001-cpufreq-patches.patch
   patch -p1 < 0001-intel-patches.patch
   patch -p1 < 0001-hwmon-patches.patch
   patch -p1 < 0001-lqx-patches.patch
