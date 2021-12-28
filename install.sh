@@ -133,7 +133,7 @@ done
 
 
 if [[ $partitioning_mode = "a" ]]; then
-  dd if=/dev/zero of=$drive bs=1M count=1
+  wipefs --all --quiet $drive && sync
   if [[ ! -z $UEFI_MODE ]]; then
 	echo -e "o\nY\nn\n\n\n+256M\nEF00\nn\n2\n\n\n\nw\nY\n" | gdisk $drive
     if [[ $drive =~ "nvme" ]]; then
