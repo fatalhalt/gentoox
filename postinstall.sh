@@ -151,6 +151,38 @@ kwriteconfig5 --file ~/.config/kdeglobals --group Colors:Window --key Decoration
 kwriteconfig5 --file ~/.config/kdeglobals --group Colors:Window --key ForegroundActive --type string "184,117,220"
 kwriteconfig5 --file ~/.config/kdeglobals --group Colors:Window --key ForegroundLink --type string "184,117,220"
 
+# fix for silly KDE bug where Breeze Light and Breeze Dark Plasma themes are not respecting accent colors, https://bugs.kde.org/show_bug.cgi?id=444043
+# i want purple, thereforce i repeat what was done above but now on ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors file
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:Button --key DecorationFocus --type string "184,117,220"
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:Button --key DecorationHover --type string "184,117,220"
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:Button --key ForegroundActive --type string "184,117,220"
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:Button --key ForegroundLink --type string "184,117,220"
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:Complementary --key DecorationFocus --type string "184,117,220"
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:Complementary --key DecorationHover --type string "184,117,220"
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:Complementary --key ForegroundActive --type string "184,117,220"
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:Complementary --key ForegroundLink --type string "184,117,220"
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:Header --key DecorationFocus --type string "184,117,220"
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:Header --key DecorationHover --type string "184,117,220"
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:Header --key ForegroundActive --type string "184,117,220"
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:Header --key ForegroundLink --type string "184,117,220"
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:Selection --key BackgroundAlternate --type string "89,64,107"
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:Selection --key BackgroundNormal --type string "89,64,107"
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:Selection --key DecorationFocus --type string "184,117,220"
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:Selection --key DecorationHover --type string "184,117,220"
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:Selection --key ForegroundActive --type string "184,117,220"
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:Selection --key ForegroundLink --type string "184,117,220"
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:Tooltip --key DecorationFocus --type string "184,117,220"
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:Tooltip --key DecorationHover --type string "184,117,220"
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:Tooltip --key ForegroundActive --type string "184,117,220"
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:Tooltip --key ForegroundLink --type string "184,117,220"
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:View --key DecorationFocus --type string "184,117,220"
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:View --key DecorationHover --type string "184,117,220"
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:View --key ForegroundActive --type string "184,117,220"
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:View --key ForegroundLink --type string "184,117,220"
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:Window --key DecorationFocus --type string "184,117,220"
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:Window --key DecorationHover --type string "184,117,220"
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:Window --key ForegroundActive --type string "184,117,220"
+kwriteconfig5 --file ~/.local/share/plasma/desktoptheme/breeze_transparent_dark/colors --group Colors:Window --key ForegroundLink --type string "184,117,220"
 
 echo '[Common]
 ShadowStrength=89
