@@ -242,36 +242,33 @@ cd /usr/src/linux/
 if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   wget --quiet 'https://raw.githubusercontent.com/archlinux/svntogit-packages/packages/linux/trunk/config' -O .config
   cp .config .config.org
-  #wget --quiet -m -np -c 'ck.kolivas.org/patches/5.0/5.12/5.12-ck1/patches/'
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/android-patches-v2/0001-android-export-symbold-and-enable-building-ashmem-an.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/arch-patches-v10/0001-arch-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/btrfs-patches-v9/0001-btrfs-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/clearlinux-patches-v2/0001-clearlinux-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/cpu-patches-v2/0001-cpu-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/fixes-miscellaneous-v9/0001-fixes-miscellaneous.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/mm-patches-v2/0001-mm-protect-mappings-under-memory-pressure.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/futex-patches-v2/0001-futex-resync-from-gitlab.collabora.com.patch
-  #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/futex2-patches/0001-futex2-resync-from-gitlab.collabora.com.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/zstd-patches/0001-zstd-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/zstd-dev-patches-v5/0001-zstd-dev-patches.patch
-  wget --quiet https://raw.githubusercontent.com/ptr1337/kernel-patches/master/CacULE/v5.15/cacule-5.15-full.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/xanmod-patches-v5/0001-xanmod-patches.patch
-  #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/lru-patches-le9-v4/0001-lru-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/bbr2-patches/0001-bbr2-5.15-introduce-BBRv2.patch
-  #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/bcachefs-patches/0001-bcachefs-5.15-introduce-bcachefs-patchset.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/ntfs3-patches-v2/0001-ntfs3-patches.patch
+  #wget --quiet -m -np -c 'ck.kolivas.org/patches/5.0/5.17/5.17-ck1/patches/'
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.17/android-patches/0001-android-export-symbold-and-enable-building-ashmem-an.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.17/arch-patches-v15/0001-arch-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.17/btrfs-patches-v5/0001-btrfs-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.17/clearlinux-patches/0001-clearlinux-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.17/cpu-patches/0001-cpu-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.17/fixes-miscellaneous-v6/0001-fixes-miscellaneous.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.17/mm-patches-v3/0001-mm-5.17-protect-mappings-under-memory-pressure.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.17/futex-patches/0001-futex-Add-entry-point-for-FUTEX_WAIT_MULTIPLE-opcode.patch
+  #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.17/futex2-patches/0001-futex2-resync-from-gitlab.collabora.com.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.17/zstd-patches/0001-zstd-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.17/zstd-dev-patches/0001-zstd-dev-patches.patch
+  wget --quiet https://raw.githubusercontent.com/ptr1337/kernel-patches/master/5.17/sched/0001-cacULE.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.17/xanmod-patches-v3/0001-xanmod-miscellaneous.patch
+  #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.17/lru-patches-le9/0001-lru-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.17/bbr2-patches/0001-bbr2-5.17-introduce-BBRv2.patch
+  #wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.17/bcachefs-patches/0001-bcachefs-5.17-introduce-bcachefs-patchset.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.17/ntfs3-patches/0001-ntfs3-patches.patch
 
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/amd64-patches-v2/0001-amd64-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/cpufreq-patches-v6/0001-cpufreq-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/intel-patches/0001-intel-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/hwmon-patches-v8/0001-hwmon-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/lqx-patches-v4/0001-lqx-patches.patch
-  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.15/v4l2loopback-patches-v2/0001-v4l2loopback-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.17/hwmon-patches-v2/0001-hwmon-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.17/lqx-patches-v5/0001-lqx-patches.patch
+  wget --quiet https://gitlab.com/sirlucjan/kernel-patches/-/raw/master/5.17/v4l2loopback-patches-v2/0001-v4l2loopback-patches.patch
 
   #wget --quiet https://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git/patch/?id=86ad60a65f29dd862a11c22bb4b5be28d6c5cef1 -O x86_aes-ni-xts_use_direct_calls_to_and_4-way_stride.patch
   #wget --quiet https://git.kernel.org/pub/scm/linux/kernel/git/herbert/crypto-2.6.git/patch/?id=2481104fe98d5b016fdd95d649b1235f21e491ba -O x86_aes-ni-xts_rewrite_and_drop_indirections_via_glue_helper.patch
 
-  #for f in ck.kolivas.org/patches/5.0/5.12/5.12-ck1/patches/*.patch; do patch -p1 < "\$f"; done
+  #for f in ck.kolivas.org/patches/5.0/5.17/5.17-ck1/patches/*.patch; do patch -p1 < "\$f"; done
   patch -p1 < 0001-cpu-patches.patch
   patch -p0 < ../$KERNEL_CONFIG_DIFF
 
@@ -298,23 +295,20 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   patch -p1 < 0001-btrfs-patches.patch
   patch -p1 < 0001-clearlinux-patches.patch
   patch -p1 < 0001-fixes-miscellaneous.patch
-  patch -p1 < 0001-futex-resync-from-gitlab.collabora.com.patch
+  patch -p1 < 0001-futex-Add-entry-point-for-FUTEX_WAIT_MULTIPLE-opcode.patch
   #patch -p1 < 0001-futex2-resync-from-gitlab.collabora.com.patch
   patch -p1 < ../0011-ZFS-fix.patch
   patch -p1 < ../zfs-ungpl-rcu_read_unlock-export.diff
   patch -p1 < 0001-zstd-dev-patches.patch
   patch -p1 < 0001-zstd-patches.patch
-  patch -p1 < cacule-5.15-full.patch
-  patch -p1 < 0001-xanmod-patches.patch
+  patch -p1 < 0001-cacULE.patch
+  patch -p1 < 0001-xanmod-miscellaneous.patch
   #patch -p1 < 0001-lru-patches.patch
-  patch -p1 < 0001-mm-protect-mappings-under-memory-pressure.patch
-  patch -p1 < 0001-bbr2-5.15-introduce-BBRv2.patch
-  #patch -p1 < 0001-bcachefs-5.15-introduce-bcachefs-patchset.patch
-  patch -p1 < 0001-ntfs3-patches.patch
+  patch -p1 < 0001-mm-5.17-protect-mappings-under-memory-pressure.patch
+  patch -p1 < 0001-bbr2-5.17-introduce-BBRv2.patch
+  #patch -p1 < 0001-bcachefs-5.17-introduce-bcachefs-patchset.patch
+  #patch -p1 < 0001-ntfs3-patches.patch
 
-  patch -p1 < 0001-amd64-patches.patch
-  patch -p1 < 0001-cpufreq-patches.patch
-  patch -p1 < 0001-intel-patches.patch
   patch -p1 < 0001-hwmon-patches.patch
   patch -p1 < 0001-lqx-patches.patch
   patch -p1 < 0001-v4l2loopback-patches.patch
@@ -323,9 +317,9 @@ if [[ ! -f '/tmp/gentoox-kernelpatches-applied' ]]; then
   #patch -p1 < x86_aes-ni-xts_rewrite_and_drop_indirections_via_glue_helper.patch
 
   # Linux Random Number Generator patch.  http://www.chronox.de/lrng.html
-  git clone --depth 1 --filter=blob:none --sparse https://github.com/smuellerDD/lrng.git lrng-5.15; cd lrng-5.15
-  git sparse-checkout init --cone; git sparse-checkout set kernel_patches/v5.15; cd ..
-  for f in lrng-5.15/kernel_patches/v5.15/*.patch; do patch -p1 < "\$f"; done
+  git clone --depth 1 --filter=blob:none --sparse https://github.com/smuellerDD/lrng.git lrng-5.17; cd lrng-5.17
+  git sparse-checkout init --cone; git sparse-checkout set kernel_patches/v5.17; cd ..
+  for f in lrng-5.17/kernel_patches/v5.17/*.patch; do patch -p1 < "\$f"; done
 echo 'CONFIG_LRNG=y
 CONFIG_LRNG_CONTINUOUS_COMPRESSION_DISABLED=y
 CONFIG_LRNG_SWITCHABLE_CONTINUOUS_COMPRESSION=y
