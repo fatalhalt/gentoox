@@ -196,6 +196,10 @@ sys-apps/util-linux caps
 */* PYTHON_TARGETS: -* python3_10
 */* PYTHON_SINGLE_TARGET: -* python3_10' > /etc/portage/package.use/gentoox
 
+mkdir -p /etc/portage/package.mask /etc/portage/package.unmask
+echo '<dev-lang/ruby-3.1
+<dev-lang/python-3.10' > /etc/portage/package.mask/gentoox
+
 rm -rf /etc/portage/package.accept_keywords/
 echo -n > /etc/portage/package.accept_keywords
 
@@ -408,7 +412,6 @@ yes | layman --add lto-overlay
 echo 'sys-config/ltoize ~amd64
 app-portage/portage-bashrc-mv ~amd64
 app-shells/runtitle ~amd64' >> /etc/portage/package.accept_keywords
-mkdir -p /etc/portage/package.mask /etc/portage/package.unmask
 echo '*/*::mv' >> /etc/portage/package.mask/lowprio
 echo 'app-portage/portage-bashrc-mv::mv
 app-shells/runtitle::mv' >> /etc/portage/package.unmask/wanted
@@ -584,7 +587,7 @@ dev-php/fpdf::bobwya' >> /etc/portage/package.unmask/wanted
 
 echo 'media-gfx/gimp nolto.conf' >> /etc/portage/package.env
 
-emerge -v gimp avidemux blender tuxkart keepassxc libreoffice firefox thunderbird mpv audacious-plugins audacious net-irc/hexchat smartmontools libisoburn phoronix-test-suite virtualbox-guest-additions pfl bash-completion dev-python/pip virtualenv app-misc/jq youtube-dl app-shells/dash
+emerge -v gimp avidemux blender tuxkart keepassxc libreoffice firefox thunderbird mpv audacious-plugins audacious net-irc/hexchat smartmontools libisoburn phoronix-test-suite virtualbox-guest-additions pfl bash-completion dev-python/pip virtualenv app-misc/jq yt-dlp app-shells/dash
 
 touch /tmp/gentoox-extra-done
 HEREDOC
