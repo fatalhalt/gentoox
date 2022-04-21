@@ -144,7 +144,7 @@ PORTDIR="/var/db/repos/gentoo"
 DISTDIR="/var/cache/distfiles"
 PKGDIR="/var/cache/binpkgs"
 LC_MESSAGES=C
-RUBY_TARGETS="ruby27 ruby30"' > /etc/portage/make.conf
+RUBY_TARGETS="ruby31"' > /etc/portage/make.conf
 
 mkdir /etc/portage/env
 echo 'CFLAGS="\${CFLAGS} -fno-lto"
@@ -193,14 +193,8 @@ dev-libs/libdbusmenu gtk3
 net-misc/curl http2
 dev-libs/apr-util ldap
 sys-apps/util-linux caps
-*/* PYTHON_TARGETS: python2_7 python3_10
-*/* PYTHON_SINGLE_TARGET: -* python3_10
-app-misc/lirc python_single_target_python3_9
-media-gfx/blender python_single_target_python3_9
-dev-libs/libnatspec python_single_target_python2_7
-dev-lang/yasm python_single_target_python2_7
-media-libs/libcaca python_single_target_python2_7
-gnome-base/libglade python_single_target_python2_7' > /etc/portage/package.use/gentoox
+*/* PYTHON_TARGETS: -* python3_10
+*/* PYTHON_SINGLE_TARGET: -* python3_10' > /etc/portage/package.use/gentoox
 
 rm -rf /etc/portage/package.accept_keywords/
 echo -n > /etc/portage/package.accept_keywords
@@ -427,6 +421,9 @@ FEATURES="-userpriv" emerge dev-lang/yasm  # yasm fails to build otherwise
 #echo 'sys-kernel/genkernel-next plymouth
 #sys-boot/plymouth gdm' > /etc/portage/package.use/gentoox
 
+echo 'media-video/pipewire *FLAGS-="${SEMINTERPOS}"  # https://github.com/InBetweenNames/gentooLTO/issues/796
+media-gfx/blender *FLAGS+=-ffat-lto-objects    # https://github.com/InBetweenNames/gentooLTO/pull/788' > /etc/portage/package.cflags/gentoox.conf
+
 emerge -v --autounmask=y --autounmask-write=y --keep-going=y --deep --newuse xorg-server nvidia-firmware arandr elogind sudo vim weston wpa_supplicant ntp bind-tools telnet-bsd snapper \
 nfs-utils cifs-utils samba dhcpcd nss-mdns zsh zsh-completions powertop cpupower lm-sensors screenfetch gparted gdb strace atop dos2unix app-misc/screen app-text/tree openbsd-netcat laptop-mode-tools hdparm alsa-utils vulkan-tools mesa-progs tcpdump shim mokutil #plymouth-openrc-plugin
 #emerge -avuDN --with-bdeps=y @world
@@ -467,7 +464,9 @@ dev-qt/qtmultimedia gstreamer
 media-libs/gd avif heif
 media-libs/libvpx postproc
 gnome-base/gvfs afp archive bluray fuse gphoto2 ios mtp nfs samba zeroconf
-net-irc/telepathy-idle python_single_target_python2_7' >> /etc/portage/package.use/gentoox
+net-irc/telepathy-idle python_single_target_python2_7
+kde-frameworks/* speech
+kde-apps/* speech' >> /etc/portage/package.use/gentoox
 
 # enable flatpak backend in discover, patch qt-creator to use clang9 effectively dropping clang8
 echo 'kde-plasma/discover flatpak' >> /etc/portage/package.use/gentoox
@@ -550,7 +549,8 @@ x11-libs/libXxf86vm abi_x86_32
 media-libs/libglvnd abi_x86_32
 virtual/opencl abi_x86_32
 app-arch/zstd abi_x86_32
-dev-util/wayland-scanner abi_x86_32' >> /etc/portage/package.use/gentoox
+dev-util/wayland-scanner abi_x86_32
+sys-apps/systemd-utils abi_x86_32' >> /etc/portage/package.use/gentoox
 emerge -v steam-meta
 touch /tmp/gentoox-steam-done
 HEREDOC
@@ -819,7 +819,8 @@ export CLUTTER_BACKEND=wayland
 export COGL_RENDERER=egl_wayland
 export SDL_VIDEODRIVER=wayland
 export QT_QPA_PLATFORM=wayland-egl
-exec weston-launch' > weston-launch.sh
+export MOZ_ENABLE_WAYLAND=1
+exec weston' > weston-launch.sh
   chmod +x weston-launch.sh
 fi
 
