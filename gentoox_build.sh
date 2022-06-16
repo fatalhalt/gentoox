@@ -16,7 +16,7 @@ username=gentoox
 userpassword=gentoox
 builddate="$(date +%Y%m%d).graphite"
 builddir="build-$(date +%Y%m%d)"
-stage3tarball="stage3-amd64-20211117.graphite.tar.xz"
+stage3tarball="stage3-amd64-20220514.graphite.tar.xz"
 KERNEL_CONFIG_DIFF="0001-kernel-config-cfs-r8.patch"
 
 binpkgs="$(pwd)/var/cache/binpkgs/"
@@ -472,8 +472,11 @@ echo 'dev-qt/qt-creator' >> /etc/portage/package.mask/gentoox
 # glibc 2.33 does not declare __xstat among others in the header anymore causing umockdev build to fail
 echo 'dev-util/umockdev no-error-on-missing-prototype.conf' >> /etc/portage/package.env
 
-emerge -v --jobs=2 --keep-going=y --autounmask=y --autounmask-write=y --deep --newuse kde-plasma/plasma-meta kde-apps/kde-apps-meta kde-apps/kmail kde-apps/knotes \
-latte-dock plasma-sdk libdbusmenu gvfs kio-fuse kuroo
+emerge -v --jobs=2 --keep-going=y --autounmask=y --autounmask-write=y --deep --newuse kde-plasma/plasma-meta \
+kde-apps/kdegraphics-meta kde-apps/kdemultimedia-meta kde-apps/kdenetwork-meta kde-apps/kdeutils-meta kde-apps/kdecore-meta \
+kde-apps/kate kde-apps/yakuake kde-apps/ark kde-apps/kcharselect kde-apps/kcalc kde-apps/print-manager app-cdr/dolphin-plugins-mountiso \
+kde-apps/kdenlive media-sound/elisa kde-apps/k3b kde-apps/kmail kde-apps/knotes \
+latte-dock plasma-sdk libdbusmenu gvfs kio-fuse kuroo media-gfx/imagemagick rar unrar
 #emerge --noreplace dev-qt/qt-creator
 #echo 'dev-qt/qt-creator' >> /etc/portage/package.mask/gentoox
 
