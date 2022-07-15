@@ -1,6 +1,6 @@
 # GentooX
 
-GentooX is an -O3 and LTO optimized x86_64 LiveCD Gentoo distribution with a simple *install.sh* CLI installer. GentooX supports BIOS and UEFI x86_64 systems, at minimum requires ~~AVX~~ capable CPUs released since 2011 such as Intel Sandybridge or AMD Bulldozer, and among KDE, it includes Steam, flatpak, and phoronix-suite out-of-the-box.
+GentooX is an -O3 and LTO optimized x86_64 LiveCD Gentoo distribution with a simple *install.sh* CLI installer. GentooX supports BIOS and UEFI x86_64 systems, at minimum requires ~~AVX~~ capable CPUs released since 2011 such as Intel Sandybridge or AMD Bulldozer, and among KDE, it includes Steam, flatpak, and phoronix-suite out-of-the-box. See more at http://gentoox.cryptohash.nl/
 
 * based on Gentoo's bleeding edge ~amd64 testing branch
 * OpenRC init system
@@ -19,7 +19,7 @@ GentooX is an -O3 and LTO optimized x86_64 LiveCD Gentoo distribution with a sim
 * Secure Boot is supported, kernel and modules have been signed, before you can install the OS under Secure Boot, import MOK.der in your BIOS via "Append Default db" (answer "no" and find the MOK.der on flashdrive where ISO has been written)
 
 ## Download
-http://gentoox.cryptohash.nl/
+https://sourceforge.net/projects/gentoox/files/
 
 ![kicker](https://raw.githubusercontent.com/fatalhalt/gentoox/master/screenshots/kicker.jpg?raw=true)
 
