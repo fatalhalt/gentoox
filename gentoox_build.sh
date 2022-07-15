@@ -177,6 +177,8 @@ sys-kernel/linux-firmware initramfs redistributable unknown-license
 x11-libs/libdrm libkms
 media-libs/mesa d3d9 lm-sensors opencl vaapi vdpau vulkan vulkan-overlay xa xvmc
 media-libs/libsdl2 gles2
+media-video/pipewire sound-server
+media-sound/pulseaudio -daemon
 www-client/firefox -system-av1 -system-icu -system-jpeg -system-libevent -system-libvpx -system-sqlite -system-harfbuzz -system-webp hwaccel pgo lto wayland clang
 mail-client/thunderbird hwaccel lto
 dev-libs/boost python zstd
@@ -193,6 +195,7 @@ dev-libs/libdbusmenu gtk3
 net-misc/curl http2
 dev-libs/apr-util ldap
 sys-apps/util-linux caps
+*/* RUBY_TARGETS: -* ruby31
 */* PYTHON_TARGETS: -* python3_10
 */* PYTHON_SINGLE_TARGET: -* python3_10' > /etc/portage/package.use/gentoox
 
@@ -210,6 +213,7 @@ echo -n > /etc/portage/package.accept_keywords
 #echo 'sys-libs/glibc **' >> /etc/portage/package.accept_keywords
 
 emerge -vN1 gcc  # install latest gcc now that it has been unmasked, or if above lines are commented this will rebuild gcc with 'lto pgo zstd' flags
+eselect gcc set latest
 emerge --autounmask=y --autounmask-write=y -vueDN --with-bdeps=y --exclude gcc @world  # rebuild entire system with fresh gcc
 
 emerge -v gentoo-sources genkernel portage-utils gentoolkit cpuid2cpuflags cryptsetup lvm2 mdadm dev-vcs/git btrfs-progs app-arch/lz4 ntfs3g dosfstools exfat-utils f2fs-tools gptfdisk efitools shim syslog-ng logrotate
@@ -402,7 +406,7 @@ else echo "kernel already compiled, skipping..."; fi
 if [[ ! -z $build_weston ]] && [[ ! -f 'tmp/gentoox-weston-done' ]]; then
 cat <<HEREDOC | chroot .
 source /etc/profile  && export PS1="(chroot) \$PS1"
-sed -i -r "s/^USE=\"([^\"]*)\"$/USE=\"\1 elogind -consolekit -systemd udev dbus X wayland gles vulkan plymouth pulseaudio ffmpeg ipv6 bluetooth zstd avif heif jpeg2k webp\"/g" /etc/portage/make.conf
+sed -i -r "s/^USE=\"([^\"]*)\"$/USE=\"\1 elogind -consolekit -systemd udev dbus X wayland gles vulkan plymouth pulseaudio screencast ffmpeg ipv6 bluetooth zstd avif heif jpeg2k webp\"/g" /etc/portage/make.conf
 
 # install lto-overlay
 emerge layman
@@ -582,6 +586,12 @@ dev-java/openjdk-bin gentoo-vm
 dev-java/openjdk gentoo-vm
 app-emulation/virtualbox-guest-additions -X' >> /etc/portage/package.use/gentoox
 
+mkdir -p /etc/portage/profile
+echo 'dev-java/openjdk-jre-bin -gentoo-vm
+dev-java/oracle-jdk-bin -gentoo-vm
+dev-java/openjdk-bin -gentoo-vm
+dev-java/openjdk -gentoo-vm' >> /etc/portage/profile/package.use.mask
+
 yes | layman -a bobwya -q
 echo '*/*::bobwya' >> /etc/portage/package.mask/lowprio
 
@@ -681,6 +691,7 @@ dev-libs/libbsd abi_x86_32
 dev-libs/popt abi_x86_32
 net-libs/libnsl abi_x86_32
 sys-libs/e2fsprogs-libs abi_x86_32
+sys-fs/e2fsprogs abi_x86_32
 sys-libs/ldb abi_x86_32
 sys-libs/liburing abi_x86_32
 sys-libs/talloc abi_x86_32
@@ -736,6 +747,9 @@ media-libs/openjpeg abi_x86_32
 app-crypt/libmd abi_x86_32
 dev-libs/libudfread abi_x86_32
 sys-libs/libxcrypt abi_x86_32
+media-libs/libpulse abi_x86_32
+dev-libs/libbsd abi_x86_32
+app-crypt/libmd abi_x86_32
 
 app-emulation/wine-vanilla custom-cflags vkd3d' >> /etc/portage/package.use/gentoox
 
@@ -808,6 +822,7 @@ rc-update add samba default
 rc-update add sshd default
 rc-update add virtualbox-guest-additions default
 rc-update add elogind boot
+rc-update add cronie default
 
 ln -s /usr/src/install.sh /root/
 ln -s /usr/src/install.sh /home/$username/
@@ -832,6 +847,8 @@ fi
 
 cd /bin
 ln -sf dash sh
+
+sed -i '/daemonize/s/^; //g' /etc/pulse/daemon.conf
 
 touch /tmp/gentoox-user-configured
 HEREDOC

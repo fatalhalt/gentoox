@@ -198,6 +198,9 @@ sed -i "s/-flto=8/-flto=\$HWTHREADS/" /etc/portage/make.conf
 rc-update delete virtualbox-guest-additions default
 rm -f /etc/xdg/autostart/vboxclient.desktop
 rm -f /usr/share/applications/avidemux-2.7.desktop
+rm -f /usr/share/applications/mupdf.desktop
+rm -f /usr/share/applications/org.fontforge.FontForge.desktop
+fc-cache -f
 
 sed -i "s/gentoox/$hostname/g" /etc/conf.d/hostname
 sed -i "s/gentoox/$hostname/g" /etc/hosts
@@ -209,6 +212,8 @@ echo '#!/bin/sh
 cpupower frequency-set -g performance
 exit 0' > /etc/local.d/my.start
 chmod +x /etc/local.d/my.start
+
+sed -i "/\/1\/snapshot/ s/ [0-]$/ 1/" /etc/fstab
 
 touch /swapfile
 chattr +C /swapfile
@@ -224,6 +229,7 @@ if [[ $username != "gentoox" ]]; then
   groupmod --new-name $username gentoox
 fi
 yes $userpassword | passwd $username
+chmod u+s /sbin/unix_chkpwd
 
 if [[ ! -z "$UEFI_MODE" ]]; then
   if [[ \$(mokutil --sb-state) == "SecureBoot enabled" ]]; then
@@ -250,4 +256,4 @@ HEREDOC
 sync
 umount -l /mnt/install/boot/efi /mnt/install/var /mnt/install/usr/local /mnt/install/tmp /mnt/install/srv /mnt/install/root /mnt/install/opt /mnt/install/home /mnt/install/boot/grub/x86_64-efi /mnt/install/boot/grub/i386-pc /mnt/install/.snapshots /mnt/install 1>/dev/null 2>&1
 sync
-echo "Installation complete, you may remove the install media and reboot"
+echo "Installation complete, you may remove the install media and reboot. It is OK to see errors on reboot."

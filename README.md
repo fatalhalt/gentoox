@@ -1,8 +1,6 @@
 # GentooX
 
-an -O3, Graphite, and LTO optimized x86_64 LiveCD Gentoo Linux distribution with installer.
-
-GentooX comes with simple interactive *install.sh* script, supports BIOS and UEFI x86_64 systems, at minimum requires ~~AVX~~ capable CPUs released since 2011 such as Intel Sandybridge or AMD Bulldozer, among KDE, it includes Steam, flatpak, and phoronix-suite out-of-the-box.
+GentooX is an -O3 and LTO optimized x86_64 LiveCD Gentoo distribution with a simple *install.sh* CLI installer. GentooX supports BIOS and UEFI x86_64 systems, at minimum requires ~~AVX~~ capable CPUs released since 2011 such as Intel Sandybridge or AMD Bulldozer, and among KDE, it includes Steam, flatpak, and phoronix-suite out-of-the-box.
 
 * based on Gentoo's bleeding edge ~amd64 testing branch
 * OpenRC init system
@@ -15,9 +13,10 @@ GentooX comes with simple interactive *install.sh* script, supports BIOS and UEF
 * flatpak is included, easily install VSCode or Discord in sandboxed environment
 * Wine with vkd3d support included out-of-the-box
 * ZFS support, kernel patched to export FPU functions
-* Linux 5.15.10 kernel built with 1000Hz -03 for Sandybridge arch. Patches include aufs, zstd, ClearLinux patches, Intel FSGSBASE patches, Valve's fsync, [sirlucjan's](https://gitlab.com/sirlucjan/kernel-patches/-/tree/master/): android/arch/btrfs/fixes-miscellaneous/ntfs, unprivileged CLONE_NEWUSER, and IOMMU missing ACS capabilities overrides.
-* KDE 5.23.4, KDE Applications 21.12.0, KDE Frameworks 5.89.0, Qt 5.15.2
-* CacULE CPU scheduler
+* Linux 5.18.11 kernel built with 1000Hz clock resolution and -03 optimization level. Patches include aufs, zstd, ClearLinux patches, Valve's fsync, [sirlucjan's](https://gitlab.com/sirlucjan/kernel-patches/-/tree/master/) patches: android-patches / amd64-patches / arch-patches / bbr2-patches / btrfs-patches / cpu-patches / cpufreq-patches / fixes-miscellaneous / hwmon-patches / intel-patches / lru-patches / lqx-patches / mm-patches / ntfs / v4l2loopback-patches / zstd-patches / xanmod-patches / zstd-dev-patches.
+* KDE 5.25.3, KDE Applications 22.04.3, KDE Frameworks 5.96.0, Qt 5.15.5
+* CacULE CPU scheduler, CPU frequency scaling governor set to performance
+* Secure Boot is supported, kernel and modules have been signed, before you can install the OS under Secure Boot, import MOK.der in your BIOS via "Append Default db" (answer "no" and find the MOK.der on flashdrive where ISO has been written)
 
 ## Download
 http://gentoox.cryptohash.nl/
@@ -30,17 +29,18 @@ The ISO weighs around 4GB and following settings were used to build it:
 ## CFLAGS
 ```sh
 source make.conf.lto
-COMMON_FLAGS="-O3 -march=sandybridge -mtune=sandybridge -pipe -fomit-frame-pointer -fno-math-errno -fno-trapping-math -funroll-loops -mfpmath=both -malign-data=cacheline -fgraphite-identity -floop-nest-optimize -fdevirtualize-at-ltrans -fipa-pta -fno-semantic-interposition -flto=8 -fuse-linker-plugin"
+COMMON_FLAGS="-O3 -march=sandybridge -mtune=sandybridge -pipe -fomit-frame-pointer -fno-math-errno -fno-trapping-math -funroll-loops -mfpmath=both -malign-data=cacheline -fgraphite-identity -floop-nest-optimize -fdevirtualize-at-ltrans -fipa-pta -fno-semantic-interposition -flto=4 -fuse-linker-plugin"
 CFLAGS="${COMMON_FLAGS}"
 CXXFLAGS="${COMMON_FLAGS}"
 FCFLAGS="${COMMON_FLAGS}"
 FFLAGS="${COMMON_FLAGS}"
 RUSTFLAGS="-C opt-level=3 -C target-cpu=sandybridge"
+LDFLAGS="${COMMON_FLAGS} ${LDFLAGS} -Wl,-O1 -Wl,--as-needed -Wl,-fuse-ld=mold"
 CPU_FLAGS_X86="aes mmx mmxext pclmul popcnt sse sse2 sse3 sse4_1 sse4_2 ssse3"
 ```
 ## USE flags
 ```sh
-USE="-bindist elogind -consolekit -systemd udev dbus X wayland gles vulkan plymouth pulseaudio ffmpeg ipv6 bluetooth zstd avif heif jpeg2k webp -webkit"
+USE="-bindist elogind -consolekit -systemd udev dbus X wayland gles vulkan plymouth pulseaudio screencast ffmpeg ipv6 bluetooth zstd avif heif jpeg2k webp -webkit"
 ```
 ## FAQ
 > (Q) **what are the user/password credentials for LiveCD?**
@@ -51,7 +51,7 @@ USE="-bindist elogind -consolekit -systemd udev dbus X wayland gles vulkan plymo
 I found it rather tedious to setup a clean Gentoo install and LTO all the packages, not only gcc has to be rebuilt to support graphite, but then your entire stage3 install needs to be recompiled, not to mention already installed software. GentooX aims to provide pre-compiled and LTOed packages from the get go with easy installation and convenient LiveCD. Since GentooX mandates AVX support, this allows further optimizations to all packages.
 > (Q) **how can I start KDE?**
 
-login to tty1 using gentoox/gentoox and type 'startx'
+login to tty1 using gentoox/gentoox and type 'startx', to start a wayland session type './startkde-wayland.sh'
 > (Q) **why does theme look like it didn't apply correctly? e.g. fonts are enlarged or dolphin looks dark-and-white?**
 
 make sure to logout/login after initial 'startx' startup in LiveCD or after installation
@@ -68,7 +68,7 @@ The installation carried by install.sh is very simple, besides interactive parti
 
 GentooX is source based, you should run **emerge --sync** after the install. After that, to update the system run:
 ```sh
-emerge -avuDN --with-bdeps=y --exclude gentoo-sources @world
+emerge -avuDN --with-bdeps=y --exclude gentoo-sources --exclude grub --exclude shim --exclude osl @world
 ```
 > (Q) **can I use login manager such as SDDM instead of 'startx'?**
 
@@ -88,5 +88,6 @@ Gentoo project, https://www.gentoo.org/, note: Gentoo Foundation, Inc. is the ow
 CloverOS, https://cloveros.ga/, GentooX has been heavily inspired by CloverOS, if you want fvwm based optimized Gentoo distribution, look no further!
 
 ## Known issues
-
+* grub-2.06-r2 and shim-15.6 break Secure Boot  (ISO comes with older grub-2.06-r1 and shim-15.5-r1 packages)
+* dolphin fails to mount smb shares with samba 4.16.x (workaround: in KDE System Settings prefill user/password in 'Windows Shares' section)
  
